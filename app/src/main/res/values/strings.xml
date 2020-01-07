@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">VideoEditor</string>
+    <string name="size">Размер</string>
+    <string name="codec">Кодек</string>
+    <string name="path">Путь</string>
+    <string name="bitrate">Битрейт</string>
+    <string name="duration">Продолжительность</string>
+    <string name="startTime">Начальное время</string>
+    <string name="height">Высота</string>
+    <string name="width">Ширина</string>
+    <string name="frameRate">Частота кадров</string>
+    <string name="aspectRatio">Соотношение сторон</string>
+    <string name="format">Формат</string>
+
 </resources>

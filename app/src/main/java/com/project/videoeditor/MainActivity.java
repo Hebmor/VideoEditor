@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 100;
 
     private VideoView videoView;
-
+    VideoInfo info;
     private Uri selectedVideoUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
-    void UploadVideo()
+    private void UploadVideo()
     {
         try {
             Intent intent = new Intent();
@@ -89,7 +89,13 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    public void OpenVideoInfoPage(View view)
+    {
 
+        Intent intent = new Intent(this, VideoInfoPage.class);
+        intent.putExtra(VideoInfo.class.getCanonicalName(),info);
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean b = isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 File file = new File(path);
                 if(!file.exists()) Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
-                VideoInfo info = new VideoInfo(path);
+                info = new VideoInfo(path);
 
 
             }
