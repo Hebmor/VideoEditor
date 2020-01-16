@@ -49,4 +49,18 @@
         android:onClick="OpenVideoInfoPage"
         />
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="180dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginEnd="186dp"
+        android:onClick="TestCallBack"
+        android:text="CallBackTest"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/videoView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

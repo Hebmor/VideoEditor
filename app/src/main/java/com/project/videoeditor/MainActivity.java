@@ -20,12 +20,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.arthenica.mobileffmpeg.Level;
+import com.arthenica.mobileffmpeg.LogCallback;
+import com.arthenica.mobileffmpeg.LogMessage;
 import com.arthenica.mobileffmpeg.MediaInformation;
+import com.arthenica.mobileffmpeg.Statistics;
+import com.arthenica.mobileffmpeg.StatisticsCallback;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_CANCEL;
+import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_SUCCESS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         videoView = findViewById(R.id.videoView);
+        //FFmpeg.execute("-encoders");
+        //Config.setLogLevel(Level.AV_LOG_FATAL);
     }
     private void OpenFile(String filename)
     {
@@ -51,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Файл успешно найдет!", Toast.LENGTH_LONG).show();
         String newFile = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf(File.separator)) + File.separator + "hl2.avi";
         FFmpeg.execute("-i "+ file.getAbsolutePath() + " " + newFile);
+
     }
     private boolean checkPermissions(){
 
@@ -165,10 +178,41 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    public void enableLogCallback() {
+        Config.enableLogCallback(new LogCallback() {
+            public void apply(LogMessage message) {
+                Log.d(Config.TAG, message.getText());
+            }
+        });
+    }
     private boolean isPermissionGranted(String permission) {
         // проверяем разрешение - есть ли оно у нашего приложения
         int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
         // true - если есть, false - если нет
         return permissionCheck == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void TestCallBack(View view) {
+
+        Config.enableLogCallback(new LogCallback() {
+            public void apply(LogMessage message) {
+                Log.d(Config.TAG, message.getText());
+            }
+        });
+        Config.enableStatisticsCallback(new StatisticsCallback() {
+            public void apply(Statistics newStatistics) {
+                Log.d(Config.TAG, String.format("frame: %d, time: %d", newStatistics.getVideoFrameNumber(), newStatistics.getTime()));
+            }
+        });
+        //int rc = FFmpeg.execute(" -hide_banner -f lavfi -i nullsrc -c:v libx264 -preset help -f mp4 -");
+        int rc = FFmpeg.execute(" -encoders");
+        if (rc == RETURN_CODE_SUCCESS) {
+            Log.i(Config.TAG, "Command execution completed successfully.");
+        } else if (rc == RETURN_CODE_CANCEL) {
+            Log.i(Config.TAG, "Command execution cancelled by user.");
+        } else {
+            Log.i(Config.TAG, String.format("Command execution failed with rc=%d and the output below.", rc));
+            //Config.printLastCommandOutput(Log.INFO);
+        }
     }
 }

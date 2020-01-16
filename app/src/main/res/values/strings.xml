@@ -10,6 +10,31 @@
     <string name="width">Ширина</string>
     <string name="frameRate">Частота кадров</string>
     <string name="aspectRatio">Соотношение сторон</string>
-    <string name="format">Формат</string>
+
+    <string name="H264">H.264</string>
+    <string name="H265">H.265</string>
+    <string name="MPEG4">MPEG-4</string>
+    <string name="MPEG2">MPEG-2</string>
+    <string name="Theora">Theora</string>
+    <string name="libx264">libx264</string>
+    <string name="libxvid">libxvid</string>
+
+    <string name="Preset">Пресет</string>
+
+    <string name="ultrafast">Сверхбыстрый</string>
+    <string name="superfast">Супербыстрый</string>
+    <string name="veryfast">Очень быстрый</string>
+    <string name="faster">Быстрый</string>
+    <string name="fast">Ускоренный</string>
+    <string name="medium">Средний</string>
+    <string name="slow">Замедленный</string>
+    <string name="slower">Медленный</string>
+    <string name="veryslow">Очень медленный</string>
+
+    <string name="Tune">Tune</string>
+\
+
+
+
 
 </resources>

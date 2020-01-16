@@ -12,10 +12,21 @@ public class ActionEditor {
 
     public ActionEditor() {
 
-    }
-    public static EncodeVideo(String format)
-    {
 
+    }
+    public static void EncodeProcess(String codec,String filePath,String new_filePath) throws Exception {
+        switch (codec)
+        {
+            case "MPEG4":
+            {
+
+            }
+            default:
+            {
+                throw new Exception("Неизвестный кодек");
+            }
+
+        }
     }
 
 }
