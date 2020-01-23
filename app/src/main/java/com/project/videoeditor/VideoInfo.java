@@ -1,10 +1,14 @@
 package com.project.videoeditor;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.arthenica.mobileffmpeg.FFmpeg;
 import com.arthenica.mobileffmpeg.MediaInformation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VideoInfo implements Parcelable {
 
@@ -20,7 +24,9 @@ public class VideoInfo implements Parcelable {
     private Long duration;
     private Long bitrate;
     private String path;
+    private Long frameCount;
     private FFmpeg ffmpeg;
+    private ArrayList<Bitmap> previewFrame;
 
 
     public VideoInfo(String path) {
@@ -37,7 +43,10 @@ public class VideoInfo implements Parcelable {
         this.codec = info.getStreams().get(0).getCodec();
         this.format = info.getStreams().get(0).getFormat();
         this.aspectRatio = info.getStreams().get(0).getDisplayAspectRatio();
+        //Приблизительное количество кадров
+        this.frameCount = ((long) this.duration / 1000) % 60 * Long.getLong(frameRate);
 
+        previewFrame = new ArrayList<Bitmap>();
     }
 
     public VideoInfo(Parcel parcel) {
@@ -57,8 +66,8 @@ public class VideoInfo implements Parcelable {
         this.path = parcel.readString();
     }
 
-    public void SetToActivity() {
-
+    public void GeneratePreviewFrames()
+    {
 
     }
 

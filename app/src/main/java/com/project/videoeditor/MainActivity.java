@@ -20,19 +20,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import androidx.fragment.app.Fragment;
+
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
-import com.arthenica.mobileffmpeg.Level;
 import com.arthenica.mobileffmpeg.LogCallback;
 import com.arthenica.mobileffmpeg.LogMessage;
-import com.arthenica.mobileffmpeg.MediaInformation;
 import com.arthenica.mobileffmpeg.Statistics;
 import com.arthenica.mobileffmpeg.StatisticsCallback;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_CANCEL;
 import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_SUCCESS;
@@ -43,13 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 100;
 
     private VideoView videoView;
-    VideoInfo info;
+    private VideoInfo info;
     private Uri selectedVideoUri;
+    private DialogEncodeProcess dialogEncodeProcess;
+    private VideoTimeline videoEditBarFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         videoView = findViewById(R.id.videoView);
+        dialogEncodeProcess = new DialogEncodeProcess();
+        videoEditBarFragment =  (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragment);
         //FFmpeg.execute("-encoders");
         //Config.setLogLevel(Level.AV_LOG_FATAL);
     }
@@ -127,6 +134,31 @@ public class MainActivity extends AppCompatActivity {
                 if(!file.exists()) Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
                 info = new VideoInfo(path);
 
+                try {
+                    Path patht = Paths.get(path);
+
+
+                    Runnable task = () -> {
+                        try {
+                            ActionEditor.EncodeProcess("MPEG4",path,patht.getParent()+"/encode.mp4");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    };
+                    Thread thread = new Thread(task);
+                    Bundle args = new Bundle();
+                    args.putParcelable("VideoInfo",info);
+                    videoEditBarFragment.putArguments(args);
+
+                    //thread.start();
+                    //dialogEncodeProcess.show(getSupportFragmentManager(), "custom");
+
+
+                    //thread.join();
+                    //progressBar.setVisibility(View.INVISIBLE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
         }

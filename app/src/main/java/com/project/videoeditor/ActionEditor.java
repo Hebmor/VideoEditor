@@ -19,7 +19,9 @@ public class ActionEditor {
         {
             case "MPEG4":
             {
-
+                String command = "-y -i " + filePath + " -c:v mpeg4 "+new_filePath;
+                FFmpeg.execute(command);
+                break;
             }
             default:
             {
@@ -27,6 +29,10 @@ public class ActionEditor {
             }
 
         }
+    }
+    public static void GetFrameProcess()
+    {
+        
     }
 
 }
