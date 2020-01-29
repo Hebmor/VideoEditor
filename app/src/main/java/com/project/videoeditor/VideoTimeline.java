@@ -3,12 +3,14 @@ package com.project.videoeditor;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.jaygoo.widget.SeekBar;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -36,7 +39,7 @@ public class VideoTimeline extends Fragment {
     private VideoEditBar videoEditBar;
     private  SeekBar SBR;
     private SeekBar SBL;
-    private LinearLayout linearLayout;
+    private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
     private VideoView pVideoView;
 
@@ -52,7 +55,8 @@ public class VideoTimeline extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         seekBar = view.findViewById(R.id.seekBarVideo);
         videoEditBar = view.findViewById(R.id.rectVideo);
-        linearLayout = view.findViewById(R.id.linear_layout);
+        videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
+        //linearLayout = view.findViewById(R.id.linear_layout);
 
 
 
@@ -130,13 +134,12 @@ public class VideoTimeline extends Fragment {
 
         seekBar.setRange(videoInfo.getStartTime(),videoInfo.getDuration() - 10,1000);
     }
-    public void SetFramesFromVideo(List<Bitmap> Frames)
+    public void setFramesFromVideo(String PathToFrameСollage)
     {
-        for (Bitmap frame:Frames) {
-            ImageView newImageView = new ImageView(getContext());
-            newImageView.setImageBitmap(frame);
-            linearLayout.addView(newImageView);
-        }
+        File image = new File(PathToFrameСollage);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        videoFramesCollage.setImageBitmap(bitmap);
     }
 
 }

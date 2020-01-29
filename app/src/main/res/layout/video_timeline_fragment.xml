@@ -8,104 +8,41 @@
     tools:context=".VideoTimeline">
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView9"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/img010" />
-        </LinearLayout>
-
-        <com.jaygoo.widget.RangeSeekBar
-            android:id="@+id/seekBarVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:rsb_gravity="center"
-            app:rsb_indicator_background_color="@color/white"
-            app:rsb_indicator_show_mode="alwaysShow"
-            app:rsb_indicator_text_color="@color/darkGrey"
-            app:rsb_indicator_text_size="10sp"
-            app:rsb_max="5000"
-            app:rsb_min="0"
-            app:rsb_mode="range"
-            app:rsb_progress_color="@color/honey"
-            app:rsb_thumb_drawable="@drawable/dot" />
-
-
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/videoFramesCollage"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/sample" />
 
     <com.project.videoeditor.VideoEditBar
         android:id="@+id/rectVideo"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        app:piv_Bottom="100"
+        app:piv_Bottom="110"
 
         app:piv_Left="0"
         app:piv_Right="1100"
         app:piv_Top="0" />
+
+    <com.jaygoo.widget.RangeSeekBar
+        android:id="@+id/seekBarVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:rsb_gravity="center"
+        app:rsb_indicator_background_color="@color/white"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_text_color="@color/darkGrey"
+        app:rsb_indicator_text_size="10sp"
+        app:rsb_max="5000"
+        app:rsb_min="0"
+        app:rsb_mode="range"
+        app:rsb_progress_color="@color/honey"
+        app:rsb_thumb_drawable="@drawable/dot"
+        app:singleThumb="false" />
 
 </FrameLayout>

@@ -1,32 +1,31 @@
 package com.project.videoeditor;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.arthenica.mobileffmpeg.FFmpeg;
 import com.arthenica.mobileffmpeg.MediaInformation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
 public class VideoInfo implements Parcelable {
 
-    private final Long startTime;
-    private final Long height;
-    private final Long width;
-    private final Long index;
+    private Long startTime = 0L;
+    private Long height  = 0L;
+    private Long width  = 0L;
+    private Long index = 0L;
     //private final Long sampleRate;
-    private final String frameRate;
-    private final String codec;
-    private final String format;
-    private final String aspectRatio;
-    private Long duration;
-    private Long bitrate;
+    private String frameRate;
+    private String codec;
+    private String format;
+    private String aspectRatio;
+    private Long duration = 0L;
+    private Long bitrate = 0L;
     private String path;
-    private Long frameCount;
+    private Long frameCount = 0L;
     private FFmpeg ffmpeg;
-    private ArrayList<Bitmap> previewFrame;
+    private String pathFrameCollage;
+
 
 
     public VideoInfo(String path) {
@@ -44,9 +43,8 @@ public class VideoInfo implements Parcelable {
         this.format = info.getStreams().get(0).getFormat();
         this.aspectRatio = info.getStreams().get(0).getDisplayAspectRatio();
         //Приблизительное количество кадров
-        this.frameCount = ((long) this.duration / 1000) % 60 * Long.getLong(frameRate);
+        this.frameCount = (long)((( this.duration / 1000) % 60) * Float.valueOf(frameRate));
 
-        previewFrame = new ArrayList<Bitmap>();
     }
 
     public VideoInfo(Parcel parcel) {
@@ -154,4 +152,24 @@ public class VideoInfo implements Parcelable {
         }
 
     };
+
+
+    public String getPathFrameCollage() {
+        return pathFrameCollage;
+    }
+
+    public void setPathFrameCollage(String frameCollage) {
+        this.pathFrameCollage = frameCollage;
+    }
+
+    public Long getFrameCount() {
+        return frameCount;
+    }
+    public void DeleteFrameCollage()
+    {
+        if(this.pathFrameCollage != null) {
+            File frameCollage = new File(this.pathFrameCollage);
+            frameCollage.delete();
+        }
+    }
 }
