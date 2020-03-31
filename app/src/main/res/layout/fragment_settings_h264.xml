@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Settings_h264Fragment">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/preset_rendering" />
+
+    <com.warkiz.widget.IndicatorSeekBar
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+
+        app:isb_indicator_color="@color/darkGrey"
+        app:isb_indicator_text_color="@color/colorAccent"
+        app:isb_indicator_text_size="18sp"
+        app:isb_max="45"
+        app:isb_min="0"
+        app:isb_progress="30"
+        app:isb_seek_smoothly="true"
+        app:isb_show_indicator="circular_bubble"
+        app:isb_show_tick_marks_type="oval"
+        app:isb_show_tick_texts="true"
+        app:isb_thumb_color="@color/honey"
+        app:isb_thumb_size="14dp"
+        app:isb_tick_marks_size="8dp"
+        app:isb_tick_texts_color="@color/colorPrimaryDark"
+        app:isb_tick_texts_size="4sp"
+        app:isb_ticks_count="9"
+        app:isb_track_background_color="@color/peach"
+        app:isb_track_background_size="2dp"
+        app:isb_track_progress_color="@color/honey"
+        app:isb_track_progress_size="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText5"
+        app:isb_tick_texts_array="@array/preset_rendering_options"
+        tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/tune" />
+
+        <com.warkiz.widget.IndicatorSeekBar
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+
+            app:isb_indicator_color="@color/darkGrey"
+            app:isb_indicator_text_color="@color/colorAccent"
+            app:isb_indicator_text_size="18sp"
+            app:isb_max="30"
+            app:isb_min="0"
+            app:isb_progress="25"
+            app:isb_seek_smoothly="true"
+            app:isb_show_indicator="circular_bubble"
+            app:isb_show_tick_marks_type="oval"
+            app:isb_show_tick_texts="true"
+            app:isb_thumb_color="@color/honey"
+            app:isb_thumb_size="14dp"
+            app:isb_tick_marks_size="12dp"
+            app:isb_tick_texts_array="@array/tune_options"
+            app:isb_tick_texts_color="@color/colorPrimaryDark"
+            app:isb_tick_texts_size="6sp"
+            app:isb_ticks_count="6"
+            app:isb_track_background_color="@color/peach"
+            app:isb_track_background_size="2dp"
+            app:isb_track_progress_color="@color/honey"
+            app:isb_track_progress_size="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText5"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="77dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/frameRate"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/editText2"
+            app:layout_constraintStart_toEndOf="@+id/editText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="85dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:autofillHints=""
+            android:contextClickable="false"
+            android:elegantTextHeight="false"
+            android:ems="10"
+            android:freezesText="false"
+            android:hint="@string/fps"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="108dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:contextClickable="false"
+            android:elegantTextHeight="false"
+            android:ems="10"
+            android:freezesText="false"
+            android:hint="@string/kbs"
+            android:inputType="number"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="83dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/bitrate"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/editText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editText_FolderPath"
+            android:layout_width="280dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:hint="Путь для сохранения"
+            android:inputType="textPersonName"
+            android:onClick=""
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText5"
+            tools:ignore="OnClick" />
+
+        <EditText
+            android:id="@+id/editText5"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="72dp"
+            android:ems="10"
+            android:hint="Имя файла"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/ListFormat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/ListFormat"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="72dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/editText5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonSelectFolderPath"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:text="Выбрать"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/editText_FolderPath"
+            app:layout_constraintTop_toBottomOf="@+id/ListFormat" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

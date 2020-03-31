@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preset_rendering_options">
+        <item>@string/ultrafast</item>
+        <item>@string/superfast</item>
+        <item>@string/veryfast</item>
+        <item>@string/faster</item>
+        <item>@string/fast</item>
+        <item>@string/medium</item>
+        <item>@string/slow</item>
+        <item>@string/slower</item>
+        <item>@string/veryslow</item>
+    </array>
+    <array name="tune_options">
+        <item>@string/film</item>
+        <item>@string/animation</item>
+        <item>@string/grain</item>
+        <item>@string/stillimage</item>
+        <item>@string/fastdecode</item>
+        <item>@string/zerolatency</item>
+    </array>
+</resources>
+

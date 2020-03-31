@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import com.arthenica.mobileffmpeg.Config;
@@ -35,8 +37,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_CANCEL;
-import static com.arthenica.mobileffmpeg.FFmpeg.RETURN_CODE_SUCCESS;
+import lib.folderpicker.FolderPicker;
+
+import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
+import static com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL;
+import static com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS;
+import static com.project.videoeditor.ConvertUriToFilePath.getPath;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         dialogEncodeProcess = new DialogEncodeProcess();
         videoEditBarFragment =  (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragment);
-        //FFmpeg.execute("-encoders");
+        enableLogCallback();
+        FFmpeg.execute("-encoders");
         //Config.setLogLevel(Level.AV_LOG_FATAL);
     }
     private void OpenFile(String filename)
@@ -109,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     public void OpenVideoInfoPage(View view)
     {
 
@@ -120,48 +129,52 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
-                selectedVideoUri = data.getData();
-                videoView.setVideoURI(selectedVideoUri);
-                MediaController mediaController = new MediaController(this);
-                videoView.setMediaController(mediaController);
-                mediaController.setMediaPlayer(videoView);
-                videoView.start();
-                String path = ConvertUriToFilePath.getPath(this,selectedVideoUri);
-                boolean a = isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
-                boolean b = isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                File file = new File(path);
-                if(!file.exists()) Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
-                info = new VideoInfo(path);
-                info.DeleteFrameCollage();
-                ActionEditor.setVideoInfo(info);
-                try {
-                    Path patht = Paths.get(path);
+            switch (requestCode) {
+                case REQUEST_TAKE_GALLERY_VIDEO:
+                    selectedVideoUri = data.getData();
+                    videoView.setVideoURI(selectedVideoUri);
+                    MediaController mediaController = new MediaController(this);
+                    videoView.setMediaController(mediaController);
+                    mediaController.setMediaPlayer(videoView);
+                    videoView.start();
+                    String path = getPath(this, selectedVideoUri);
+                    boolean a = isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    boolean b = isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    File file = new File(path);
+                    if (!file.exists())
+                        Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
+                    info = new VideoInfo(path);
+                    info.DeleteFrameCollage();
+                    ActionEditor.setVideoInfo(info);
+                    try {
+                        Path patht = Paths.get(path);
 
 
-                    Runnable task = () -> {
-                        try {
-                            ActionEditor.EncodeProcess("MPEG4",path,patht.getParent()+"/encode.mp4");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    };
-                    Thread thread = new Thread(task);
-                    Bundle args = new Bundle();
-                    args.putParcelable("VideoInfo",info);
-                    videoEditBarFragment.putArguments(args);
-                    videoEditBarFragment.setFramesFromVideo(ActionEditor.GenFrameCollage(path,this));
-                    //thread.start();
-                    //dialogEncodeProcess.show(getSupportFragmentManager(), "custom");
+                        Runnable task = () -> {
+                            try {
+                                ActionEditor.EncodeProcess("MPEG4", path, patht.getParent() + "/encode.mp4");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        };
+                        Thread thread = new Thread(task);
+                        Bundle args = new Bundle();
+                        args.putParcelable("VideoInfo", info);
+                        videoEditBarFragment.putArguments(args);
+                        videoEditBarFragment.setFramesFromVideo(ActionEditor.GenFrameCollage(path, this));
+                        //thread.start();
+                        //dialogEncodeProcess.show(getSupportFragmentManager(), "custom");
 
 
-                    //thread.join();
-                    //progressBar.setVisibility(View.INVISIBLE);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                        //thread.join();
+                        //progressBar.setVisibility(View.INVISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
 
             }
+
         }
     }
     private void getPermission() {
@@ -185,15 +198,14 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this,
                     params,
                     100);
-        } else
-            UploadVideo();
+        }
     }
     public void ClickUploadVideo(View view) {
         if (Build.VERSION.SDK_INT >= 28)
-            getPermission();
-        else
+                            getPermission();
             UploadVideo();
     }
+
     private String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
@@ -283,5 +295,10 @@ public class MainActivity extends AppCompatActivity {
 
         // The directory is now empty so delete it
         return dir.delete();
+    }
+
+    public void ClickEncoders(View view) {
+        Intent intent = new Intent(this, VideoEncoders.class);
+        startActivity(intent);
     }
 }

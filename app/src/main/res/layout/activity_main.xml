@@ -23,11 +23,23 @@
         android:id="@+id/button"
         android:layout_width="180dp"
         android:layout_height="68dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:onClick="ClickUploadVideo"
         android:text="Выбрать видео!"
         app:layout_constraintEnd_toStartOf="@+id/button3"
-        app:layout_constraintHorizontal_bias="0.313"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/videoView" />
+
+    <Button
+        android:id="@+id/buttonEncode"
+        android:layout_width="180dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="88dp"
+        android:onClick="ClickEncoders"
+        android:text="Перекодировать"
+        app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videoView" />
 
@@ -36,25 +48,11 @@
         android:layout_width="180dp"
         android:layout_height="68dp"
         android:layout_marginStart="180dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:onClick="OpenVideoInfoPage"
         android:text="Инфо"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.705"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/videoView" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="180dp"
-        android:layout_height="68dp"
-        android:layout_marginStart="180dp"
-        android:layout_marginTop="104dp"
-        android:layout_marginEnd="186dp"
-        android:onClick="TestCallBack"
-        android:text="CallBackTest"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videoView" />
 
@@ -64,10 +62,12 @@
         android:layout_width="396dp"
         android:layout_height="254dp"
         android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonEncode" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ public class ActionEditor {
 
     private static FFmpeg ffmpeg;
     private static VideoInfo videoInfo;
+    public final String availableEncodeList[] = {"MPEG4","libx264","H.265","libtheora","mpeg2","libxvid"};
 
     public ActionEditor() {
 
@@ -29,6 +30,27 @@ public class ActionEditor {
             }
 
         }
+    }
+    public static void EncodeMPEG4(String filePath,String new_filePath,int qscale_video,int qscale_audio,Long bitrate,int framerate) throws Exception {
+
+        if(qscale_video < 1 && qscale_video > 31)
+            throw new IllegalArgumentException("Ошибка, параметр qscale_video должен быть в диапазоне от 1 до 31");
+        if(qscale_audio < 1 && qscale_audio > 31)
+            throw new IllegalArgumentException("Ошибка, параметр qscale_audio должен быть в диапазоне от 1 до 31");
+        String command = "-y -i \"" + filePath + "\" -c:v mpeg4 -qscale:v "+qscale_video+" -qscale:a "+qscale_audio+" -b:v "+bitrate+"k -slices 4 -r"+framerate+" "+new_filePath;
+        FFmpeg.execute(command);
+    }
+    public static void EncodeLIBX264(String filePath,String new_filePath,Long bitrate,int framerate,String preset,String tune,int crf) throws Exception {
+        if(crf < 0 && crf > 100)
+            throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
+        String command = "-y -i \"" + filePath + "\" -c:v libx264 -crf "+crf+" -preset "+preset+" -tune "+tune+ " -b:v "+bitrate+"k  -slices 4 -r"+framerate+" "+new_filePath;
+        FFmpeg.execute(command);
+    }
+    public static void EncodeH265(String filePath,String new_filePath,Long bitrate,int framerate,String preset,String tune,int crf) throws Exception {
+        if(crf < 0 && crf > 100)
+            throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
+        String command = "-y -i \"" + filePath + "\" -c:v libx265 -crf "+crf+" -preset "+preset+" -tune "+tune+" -b:v "+bitrate+"k -slices 4 -r"+framerate+" "+new_filePath;
+        FFmpeg.execute(command);
     }
     public static String GenFrameCollage(String filePath, Context context)
     {

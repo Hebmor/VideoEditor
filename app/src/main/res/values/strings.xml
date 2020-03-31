@@ -19,23 +19,55 @@
     <string name="libx264">libx264</string>
     <string name="libxvid">libxvid</string>
 
-    <string name="Preset">Пресет</string>
+    <string name="preset_rendering">Предустановка рендеринга</string>
 
-    <string name="ultrafast">Сверхбыстрый</string>
-    <string name="superfast">Супербыстрый</string>
-    <string name="veryfast">Очень быстрый</string>
-    <string name="faster">Быстрый</string>
-    <string name="fast">Ускоренный</string>
-    <string name="medium">Средний</string>
-    <string name="slow">Замедленный</string>
-    <string name="slower">Медленный</string>
-    <string name="veryslow">Очень медленный</string>
+    <string name="ultrafast">Сверхбыстро</string>
+    <string name="superfast">Супербыстро</string>
+    <string name="veryfast">Очень быстро</string>
+    <string name="faster">Быстро</string>
+    <string name="fast">Ускоренно</string>
+    <string name="medium">Средне</string>
+    <string name="slow">Замедленно</string>
+    <string name="slower">Медленно</string>
+    <string name="veryslow">Очень медленно</string>
 
-    <string name="Tune">Tune</string>
+    <string name="tune">Специфика</string>
+    <string name="film">Фильм</string>
+    <string name="animation">Анимация</string>
+    <string name="grain">Зернистость</string>
+    <string name="stillimage">Слайдшоу</string>
+    <string name="fastdecode">Производительность</string>
+    <string name="zerolatency">Специфика</string>
+
+
+
     <string name="Cancel">Отмена</string>
+    <string name="AudioBitrate">Аудио Битрейт</string>
+    <string name="video_quality_level">Уровень качества видео</string>
+    <string name="audio_quality_level">Уровень качества аудио</string>
+    <string name="fps">fps</string>
+    <string name="kbs">кбит/с</string>
+    <string-array name="Encoders">
+        <item>H264</item>
+        <item>H265</item>
+        <item>MPEG4</item>
+        <item>MPEG2</item>
+        <item>Theora</item>
+        <item>libx264</item>
+        <item>libxvid</item>
+    </string-array>
+    <string-array name="Formats">
+        <item>MP4</item>
+        <item>AVI</item>
+        <item>WMV</item>
+        <item>MOV</item>
+        <item>FLV</item>
+        <item>GIF</item>
+        <item>OGG</item>
+    </string-array>
 
-
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

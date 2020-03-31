@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.arthenica.mobileffmpeg.FFprobe;
 import com.arthenica.mobileffmpeg.MediaInformation;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class VideoInfo implements Parcelable {
 
 
     public VideoInfo(String path) {
-        MediaInformation info = ffmpeg.getMediaInformation(path);
+        MediaInformation info = FFprobe.getMediaInformation(path);
         this.path = path;
         this.bitrate = info.getBitrate();
         this.duration = info.getDuration();
