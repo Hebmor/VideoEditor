@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Settings_h264Fragment">
 
@@ -140,6 +140,8 @@
             android:layout_height="44dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="12dp"
             android:autofillHints=""
             android:contextClickable="false"
             android:elegantTextHeight="false"
@@ -147,8 +149,11 @@
             android:freezesText="false"
             android:hint="@string/kbs"
             android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/editText5"
+            app:layout_constraintEnd_toStartOf="@+id/textView5"
             app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/textView2"

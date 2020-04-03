@@ -2,6 +2,9 @@ package com.project.videoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import android.os.Bundle;
@@ -11,16 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VideoEncoders extends AppCompatActivity {
 
     final static String TAG_MPEG4 = "FRAGMENT_MPEG4";
     final static String TAG_H264 = "FRAGMENT_H264";
     final static String TAG_H265 = "FRAGMENT_H265";
-
-    List<Fragment> fragmentList = new ArrayList<>();
+    private FragmentManager fragmentManager;
+    private Settings_h264Fragment settingsH264Fragment;
+    private SettingsMPEG4Fragment settingsMPEG4Fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,18 +30,17 @@ public class VideoEncoders extends AppCompatActivity {
 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerEncodersList);
         //WARNING BAD CODE!
-
-        Spinner spinner2 = (Spinner) findViewById(R.id.ListFormat);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.Encoders, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.Formats, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner2.setAdapter(adapter2);
+
+        fragmentManager = getSupportFragmentManager();
+        settingsH264Fragment = Settings_h264Fragment.newInstance();
+        settingsMPEG4Fragment = SettingsMPEG4Fragment.newInstance();
+         AddFragment(R.id.containerFrag,settingsH264Fragment,TAG_H264);
+
         AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -51,10 +51,10 @@ public class VideoEncoders extends AppCompatActivity {
                 switch (item)
                 {
                     case "H264":
-                        ChangeFragment(R.id.fragmentSettingsEncoders,new Settings_h264Fragment(),TAG_H264);
+                        ChangeFragment(R.id.containerFrag,settingsH264Fragment,TAG_H264);
                         break;
                     case "MPEG4":
-                        ChangeFragment(R.id.fragmentSettingsEncoders,new SettingsMPEG4Fragment(),TAG_MPEG4);
+                        ChangeFragment(R.id.containerFrag,settingsMPEG4Fragment,TAG_MPEG4);
                         break;
                 }
             }
@@ -64,13 +64,22 @@ public class VideoEncoders extends AppCompatActivity {
 
             }
         };
-
+        spinner.setOnItemSelectedListener(itemSelectedListener);
+    }
+    private void AddFragment(int containerViewId, Fragment fragment,String Tag)
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager
+                .beginTransaction();
+        fragmentTransaction.add(containerViewId, fragment,
+                Tag);
+        fragmentTransaction.commit();
     }
     private void ChangeFragment(int containerViewId, Fragment fragment,String Tag)
     {
-        //FragmentTransaction fragmentTransaction = myFragmentManager
-       //         .beginTransaction();
-       // fragmentTransaction.replace(R.id.fragmentSettingsEncoders, fragment,Tag);
-       // fragmentTransaction.commit();
+        FragmentTransaction fragmentTransaction = fragmentManager
+                .beginTransaction();
+        fragmentTransaction.replace(containerViewId, fragment,
+                Tag);
+        fragmentTransaction.commit();
     }
 }

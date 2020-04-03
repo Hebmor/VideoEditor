@@ -57,13 +57,13 @@
         <item>libxvid</item>
     </string-array>
     <string-array name="Formats">
-        <item>MP4</item>
-        <item>AVI</item>
-        <item>WMV</item>
-        <item>MOV</item>
-        <item>FLV</item>
-        <item>GIF</item>
-        <item>OGG</item>
+        <item>mp4</item>
+        <item>avi</item>
+        <item>wmv</item>
+        <item>mov</item>
+        <item>flv</item>
+        <item>gif</item>
+        <item>ogg</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->

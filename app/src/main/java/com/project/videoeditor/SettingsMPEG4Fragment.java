@@ -1,12 +1,24 @@
 package com.project.videoeditor;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+
+import static android.app.Activity.RESULT_OK;
+import static com.project.videoeditor.ConvertUriToFilePath.getPath;
 
 
 /**
@@ -15,15 +27,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class SettingsMPEG4Fragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private View viewPointer;
+    private static final int FOLDERPICKER_CODE = 101;
+    private String selectedFormat;
     public SettingsMPEG4Fragment() {
         // Required empty public constructor
     }
@@ -31,34 +37,83 @@ public class SettingsMPEG4Fragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SettingsMPEG4Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingsMPEG4Fragment newInstance(String param1, String param2) {
+    public static SettingsMPEG4Fragment newInstance() {
         SettingsMPEG4Fragment fragment = new SettingsMPEG4Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings_mpeg4, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings_mpeg4, container, false);
+        view.findViewById(R.id.buttonSelectFolderPath).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectPath();
+            }
+        });
+        Spinner spinner = (Spinner) view.findViewById(R.id.ListFormat);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.Formats, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        selectedFormat = "mp4";
+
+        AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // Получаем выбранный объект
+                selectedFormat = (String)parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+        spinner.setOnItemSelectedListener(itemSelectedListener);
+        viewPointer = view;
+        return view;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case FOLDERPICKER_CODE:
+                    Uri uri = data.getData();
+                    Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
+                            DocumentsContract.getTreeDocumentId(uri));
+                    String path2 = getPath(getContext(), docUri);
+                    ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path2);
+                    break;
+            }
+        }
+    }
+    private void SelectPath()
+    {
+        try {
+            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            DocumentFile file = DocumentFile.fromFile( Environment.getDataDirectory());
+            //i.putExtra(EXTRA_INITIAL_URI,file.getUri());
+            startActivityForResult(Intent.createChooser(i, "Choose directory"), FOLDERPICKER_CODE);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }

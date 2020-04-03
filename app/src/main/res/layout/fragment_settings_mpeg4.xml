@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".SettingsMPEG4Fragment">
 
     <LinearLayout
@@ -32,6 +32,7 @@
             app:isb_indicator_color="@color/darkGrey"
             app:isb_indicator_text_color="@color/colorAccent"
             app:isb_indicator_text_size="18sp"
+            app:isb_progress="40"
             app:isb_seek_smoothly="true"
             app:isb_show_indicator="circular_bubble"
             app:isb_show_thumb_text="false"
@@ -49,7 +50,6 @@
             app:isb_track_progress_size="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText5"
-            app:isb_progress="40"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -163,34 +163,50 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editText6"
-            android:layout_width="380dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:hint="Путь для сохранения"
-            android:inputType="textPersonName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText2" />
-
-        <EditText
             android:id="@+id/editText5"
             android:layout_width="240dp"
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="72dp"
             android:ems="10"
             android:hint="Имя файла"
             android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/ListFormat"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText6" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/ListFormat"
             android:layout_width="140dp"
             android:layout_height="40dp"
+            android:layout_marginTop="72dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/editText5"
-            app:layout_constraintTop_toBottomOf="@+id/editText6" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonSelectFolderPath"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:text="Выбрать"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/editText_FolderPath"
+            app:layout_constraintTop_toBottomOf="@+id/ListFormat" />
+
+        <EditText
+            android:id="@+id/editText_FolderPath"
+            android:layout_width="280dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:hint="Путь для сохранения"
+            android:inputType="textPersonName"
+            android:onClick=""
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText5"
+            tools:ignore="OnClick" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
