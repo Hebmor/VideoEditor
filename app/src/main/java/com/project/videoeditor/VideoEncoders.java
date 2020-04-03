@@ -2,22 +2,26 @@ package com.project.videoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VideoEncoders extends AppCompatActivity {
 
-    private FragmentManager myFragmentManager;
     final static String TAG_MPEG4 = "FRAGMENT_MPEG4";
     final static String TAG_H264 = "FRAGMENT_H264";
     final static String TAG_H265 = "FRAGMENT_H265";
+
+    List<Fragment> fragmentList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,14 +64,13 @@ public class VideoEncoders extends AppCompatActivity {
 
             }
         };
-        myFragmentManager = getFragmentManager();;
-        spinner.setOnItemSelectedListener(itemSelectedListener);
+
     }
     private void ChangeFragment(int containerViewId, Fragment fragment,String Tag)
     {
-        FragmentTransaction fragmentTransaction = myFragmentManager
-                .beginTransaction();
-        fragmentTransaction.replace(R.id.fragmentSettingsEncoders, fragment,Tag);
-        fragmentTransaction.commit();
+        //FragmentTransaction fragmentTransaction = myFragmentManager
+       //         .beginTransaction();
+       // fragmentTransaction.replace(R.id.fragmentSettingsEncoders, fragment,Tag);
+       // fragmentTransaction.commit();
     }
 }

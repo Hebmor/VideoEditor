@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.1.0'
     implementation 'com.github.Jay-Goo:RangeSeekBar:v3.0.0'
-    implementation 'com.android.support:support-v4:+'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
     implementation group: 'lib.kashif', name: 'folderpicker', version: '2.4'
 
