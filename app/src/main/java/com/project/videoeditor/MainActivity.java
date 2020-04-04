@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(Environment.getExternalStorageDirectory(), filename);
         if(!file.exists()) Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
         Toast.makeText(this, "Файл успешно найдет!", Toast.LENGTH_LONG).show();
-        String newFile = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf(File.separator)) + File.separator + "hl2.avi";
+        String newFile = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf(File.separator)) + File.separator + filename;
         FFmpeg.execute("-i "+ file.getAbsolutePath() + " " + newFile);
 
     }
@@ -145,31 +145,11 @@ public class MainActivity extends AppCompatActivity {
                     info = new VideoInfo(path);
                     info.DeleteFrameCollage();
                     ActionEditor.setVideoInfo(info);
-                    try {
-                        Path patht = Paths.get(path);
 
-
-                        Runnable task = () -> {
-                            try {
-                                ActionEditor.EncodeProcess("MPEG4", path, patht.getParent() + "/encode.mp4");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        };
-                        Thread thread = new Thread(task);
-                        Bundle args = new Bundle();
-                        args.putParcelable("VideoInfo", info);
-                        videoEditBarFragment.putArguments(args);
-                        videoEditBarFragment.setFramesFromVideo(ActionEditor.GenFrameCollage(path, this));
-                        //thread.start();
-                        //dialogEncodeProcess.show(getSupportFragmentManager(), "custom");
-
-
-                        //thread.join();
-                        //progressBar.setVisibility(View.INVISIBLE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Bundle args = new Bundle();
+                    args.putParcelable("VideoInfo", info);
+                    videoEditBarFragment.putArguments(args);
+                    videoEditBarFragment.setFramesFromVideo(ActionEditor.GenFrameCollage(path, this));
                     break;
 
             }
@@ -248,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(Config.TAG, String.format("frame: %d, time: %d", newStatistics.getVideoFrameNumber(), newStatistics.getTime()));
             }
         });
-        //int rc = FFmpeg.execute(" -hide_banner -f lavfi -i nullsrc -c:v libx264 -preset help -f mp4 -");
         int rc = FFmpeg.execute(" -encoders");
         if (rc == RETURN_CODE_SUCCESS) {
             Log.i(Config.TAG, "Command execution completed successfully.");

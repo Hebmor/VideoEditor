@@ -105,7 +105,9 @@ public class VideoTimeline extends Fragment {
     {
         videoInfo = (VideoInfo) args.getParcelable("VideoInfo");
 
-        seekBar.setRange(videoInfo.getStartTime(),videoInfo.getDuration() - 10,1000);
+        seekBar.setRange(videoInfo.getStartTime(),videoInfo.getDuration(),1000);
+        seekBar.setProgress(0,videoInfo.getDuration());
+        updateTimeline(0,videoInfo.getDuration());
     }
     public void setFramesFromVideo(String PathToFrameСollage)
     {
@@ -126,7 +128,7 @@ public class VideoTimeline extends Fragment {
             // long hourSBL = ((long)SBL.getProgress() / (1000 * 60 * 60)) % 24;
             tempLeftValue = leftValue;
             SBL.setIndicatorText(String.format("%02d:%02d.%d",minuteSBL, secondSBL, millisSBL));
-            pVideoView.seekTo((int)SBL.getProgress());
+            pVideoView.seekTo((int)leftValue);
         }
         if(tempRightValue != rightValue) {
             long millisSBR = (long) SBR.getProgress() % 1000;
@@ -135,7 +137,7 @@ public class VideoTimeline extends Fragment {
             // long hourSBR = ((long)SBR.getProgress() / (1000 * 60 * 60)) % 24;
             tempRightValue = rightValue;
             SBR.setIndicatorText(String.format("%02d:%02d.%d",minuteSBR, secondSBR, millisSBR));
-            pVideoView.seekTo((int)SBR.getProgress());
+            pVideoView.seekTo((int)rightValue);
         }
         videoEditBar.invalidate();
     }
