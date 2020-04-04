@@ -48,13 +48,13 @@ public class ActionEditor {
         if(crf < 0 && crf > 100)
             throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
         String command = "-y -i \"" + filePath + "\" -c:v libx264 -crf "+crf+" -preset "+preset+" -tune "+tune+ " -b:v "+bitrate+"k  -slices 4 -r"+framerate+" "+new_filePath;
-        FFmpeg.execute(command);
+        RunCommandExecuteFFMPEG(command);
     }
     public static void EncodeH265(String filePath,String new_filePath,String bitrate,String framerate,String preset,String tune,int crf) throws Exception {
         if(crf < 0 && crf > 100)
             throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
         String command = "-y -i \"" + filePath + "\" -c:v libx265 -crf "+crf+" -preset "+preset+" -tune "+tune+" -b:v "+bitrate+"k -slices 4 -r "+framerate+" "+new_filePath;
-        FFmpeg.execute(command);
+        RunCommandExecuteFFMPEG(command);
     }
     public static String GenFrameCollage(String filePath, Context context)
     {
@@ -110,5 +110,15 @@ public class ActionEditor {
     }
     public static void setVideoInfo(VideoInfo videoInfo) {
         ActionEditor.videoInfo = videoInfo;
+    }
+    private static void RunCommandExecuteFFMPEG(String command)
+    {
+        Thread ffmpegExecuteThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FFmpeg.execute(command);
+            }
+        });
+        ffmpegExecuteThread.start();
     }
 }
