@@ -17,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.warkiz.widget.IndicatorSeekBar;
+
 import static android.app.Activity.RESULT_OK;
 import static com.project.videoeditor.ConvertUriToFilePath.getPath;
 
@@ -61,6 +63,16 @@ public class SettingsMPEG4Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SelectPath();
+            }
+        });
+        view.findViewById(R.id.buttonRunEncode_MPEG4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    RunEncode();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         Spinner spinner = (Spinner) view.findViewById(R.id.Spinner_FormatVideoFile);
@@ -117,5 +129,20 @@ public class SettingsMPEG4Fragment extends Fragment {
 
             e.printStackTrace();
         }
+    }
+    private void RunEncode() throws Exception {
+        String framerateVideo = ((EditText)viewPointer.findViewById(R.id.editText_Framerate)).getText().toString();
+        String bitrateVideo = ((EditText)viewPointer.findViewById(R.id.editText_Bitrate)).getText().toString();
+        String formatVideo = ((Spinner)viewPointer.findViewById(R.id.Spinner_FormatVideoFile)).getSelectedItem().toString();
+        String folderPathVideo = ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).getText().toString();
+        String filenameVideo = ((EditText)viewPointer.findViewById(R.id.editText_Filename)).getText().toString();
+
+        int valueVideoQuality = ((IndicatorSeekBar)viewPointer.findViewById(R.id.IndicatorSeekBar_VideoQuality)).getProgress();
+        int valueAudioQuality = ((IndicatorSeekBar)viewPointer.findViewById(R.id.IndicatorSeekBar_AudioQuality)).getProgress();
+
+
+        ActionEditor.EncodeMPEG4(videoInfo.getPath(),folderPathVideo + "\\"+filenameVideo+"."+formatVideo,valueVideoQuality,valueAudioQuality,bitrateVideo,framerateVideo);
+
+
     }
 }

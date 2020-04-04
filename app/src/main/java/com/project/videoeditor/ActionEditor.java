@@ -35,13 +35,13 @@ public class ActionEditor {
 
         }
     }
-    public static void EncodeMPEG4(String filePath,String new_filePath,int qscale_video,int qscale_audio,Long bitrate,int framerate) throws Exception {
+    public static void EncodeMPEG4(String filePath,String new_filePath,int qscale_video,int qscale_audio,String bitrate,String framerate) throws Exception {
 
         if(qscale_video < 1 && qscale_video > 31)
             throw new IllegalArgumentException("Ошибка, параметр qscale_video должен быть в диапазоне от 1 до 31");
         if(qscale_audio < 1 && qscale_audio > 31)
             throw new IllegalArgumentException("Ошибка, параметр qscale_audio должен быть в диапазоне от 1 до 31");
-        String command = "-y -i \"" + filePath + "\" -c:v mpeg4 -qscale:v "+qscale_video+" -qscale:a "+qscale_audio+" -b:v "+bitrate+"k -slices 4 -r"+framerate+" "+new_filePath;
+        String command = "-y -i \"" + filePath + "\" -c:v mpeg4 -qscale:v "+qscale_video+" -qscale:a "+qscale_audio+" -b:v "+bitrate+"k -slices 4 -r "+framerate+" "+new_filePath;
         FFmpeg.execute(command);
     }
     public static void EncodeLIBX264(String filePath,String new_filePath,Long bitrate,int framerate,String preset,String tune,int crf) throws Exception {

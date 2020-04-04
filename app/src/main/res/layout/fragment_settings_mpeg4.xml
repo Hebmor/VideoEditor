@@ -22,6 +22,7 @@
 
         <com.warkiz.widget.IndicatorSeekBar
 
+            android:id="@+id/IndicatorSeekBar_VideoQuality"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -63,6 +64,7 @@
 
         <com.warkiz.widget.IndicatorSeekBar
 
+            android:id="@+id/IndicatorSeekBar_AudioQuality"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -209,7 +211,7 @@
             tools:ignore="OnClick" />
 
         <Button
-            android:id="@+id/buttonRunEncode"
+            android:id="@+id/buttonRunEncode_MPEG4"
             android:layout_width="380dp"
             android:layout_height="40dp"
             android:layout_marginStart="15dp"
