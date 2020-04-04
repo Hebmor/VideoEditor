@@ -30,6 +30,7 @@ public class SettingsMPEG4Fragment extends Fragment {
     private View viewPointer;
     private static final int FOLDERPICKER_CODE = 101;
     private String selectedFormat;
+    static private VideoInfo videoInfo;
     public SettingsMPEG4Fragment() {
         // Required empty public constructor
     }
@@ -40,8 +41,9 @@ public class SettingsMPEG4Fragment extends Fragment {
      * @return A new instance of fragment SettingsMPEG4Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingsMPEG4Fragment newInstance() {
+    public static SettingsMPEG4Fragment newInstance(VideoInfo _videoInfo) {
         SettingsMPEG4Fragment fragment = new SettingsMPEG4Fragment();
+        videoInfo = _videoInfo;
         return fragment;
     }
 
@@ -61,7 +63,7 @@ public class SettingsMPEG4Fragment extends Fragment {
                 SelectPath();
             }
         });
-        Spinner spinner = (Spinner) view.findViewById(R.id.ListFormat);
+        Spinner spinner = (Spinner) view.findViewById(R.id.Spinner_FormatVideoFile);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.Formats, android.R.layout.simple_spinner_item);

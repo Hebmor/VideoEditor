@@ -138,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     mediaController.setMediaPlayer(videoView);
                     videoView.start();
                     String path = getPath(this, selectedVideoUri);
-                    boolean a = isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    boolean b = isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
                     File file = new File(path);
                     if (!file.exists())
                         Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
@@ -297,8 +296,9 @@ public class MainActivity extends AppCompatActivity {
         return dir.delete();
     }
 
-    public void ClickEncoders(View view) {
+    public void ClickOpenEncodersPage(View view) {
         Intent intent = new Intent(this, VideoEncoders.class);
+        intent.putExtra(VideoInfo.class.getCanonicalName(),info);
         startActivity(intent);
     }
 }

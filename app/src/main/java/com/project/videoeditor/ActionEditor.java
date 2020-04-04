@@ -1,8 +1,12 @@
 package com.project.videoeditor;
 
+import android.app.Activity;
 import android.content.Context;
+import android.widget.ArrayAdapter;
 
 import com.arthenica.mobileffmpeg.FFmpeg;
+
+import java.util.Objects;
 
 
 public class ActionEditor {
@@ -46,10 +50,10 @@ public class ActionEditor {
         String command = "-y -i \"" + filePath + "\" -c:v libx264 -crf "+crf+" -preset "+preset+" -tune "+tune+ " -b:v "+bitrate+"k  -slices 4 -r"+framerate+" "+new_filePath;
         FFmpeg.execute(command);
     }
-    public static void EncodeH265(String filePath,String new_filePath,Long bitrate,int framerate,String preset,String tune,int crf) throws Exception {
+    public static void EncodeH265(String filePath,String new_filePath,String bitrate,String framerate,String preset,String tune,int crf) throws Exception {
         if(crf < 0 && crf > 100)
             throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
-        String command = "-y -i \"" + filePath + "\" -c:v libx265 -crf "+crf+" -preset "+preset+" -tune "+tune+" -b:v "+bitrate+"k -slices 4 -r"+framerate+" "+new_filePath;
+        String command = "-y -i \"" + filePath + "\" -c:v libx265 -crf "+crf+" -preset "+preset+" -tune "+tune+" -b:v "+bitrate+"k -slices 4 -r "+framerate+" "+new_filePath;
         FFmpeg.execute(command);
     }
     public static String GenFrameCollage(String filePath, Context context)
@@ -60,7 +64,50 @@ public class ActionEditor {
         videoInfo.setPathFrameCollage(tempCachePath);
         return  tempCachePath;
     }
-
+    public static String GetNamePresetEncodeByNumber(int presetNumber)
+    {
+        switch (presetNumber)
+        {
+            case 0:
+                return "ultrafast";
+            case 1:
+                return "superfast";
+            case 2:
+                return "veryfast";
+            case 3:
+                return "faster";
+            case 4:
+                return "fast";
+            case 5:
+                return "medium";
+            case 6:
+                return "slow";
+            case 7:
+                return "slower";
+            case 8:
+                return "veryslow";
+        }
+        return "NoValue";
+    }
+    public static String GetNameTuneEncodeByNumber(int tuneNumber)
+    {
+        switch (tuneNumber)
+        {
+            case 0:
+                return "film";
+            case 1:
+                return "animation";
+            case 2:
+                return "grain";
+            case 3:
+                return "stillimage";
+            case 4:
+                return "fastdecode";
+            case 5:
+                return "zerolatency";
+        }
+        return "NoValue";
+    }
     public static void setVideoInfo(VideoInfo videoInfo) {
         ActionEditor.videoInfo = videoInfo;
     }

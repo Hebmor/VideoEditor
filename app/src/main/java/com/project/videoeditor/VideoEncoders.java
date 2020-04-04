@@ -22,12 +22,13 @@ public class VideoEncoders extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private Settings_h264Fragment settingsH264Fragment;
     private SettingsMPEG4Fragment settingsMPEG4Fragment;
-
+    private VideoInfo videoInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_encoders);
 
+        videoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
         Spinner spinner = (Spinner) findViewById(R.id.spinnerEncodersList);
         //WARNING BAD CODE!
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -37,8 +38,8 @@ public class VideoEncoders extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
         fragmentManager = getSupportFragmentManager();
-        settingsH264Fragment = Settings_h264Fragment.newInstance();
-        settingsMPEG4Fragment = SettingsMPEG4Fragment.newInstance();
+        settingsH264Fragment = Settings_h264Fragment.newInstance(videoInfo);
+        settingsMPEG4Fragment = SettingsMPEG4Fragment.newInstance(videoInfo);
          AddFragment(R.id.containerFrag,settingsH264Fragment,TAG_H264);
 
         AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {

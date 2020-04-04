@@ -2,7 +2,6 @@ package com.project.videoeditor;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -18,8 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.warkiz.widget.IndicatorSeekBar;
+
 import static android.app.Activity.RESULT_OK;
-import static com.project.videoeditor.ConvertUriToFilePath.getPath;
 
 
 /**
@@ -33,6 +33,7 @@ public class Settings_h264Fragment extends Fragment {
     private View viewPointer;
     private Uri selectedFolderUri;
     private String selectedFormat;
+    static private VideoInfo videoInfo;
 
     public Settings_h264Fragment() {
         // Required empty public constructor
@@ -44,15 +45,15 @@ public class Settings_h264Fragment extends Fragment {
      * @return A new instance of fragment Settings_libx264Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Settings_h264Fragment newInstance() {
+    public static Settings_h264Fragment newInstance(VideoInfo _videoInfo) {
         Settings_h264Fragment fragment = new Settings_h264Fragment();
+        videoInfo = _videoInfo;
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -66,7 +67,17 @@ public class Settings_h264Fragment extends Fragment {
                 SelectPath();
             }
         });
-        Spinner spinner = (Spinner) view.findViewById(R.id.ListFormat);
+        view.findViewById(R.id.buttonRunEncode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    RunEncode();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Spinner spinner = (Spinner) view.findViewById(R.id.Spinner_FormatVideoFile);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.Formats, android.R.layout.simple_spinner_item);
@@ -102,8 +113,8 @@ public class Settings_h264Fragment extends Fragment {
                     Uri uri = data.getData();
                     Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                             DocumentsContract.getTreeDocumentId(uri));
-                    String path2 = docUri.getPath();
-                    ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path2);
+                    String path = ConvertUriToFilePath.getPath(getContext(),docUri);
+                    ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path);
                     break;
             }
         }
@@ -120,5 +131,20 @@ public class Settings_h264Fragment extends Fragment {
 
                 e.printStackTrace();
             }
+    }
+    private void RunEncode() throws Exception {
+        String framerateVideo = ((EditText)viewPointer.findViewById(R.id.editText_Framerate)).getText().toString();
+        String bitrateVideo = ((EditText)viewPointer.findViewById(R.id.editText_Bitrate)).getText().toString();
+        String formatVideo = ((Spinner)viewPointer.findViewById(R.id.Spinner_FormatVideoFile)).getSelectedItem().toString();
+        String folderPathVideo = ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).getText().toString();
+        String filenameVideo = ((EditText)viewPointer.findViewById(R.id.editText_Filename)).getText().toString();
+
+        String valuePresetRendererVideo = ActionEditor.GetNamePresetEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_PresetRenderer)).getProgress());
+        String valueTuneVideo = ActionEditor.GetNameTuneEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_PresetRenderer)).getProgress());
+
+
+        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "\\"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
+
+
     }
 }

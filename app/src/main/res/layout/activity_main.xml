@@ -36,7 +36,7 @@
         android:layout_width="180dp"
         android:layout_height="68dp"
         android:layout_marginTop="88dp"
-        android:onClick="ClickEncoders"
+        android:onClick="ClickOpenEncodersPage"
         android:text="Перекодировать"
         app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintHorizontal_bias="0.444"
