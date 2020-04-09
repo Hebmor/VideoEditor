@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         dialogEncodeProcess = new DialogEncodeProcess();
         videoEditBarFragment =  (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragment);
         enableLogCallback();
-        FFmpeg.execute("-encoders");
-        //Config.setLogLevel(Level.AV_LOG_FATAL);
+        //FFmpeg.execute("-encoders");
+       // Config.setLogLevel(Level.AV_LOG_FATAL);
     }
     private void OpenFile(String filename)
     {

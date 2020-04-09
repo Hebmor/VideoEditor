@@ -8,6 +8,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,27 +16,35 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.arthenica.mobileffmpeg.Config;
 import com.warkiz.widget.IndicatorSeekBar;
+
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Settings_h264Fragment#newInstance} factory method to
+ * Use the {@link Settings_h265Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Settings_h264Fragment extends Fragment {
+public class Settings_h265Fragment extends Fragment {
     private static final int FOLDERPICKER_CODE = 101;
-
     private View viewPointer;
     private Uri selectedFolderUri;
     private String selectedFormat;
+    private TextView countdownText;
+    private LinearLayout settingsEncodeLayout;
     static private VideoInfo videoInfo;
+    private ProgressBar progressBar;
 
-    public Settings_h264Fragment() {
+    public Settings_h265Fragment() {
         // Required empty public constructor
     }
 
@@ -45,8 +54,8 @@ public class Settings_h264Fragment extends Fragment {
      * @return A new instance of fragment Settings_libx264Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Settings_h264Fragment newInstance(VideoInfo _videoInfo) {
-        Settings_h264Fragment fragment = new Settings_h264Fragment();
+    public static Settings_h265Fragment newInstance(VideoInfo _videoInfo) {
+        Settings_h265Fragment fragment = new Settings_h265Fragment();
         videoInfo = _videoInfo;
         return fragment;
     }
@@ -54,6 +63,9 @@ public class Settings_h264Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
+        settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
     }
 
     @Override
@@ -143,8 +155,32 @@ public class Settings_h264Fragment extends Fragment {
         String valueTuneVideo = ActionEditor.GetNameTuneEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_PresetRenderer)).getProgress());
 
 
-        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "\\"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
 
+        Handler handler = new Handler();
+        settingsEncodeLayout.setVisibility(View.INVISIBLE);
+        countdownText.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "\\"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long time = videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime();
+                long secs = time  / 1000;
+                long hours = secs / 3600;
+                long minutes = (secs % 3600) / 60;
+
+                countdownText.setText(String.format(Locale.getDefault(),
+                        "%d:%02d:%02d", hours, minutes, secs));
+                if(time > 0) {
+                    handler.postDelayed(this, 1000);
+                }
+                else {
+                    settingsEncodeLayout.setVisibility(View.VISIBLE);
+                    countdownText.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                }
+        });
 
     }
 }

@@ -2,7 +2,6 @@ package com.project.videoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -20,7 +19,7 @@ public class VideoEncoders extends AppCompatActivity {
     final static String TAG_H264 = "FRAGMENT_H264";
     final static String TAG_H265 = "FRAGMENT_H265";
     private FragmentManager fragmentManager;
-    private Settings_h264Fragment settingsH264Fragment;
+    private Settings_h265Fragment settingsH264Fragment;
     private SettingsMPEG4Fragment settingsMPEG4Fragment;
     private VideoInfo videoInfo;
     @Override
@@ -38,7 +37,7 @@ public class VideoEncoders extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
         fragmentManager = getSupportFragmentManager();
-        settingsH264Fragment = Settings_h264Fragment.newInstance(videoInfo);
+        settingsH264Fragment = Settings_h265Fragment.newInstance(videoInfo);
         settingsMPEG4Fragment = SettingsMPEG4Fragment.newInstance(videoInfo);
          AddFragment(R.id.containerFrag,settingsH264Fragment,TAG_H264);
 

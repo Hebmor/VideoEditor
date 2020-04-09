@@ -38,7 +38,7 @@
     <string name="stillimage">Слайдшоу</string>
     <string name="fastdecode">Производительность</string>
     <string name="zerolatency">Специфика</string>
-
+    <string name="countdown">Отсчет</string>
 
 
     <string name="Cancel">Отмена</string>
