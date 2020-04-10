@@ -25,6 +25,7 @@ import com.arthenica.mobileffmpeg.Config;
 import com.warkiz.widget.IndicatorSeekBar;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
 import static com.project.videoeditor.ConvertUriToFilePath.getPath;
@@ -162,13 +163,13 @@ public class SettingsMPEG4Fragment extends Fragment {
             @Override
             public void run() {
                 long ms = videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime();
-                long secs = ms  / 1000;
-                long hours = secs / 3600;
-                long minutes = (secs % 3600) / 60;
+                long secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
+                long hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
 
                 countdownText.setText(String.format(Locale.getDefault(),
-                        "%d:%02d:%02d:%04d", hours, minutes, secs,ms - secs * 1000));
-                if(secs > 1) {
+                        "%d:%02d:%02d", hours, minutes, secs));
+                if(secs > 0) {
                     handler.postDelayed(this, 1000);
                 }
                 else {
