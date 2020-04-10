@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.arthenica.mobileffmpeg.Config;
 import com.warkiz.widget.IndicatorSeekBar;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -160,18 +162,21 @@ public class Settings_h265Fragment extends Fragment {
         settingsEncodeLayout.setVisibility(View.INVISIBLE);
         countdownText.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "\\"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
+        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "/"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
         handler.post(new Runnable() {
             @Override
             public void run() {
-                long time = videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime();
-                long secs = time  / 1000;
-                long hours = secs / 3600;
-                long minutes = (secs % 3600) / 60;
+
+                double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+
+                long ms = (long)((videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                long secs = TimeUnit.MILLISECONDS.toSeconds(ms)  % 60;
+                long hours = TimeUnit.MILLISECONDS.toHours(ms)  % 24;
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)  % 60;
 
                 countdownText.setText(String.format(Locale.getDefault(),
                         "%d:%02d:%02d", hours, minutes, secs));
-                if(time > 0) {
+                if(secs > 0) {
                     handler.postDelayed(this, 1000);
                 }
                 else {
@@ -179,7 +184,7 @@ public class Settings_h265Fragment extends Fragment {
                     countdownText.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
-                }
+            }
         });
 
     }

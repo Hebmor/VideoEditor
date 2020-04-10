@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,10 +163,12 @@ public class SettingsMPEG4Fragment extends Fragment {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                long ms = videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime();
-                long secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
-                long hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
+
+                double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+                long ms = (long)((videoInfo.getDuration() - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                long secs = TimeUnit.MILLISECONDS.toSeconds(ms)  % 60;
+                long hours = TimeUnit.MILLISECONDS.toHours(ms)  % 24;
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)  % 60;
 
                 countdownText.setText(String.format(Locale.getDefault(),
                         "%d:%02d:%02d", hours, minutes, secs));

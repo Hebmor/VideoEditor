@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         dialogEncodeProcess = new DialogEncodeProcess();
         videoEditBarFragment =  (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragment);
-        enableLogCallback();
+       // enableLogCallback();
         //FFmpeg.execute("-encoders");
        // Config.setLogLevel(Level.AV_LOG_FATAL);
     }
