@@ -133,6 +133,7 @@
             android:freezesText="false"
             android:hint="@string/fps"
             android:inputType="numberDecimal"
+            android:text="30"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -151,11 +152,11 @@
             android:freezesText="false"
             android:hint="@string/kbs"
             android:inputType="number"
+            android:text="5000"
             app:layout_constraintBottom_toTopOf="@+id/editText_Filename"
             app:layout_constraintEnd_toStartOf="@+id/textView5"
             app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView2"
@@ -195,6 +196,7 @@
             android:ems="10"
             android:hint="Имя файла"
             android:inputType="textPersonName"
+            android:text="test"
             app:layout_constraintBottom_toTopOf="@+id/editText_FolderPath"
             app:layout_constraintEnd_toStartOf="@+id/Spinner_FormatVideoFile"
             app:layout_constraintStart_toStartOf="parent"

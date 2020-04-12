@@ -1,6 +1,8 @@
 package com.project.videoeditor;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -16,7 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -25,6 +29,8 @@ import android.widget.TextView;
 import com.arthenica.mobileffmpeg.Config;
 import com.warkiz.widget.IndicatorSeekBar;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +51,10 @@ public class Settings_h265Fragment extends Fragment {
     private LinearLayout settingsEncodeLayout;
     static private VideoInfo videoInfo;
     private ProgressBar progressBar;
-
+    private ImageView imageView;
+    private ArrayList<Bitmap> framesPreview;
+    private Button nextButton;
+    private Button prevButton;
     public Settings_h265Fragment() {
         // Required empty public constructor
     }
@@ -68,6 +77,20 @@ public class Settings_h265Fragment extends Fragment {
         countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
         settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
         progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        imageView = (ImageView) getActivity().findViewById(R.id.settingsPreview);
+        nextButton = (Button) getActivity().findViewById(R.id.buttonNext);
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(framesPreview != null && imageView != null)
+                {
+                        //Bitmap framePreview = ActionEditor.GetEncodeSettingsPreview(videoInfo.getPath(),bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26,getContext());
+                        //imageView.setImageBitmap(framesPreview.get(imageViewPosition));
+                }
+
+            }
+        });
     }
 
     @Override
@@ -159,11 +182,14 @@ public class Settings_h265Fragment extends Fragment {
 
 
         Handler handler = new Handler();
-        settingsEncodeLayout.setVisibility(View.INVISIBLE);
-        countdownText.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
-        ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "/"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
-        handler.post(new Runnable() {
+        //settingsEncodeLayout.setVisibility(View.INVISIBLE);
+       // countdownText.setVisibility(View.VISIBLE);
+        //progressBar.setVisibility(View.VISIBLE);
+        //ActionEditor.EncodeH265(videoInfo.getPath(),folderPathVideo + "/"+filenameVideo+"."+formatVideo,bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26);
+        //framesPreview.clear();
+        Bitmap framePreview = ActionEditor.GetEncodeSettingsPreview(videoInfo.getPath(),bitrateVideo,framerateVideo,valuePresetRendererVideo,valueTuneVideo,26,getContext());
+        imageView.setImageBitmap(framePreview);
+        /*handler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -185,7 +211,7 @@ public class Settings_h265Fragment extends Fragment {
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             }
-        });
+        });*/
 
     }
 }
