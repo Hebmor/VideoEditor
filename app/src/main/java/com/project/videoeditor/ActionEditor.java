@@ -128,10 +128,8 @@ public class ActionEditor {
             case 2:
                 return "grain";
             case 3:
-                return "stillimage";
-            case 4:
                 return "fastdecode";
-            case 5:
+            case 4:
                 return "zerolatency";
         }
         return "NoValue";

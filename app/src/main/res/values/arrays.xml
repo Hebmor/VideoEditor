@@ -15,7 +15,6 @@
         <item>@string/film</item>
         <item>@string/animation</item>
         <item>@string/grain</item>
-        <item>@string/stillimage</item>
         <item>@string/fastdecode</item>
         <item>@string/zerolatency</item>
     </array>

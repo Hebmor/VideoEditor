@@ -177,7 +177,7 @@ public class Settings_h265Fragment extends Fragment {
         String filenameVideo = ((EditText)viewPointer.findViewById(R.id.editText_Filename)).getText().toString();
 
         String valuePresetRendererVideo = ActionEditor.GetNamePresetEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_PresetRenderer)).getProgress());
-        String valueTuneVideo = ActionEditor.GetNameTuneEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_PresetRenderer)).getProgress());
+        String valueTuneVideo = ActionEditor.GetNameTuneEncodeByNumber(((IndicatorSeekBar)viewPointer.findViewById(R.id.SeekBar_Tune)).getProgress());
 
 
 
