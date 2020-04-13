@@ -29,10 +29,10 @@ public class VideoInfoPage extends AppCompatActivity {
         tv4.setText("--------");
         tv5.setText(videoInf.getPath());
         tv6.setText(videoInf.getHeight().toString());
-        tv7.setText(videoInf.getFrameRate().toString());
+        tv7.setText(videoInf.getFrameRate().toString() + " кадров/с");
         tv8.setText(videoInf.getFormat());
         tv9.setText(videoInf.getDuration().toString());
         tv10.setText(videoInf.getCodec());
-        tv11.setText(videoInf.getBitrate().toString());
+        tv11.setText(videoInf.getBitrate().toString() + " кб/с");
     }
 }

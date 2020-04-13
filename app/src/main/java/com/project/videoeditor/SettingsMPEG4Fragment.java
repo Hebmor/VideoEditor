@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
-import static com.project.videoeditor.ConvertUriToFilePath.getPath;
 
 
 /**
@@ -127,7 +126,7 @@ public class SettingsMPEG4Fragment extends Fragment {
                     Uri uri = data.getData();
                     Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                             DocumentsContract.getTreeDocumentId(uri));
-                    String path2 = getPath(getContext(), docUri);
+                    String path2 = UtilUri.getPath(getContext(), docUri);
                     ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path2);
                     break;
             }

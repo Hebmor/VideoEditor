@@ -87,7 +87,7 @@ public class ActionEditor {
     public static String GenFrameCollage(String filePath, Context context)
     {
         String tempCachePath = context.getCacheDir() + "/tempCollage.png";
-        String command = "-y -i \"" + filePath + "\" с -q:v 1 -vsync vfr -vf \"select=not(mod(n\\,"+ (int)(videoInfo.getFrameCount() / 8)+")),scale=-1:120,tile=8x1\" "+tempCachePath;
+        String command = "-y -i \"" + filePath + "\" -q:v 1 -vsync vfr -vf \"select=not(mod(n\\,"+ (int)(videoInfo.getFrameCount() / 8)+")),scale=-1:120,tile=8x1\" "+tempCachePath;
         FFmpeg.execute(command);
         videoInfo.setPathFrameCollage(tempCachePath);
         return  tempCachePath;

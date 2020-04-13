@@ -150,7 +150,7 @@ public class Settings_h265Fragment extends Fragment {
                     Uri uri = data.getData();
                     Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                             DocumentsContract.getTreeDocumentId(uri));
-                    String path = ConvertUriToFilePath.getPath(getContext(),docUri);
+                    String path = UtilUri.getPath(getContext(),docUri);
                     ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path);
                     break;
             }

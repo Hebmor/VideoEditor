@@ -41,12 +41,14 @@
     <string name="countdown">Отсчет</string>
 
 
-    <string name="Cancel">Отмена</string>
+    <string name="сancel">Отмена</string>
     <string name="AudioBitrate">Аудио Битрейт</string>
     <string name="video_quality_level">Уровень качества видео</string>
     <string name="audio_quality_level">Уровень качества аудио</string>
     <string name="fps">fps</string>
     <string name="kbs">кбит/с</string>
+    <string name="select_video">Выбрать видео</string>
+    <string name="format">Формат</string>
     <string-array name="Encoders">
         <item>H264</item>
         <item>H265</item>

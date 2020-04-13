@@ -98,7 +98,7 @@ public class VideoTimeline extends Fragment {
     public void onStart() {
 
         super.onStart();
-        pVideoView = getActivity().findViewById(R.id.videoView);
+        //pVideoView = getActivity().findViewById(R.id.videoView);
     }
 
     public void putArguments(Bundle args)

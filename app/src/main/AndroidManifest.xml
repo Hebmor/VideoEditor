@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VideoEncoders"></activity>
+        <activity android:name=".MainEditor"></activity>
+        <activity android:name=".VideoEncoders" />
         <activity android:name=".VideoInfoPage" />
         <activity android:name=".MainActivity">
             <intent-filter>
