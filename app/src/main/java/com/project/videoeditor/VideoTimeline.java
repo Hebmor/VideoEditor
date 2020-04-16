@@ -1,23 +1,28 @@
 package com.project.videoeditor;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.jaygoo.widget.OnRangeChangedListener;
@@ -25,23 +30,30 @@ import com.jaygoo.widget.RangeSeekBar;
 import com.jaygoo.widget.SeekBar;
 
 import java.io.File;
-import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class VideoTimeline extends Fragment {
 
-    private VideoTimelineViewModel mViewModel;
 
-    public static VideoTimeline newInstance() {
-        return new VideoTimeline();
-    }
     private  RangeSeekBar seekBar;
     private VideoEditBar videoEditBar;
+
+    public SeekBar getSBR() {
+        return SBR;
+    }
+
+    public SeekBar getSBL() {
+        return SBL;
+    }
+
     private  SeekBar SBR;
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
     private VideoView pVideoView;
+
 
     private float tempLeftValue = 0;
     private float tempRightValue = 0;
@@ -62,8 +74,8 @@ public class VideoTimeline extends Fragment {
 
         SBR = seekBar.getRightSeekBar();
         SBL = seekBar.getLeftSeekBar();
-        videoEditBar.setmLeft((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
-        videoEditBar.setmRight((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
+        videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
+        videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
         videoEditBar.invalidate();
 
         seekBar.setOnRangeChangedListener(new OnRangeChangedListener()
@@ -91,23 +103,21 @@ public class VideoTimeline extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(VideoTimelineViewModel.class);
+
         // TODO: Use the ViewModel
     }
     @Override
     public void onStart() {
 
         super.onStart();
+        pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
+        seekBar.setRange(0,videoInfo.getDuration(),10);
+        updateTimeline(0,videoInfo.getDuration());
         //pVideoView = getActivity().findViewById(R.id.videoView);
     }
-
-    public void putArguments(Bundle args)
+    public void setVideoInfo(VideoInfo videoInfo)
     {
-        videoInfo = (VideoInfo) args.getParcelable("VideoInfo");
-
-        seekBar.setRange(videoInfo.getStartTime(),videoInfo.getDuration(),1000);
-        seekBar.setProgress(0,videoInfo.getDuration());
-        updateTimeline(0,videoInfo.getDuration());
+        this.videoInfo = videoInfo;
     }
     public void setFramesFromVideo(String PathToFrameСollage)
     {
@@ -118,8 +128,8 @@ public class VideoTimeline extends Fragment {
     }
     private void updateTimeline(float leftValue, float rightValue)
     {
-        videoEditBar.setmLeft((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
-        videoEditBar.setmRight((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
+        videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
+        videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
 
         if(tempLeftValue != leftValue) {
             long millisSBL = (long) SBL.getProgress() % 1000;

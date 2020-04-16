@@ -141,7 +141,7 @@ public class Settings_h265Fragment extends Fragment {
         return view;
     }
     @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {

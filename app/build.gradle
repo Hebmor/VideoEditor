@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.project.videoeditor"
         minSdkVersion 25
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,7 +27,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.3.1'
+    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.3.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     testImplementation 'junit:junit:4.12'
@@ -39,5 +39,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
     implementation group: 'lib.kashif', name: 'folderpicker', version: '2.4'
+    implementation 'com.github.proghjy:android-gpuimage-videorecording:v1.4.3'
 
 }

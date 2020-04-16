@@ -1,5 +1,6 @@
 package com.project.videoeditor;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import com.arthenica.mobileffmpeg.FFmpeg;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 public class ActionEditor {
@@ -73,10 +75,10 @@ public class ActionEditor {
          float frameNumber = (10 + (int)(Math.random() * videoInfo.getFrameCount())) / Float.parseFloat(videoInfo.getFrameRate());
         if(crf < 0 && crf > 100)
             throw new IllegalArgumentException("Ошибка, параметр crf должен быть в диапазоне от 0 до 100");
-        String command = "-y -i \"" + filePath + "\" -frames:v 1 -vsync vfr -c:v libx265 -crf "+crf+" -preset  "+preset+" -tune "+tune+" -ss "+frameNumber +" -b:v "+bitrate+"k -slices 4 -r "+framerate+" -an "+ tempCachePath + oneFrameVideo;
+        String command = "-y -i \"" + filePath + "\" -frames:v 1 -vsync vfr -c:v libx265 -crf "+crf+" -acodec copy  -preset  "+preset+" -tune "+tune+" -ss "+frameNumber +" -b:v "+bitrate+"k -slices 4 -r "+framerate+" -an "+ tempCachePath + oneFrameVideo;
         RunCommandExecuteFFMPEG(command,true);
         Log.d("TEST_ERROR", String.valueOf(Config.getLastReturnCode()));
-        command = "-y -i \"" + tempCachePath + oneFrameVideo + "\" -frames:v 1 "+ tempCachePath + nameTempSettingsPreview;
+        command = "-y -i \"" + tempCachePath + oneFrameVideo + "\" -frames:v 1 -an "+ tempCachePath + nameTempSettingsPreview;
         RunCommandExecuteFFMPEG(command,true);
         Log.d("TEST_ERROR", String.valueOf(Config.getLastReturnCode()));
 
@@ -87,7 +89,7 @@ public class ActionEditor {
     public static String GenFrameCollage(String filePath, Context context)
     {
         String tempCachePath = context.getCacheDir() + "/tempCollage.png";
-        String command = "-y -i \"" + filePath + "\" -q:v 1 -vsync vfr -vf \"select=not(mod(n\\,"+ (int)(videoInfo.getFrameCount() / 8)+")),scale=-1:120,tile=8x1\" "+tempCachePath;
+        String command = "-y -i \"" + filePath + "\" -frames:v 1 -q:v 1 -vsync vfr -vf \"select=not(mod(n\\,"+ (int)(videoInfo.getFrameCount() / 6)+")),scale=-280:280,tile=6x1\" "+tempCachePath;
         FFmpeg.execute(command);
         videoInfo.setPathFrameCollage(tempCachePath);
         return  tempCachePath;
@@ -147,5 +149,21 @@ public class ActionEditor {
         ffmpegExecuteThread.start();
         if(isJoin)
             ffmpegExecuteThread.join();
+    }
+    public static void CutPathFromVideo(String inputVideoPath,String outputVideoPath,long fromTimeMS,long toTimeMS) throws InterruptedException {
+
+        long msFrom = fromTimeMS % 1000;
+        long secsFrom = TimeUnit.MILLISECONDS.toSeconds(fromTimeMS)  % 60;
+        long hoursFrom = TimeUnit.MILLISECONDS.toHours(fromTimeMS)  % 24;
+        long minutesFrom = TimeUnit.MILLISECONDS.toMinutes(fromTimeMS)  % 60;
+
+        long durationMS = toTimeMS - fromTimeMS;
+        long msDuration = durationMS % 1000;
+        long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
+        long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
+        long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+        @SuppressLint("DefaultLocale") String command = String.format("-y -i \"%s\" -ss %d:%d:%d -t %d:%d:%d -vcodec copy -acodec copy \"%s\"",inputVideoPath,hoursFrom,minutesFrom,secsFrom
+                ,hoursDuration,minutesDuration,secsDuration,outputVideoPath);
+        RunCommandExecuteFFMPEG(command,false);
     }
 }

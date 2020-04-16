@@ -6,46 +6,60 @@ import android.os.Parcelable;
 import com.arthenica.mobileffmpeg.FFmpeg;
 import com.arthenica.mobileffmpeg.FFprobe;
 import com.arthenica.mobileffmpeg.MediaInformation;
+import com.arthenica.mobileffmpeg.StreamInformation;
 
 import java.io.File;
 
 public class VideoInfo implements Parcelable {
 
-    private Long startTime = 0L;
-    private Long height  = 0L;
-    private Long width  = 0L;
-    private Long index = 0L;
-    //private final Long sampleRate;
+    private String path;
+    private Long bitrate;
+    private Long startTime;
+    private Long duration;
+    private Long width;
+    private Long height;
+    private String format;
+    private Long index;
     private String frameRate;
     private String codec;
-    private String format;
     private String aspectRatio;
-    private Long duration = 0L;
-    private Long bitrate = 0L;
-    private String path;
-    private Long frameCount = 0L;
-    private FFmpeg ffmpeg;
+    private long frameCount;
     private String pathFrameCollage;
-
+    private String extension;
 
 
     public VideoInfo(String path) {
+        StreamInformation mainVideoStream = null;
+        StreamInformation mainAudioStream;
         MediaInformation info = FFprobe.getMediaInformation(path);
-        this.path = path;
-        this.bitrate = info.getBitrate();
+        for(StreamInformation stream : info.getStreams())
+        {
+            if(stream.getType() == "video")
+                mainVideoStream = stream;
+            if(stream.getType() == "audio")
+                mainAudioStream = stream;
+        }
         this.duration = info.getDuration();
         this.startTime = info.getStartTime();
-        this.height = info.getStreams().get(0).getHeight();
-        this.width = info.getStreams().get(0).getWidth();
-        this.index = info.getStreams().get(0).getIndex();
-        //this.sampleRate = info.getStreams().get(0).getSampleRate();
-        this.frameRate = info.getStreams().get(0).getAverageFrameRate();
-        this.codec = info.getStreams().get(0).getCodec();
-        this.format = info.getStreams().get(0).getFormat();
-        this.aspectRatio = info.getStreams().get(0).getDisplayAspectRatio();
-        //Приблизительное количество кадров
-        this.frameCount = (long)((( this.duration / 1000) % 60) * Float.valueOf(frameRate));
+        this.extension = path.substring(path.lastIndexOf("."));
 
+        if(mainVideoStream != null)
+        {
+            this.path = path;
+            this.bitrate = mainVideoStream.getBitrate();
+
+            this.height = mainVideoStream.getHeight();
+            this.width = mainVideoStream.getWidth();
+            this.index = mainVideoStream.getIndex();
+            //this.sampleRate = info.getStreams().get(0).getSampleRate();
+            this.frameRate = mainVideoStream.getAverageFrameRate();
+            this.codec = mainVideoStream.getCodec();
+            this.format = mainVideoStream.getFormat();
+            this.aspectRatio = mainVideoStream.getDisplayAspectRatio();
+            //Приблизительное количество кадров
+            this.frameCount = (long)((( this.duration / 1000) % 60) * Float.parseFloat(frameRate));
+
+        }
     }
 
     public VideoInfo(Parcel parcel) {
@@ -63,6 +77,7 @@ public class VideoInfo implements Parcelable {
         this.format = parcel.readString();
         this.aspectRatio = parcel.readString();
         this.path = parcel.readString();
+        this.extension = parcel.readString();
     }
 
     public void GeneratePreviewFrames()
@@ -85,10 +100,6 @@ public class VideoInfo implements Parcelable {
     public Long getIndex() {
         return index;
     }
-
-   /* public Long getSampleRate() {
-        return sampleRate;
-    }*/
 
     public String getFrameRate() {
         return frameRate;
@@ -138,6 +149,7 @@ public class VideoInfo implements Parcelable {
         dest.writeString(format);
         dest.writeString(aspectRatio);
         dest.writeString(path);
+        dest.writeString(extension);
 
     }
 
@@ -172,5 +184,9 @@ public class VideoInfo implements Parcelable {
             File frameCollage = new File(this.pathFrameCollage);
             frameCollage.delete();
         }
+    }
+
+    public String getExtension() {
+        return extension;
     }
 }

@@ -23,11 +23,17 @@ public class MainEditor extends AppCompatActivity {
         intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
         startActivity(intent);
     }
-    public void OpenVideoInfoPage(View view)
+    public void ClickOpenVideoInfoPage(View view)
     {
-
         Intent intent = new Intent(this, VideoInfoPage.class);
         intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
         startActivity(intent);
     }
+    public void ClickOpenEditorPage(View view)
+    {
+        Intent intent = new Intent(this, VideoEditPage.class);
+        intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
+        startActivity(intent);
+    }
+
 }

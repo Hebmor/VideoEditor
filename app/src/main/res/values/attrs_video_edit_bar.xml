@@ -1,8 +1,15 @@
 <resources>
     <declare-styleable name="VideoEditBar">
-        <attr name="piv_Left" format="float|integer" />
-        <attr name="piv_Right" format="float|integer" />
-        <attr name="piv_Top" format="float|integer" />
-        <attr name="piv_Bottom" format="float|integer" />
+        <attr name="piv_LeftBackground" format="float|integer" />
+        <attr name="piv_RightBackground" format="float|integer" />
+        <attr name="piv_TopBackground" format="float|integer" />
+        <attr name="piv_BottomBackground" format="float|integer" />
+
+        <attr name="piv_Left_LeftBand" format="float|integer" />
+        <attr name="piv_Right_LeftBand" format="float|integer" />
+
+        <attr name="piv_Left_RightBand" format="float|integer" />
+        <attr name="piv_Right_RightBand" format="float|integer" />
+
     </declare-styleable>
 </resources>

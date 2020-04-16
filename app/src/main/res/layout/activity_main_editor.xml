@@ -22,7 +22,7 @@
         android:layout_height="100dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="8dp"
-        android:onClick="OpenVideoInfoPage"
+        android:onClick="ClickOpenVideoInfoPage"
         android:src="@drawable/information"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonSplit" />
@@ -35,8 +35,7 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/video_player"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEncode"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonEncode" />
 
     <ImageButton
         android:id="@+id/buttonEncode"
@@ -60,6 +59,7 @@
         android:src="@drawable/cut"
         app:layout_constraintStart_toEndOf="@+id/buttonEncode"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        android:onClick="ClickOpenEditorPage"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

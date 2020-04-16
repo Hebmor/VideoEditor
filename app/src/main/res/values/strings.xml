@@ -41,6 +41,7 @@
     <string name="countdown">Отсчет</string>
 
 
+    <string name="ok">OK</string>
     <string name="сancel">Отмена</string>
     <string name="AudioBitrate">Аудио Битрейт</string>
     <string name="video_quality_level">Уровень качества видео</string>

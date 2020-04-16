@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -17,13 +15,27 @@ import android.view.View;
 public class VideoEditBar extends View {
 
 
-    private int mLeft; // TODO: use a default from R.string...
-    private int mRight; // TODO: use a default from R.color...
-    private int mTop; // TODO: use a default from R.dimen...
-    private int mBottom; // TODO: use a default from R.dimen...
+    private int mLeftBackground; // TODO: use a default from R.string...
+    private int mRightBackground; // TODO: use a default from R.color...
+    private int mTopBackground; // TODO: use a default from R.dimen...
+    private int mBottomBackground; // TODO: use a default from R.dimen...
 
-    private Paint paint;
-    private Rect rect;
+    private final int WIDTH_BAND = 5;
+    private int mLeft_LeftBand; // TODO: use a default from R.string...
+    private int mRight_LeftBand; // TODO: use a default from R.color...
+    private int mTop_LeftBand; // TODO: use a default from R.dimen...
+    private int mBottom_LeftBand; // TODO: use a default from R.dimen...
+
+    private int mLeft_RightBand; // TODO: use a default from R.string...
+    private int mRight_RightBand; // TODO: use a default from R.color...
+    private int mTop_RightBand; // TODO: use a default from R.dimen...
+    private int mBottom_RightBand; // TODO: use a default from R.dimen...
+
+    private Paint paintBackgroundColor;
+    private Paint paintBandColor;
+    private Rect rectBackground;
+    private Rect leftBand;
+    private Rect rightBand;
     private TypedArray a;
 
     public VideoEditBar(Context context) {
@@ -46,13 +58,23 @@ public class VideoEditBar extends View {
         a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.VideoEditBar, defStyle, 0);
 
-        mLeft = a.getInt(R.styleable.VideoEditBar_piv_Left,0);
-        mRight = a.getInt(R.styleable.VideoEditBar_piv_Right,0);
-        mTop = a.getInt(R.styleable.VideoEditBar_piv_Top,100);
-        mBottom = a.getInt(R.styleable.VideoEditBar_piv_Bottom,100);
+        mLeftBackground = a.getInt(R.styleable.VideoEditBar_piv_LeftBackground,0);
+        mRightBackground = a.getInt(R.styleable.VideoEditBar_piv_RightBackground,0);
+        mTopBackground = a.getInt(R.styleable.VideoEditBar_piv_TopBackground,100);
+        mBottomBackground = a.getInt(R.styleable.VideoEditBar_piv_BottomBackground,100);
 
-        paint = new Paint();
-        rect = new Rect(0,0,0,0);
+        mLeft_LeftBand =  a.getInt(R.styleable.VideoEditBar_piv_Left_LeftBand,0);
+        mRight_LeftBand =  a.getInt(R.styleable.VideoEditBar_piv_Right_LeftBand,0);
+
+        mLeft_RightBand =  a.getInt(R.styleable.VideoEditBar_piv_Left_RightBand,0);
+        mRight_RightBand =  a.getInt(R.styleable.VideoEditBar_piv_Right_RightBand,0);
+
+        paintBackgroundColor = new Paint();
+        paintBandColor = new Paint();
+
+        rectBackground = new Rect(0,0,0,0);
+        leftBand = new Rect(0,0,0,0);
+        rightBand = new Rect(0,0,0,0);
         a.recycle();
 
         // Update TextPaint and text measurements from attributes
@@ -72,47 +94,60 @@ public class VideoEditBar extends View {
         // allocations per draw cycle.
 
 
-        paint.setColor(Color.BLUE);
-        paint.setAlpha(60);
+        paintBackgroundColor.setColor(Color.BLUE);
+        paintBandColor.setColor(Color.GRAY);
+        paintBackgroundColor.setAlpha(60);
 
-        rect.bottom = mBottom;
-        rect.left = mLeft;
-        rect.top = mTop;
-        rect.right = mRight;
+        rectBackground.bottom = mBottomBackground;
+        rectBackground.left = mLeftBackground;
+        rectBackground.top = mTopBackground;
+        rectBackground.right = mRightBackground;
 
-        canvas.drawRect(rect,paint);
+        rightBand.left = mRightBackground + WIDTH_BAND ;
+        rightBand.top = mTopBackground;
+        rightBand.bottom = mBottomBackground;
+        rightBand.right = mRightBackground;
+
+        leftBand.left = mLeftBackground;
+        leftBand.top = mTopBackground;
+        leftBand.bottom = mBottomBackground;
+        leftBand.right = mLeftBackground - WIDTH_BAND;
+
+        canvas.drawRect(rectBackground,paintBackgroundColor);
+        canvas.drawRect(rightBand,paintBandColor);
+        canvas.drawRect(leftBand,paintBandColor);
 
     }
-    public int getmLeft() {
-        return mLeft;
+    public int getmLeftBackground() {
+        return mLeftBackground;
     }
 
-    public void setmLeft(int mLeft) {
-        this.mLeft = mLeft;
+    public void setmLeftBackground(int mLeftBackground) {
+        this.mLeftBackground = mLeftBackground;
     }
 
-    public int getmRight() {
-        return mRight;
+    public int getmRightBackground() {
+        return mRightBackground;
     }
 
-    public void setmRight(int mRight) {
-        this.mRight = mRight;
+    public void setmRightBackground(int mRightBackground) {
+        this.mRightBackground = mRightBackground;
     }
 
-    public int getmTop() {
-        return mTop;
+    public int getmTopBackground() {
+        return mTopBackground;
     }
 
-    public void setmTop(int mTop) {
-        this.mTop = mTop;
+    public void setmTopBackground(int mTopBackground) {
+        this.mTopBackground = mTopBackground;
     }
 
-    public int getmBottom() {
-        return mBottom;
+    public int getmBottomBackground() {
+        return mBottomBackground;
     }
 
-    public void setmBottom(int mBottom) {
-        this.mBottom = mBottom;
+    public void setmBottomBackground(int mBottomBackground) {
+        this.mBottomBackground = mBottomBackground;
     }
 
 

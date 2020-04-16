@@ -22,7 +22,6 @@ import java.util.List;
 
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 100;
@@ -94,20 +93,13 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     VideoInfo info = new VideoInfo(path);
-                    info.DeleteFrameCollage();
                     ActionEditor.setVideoInfo(info);
                     Intent intent = new Intent(this,MainEditor.class);
                     intent.putExtra(MainEditor.EDIT_VIDEO_ID,info);
                     startActivity(intent);
-
-                    //Bundle args = new Bundle();
-                    //args.putParcelable("VideoInfo", info);
-                    //videoEditBarFragment.putArguments(args);
-                   // videoEditBarFragment.setFramesFromVideo(ActionEditor.GenFrameCollage(path, this));
                     break;
 
             }
-
         }
     }
 
