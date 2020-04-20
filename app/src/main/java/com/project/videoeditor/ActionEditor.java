@@ -11,16 +11,13 @@ import android.widget.ArrayAdapter;
 
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-
 public class ActionEditor {
 
-    private static FFmpeg ffmpeg;
     private static VideoInfo videoInfo;
     public final String availableEncodeList[] = {"MPEG4","libx264","H.265","libtheora","mpeg2","libxvid"};
 
@@ -139,7 +136,7 @@ public class ActionEditor {
     public static void setVideoInfo(VideoInfo videoInfo) {
         ActionEditor.videoInfo = videoInfo;
     }
-    private static void RunCommandExecuteFFMPEG(String command,boolean isJoin) throws InterruptedException {
+    public static void RunCommandExecuteFFMPEG(String command,boolean isJoin) throws InterruptedException {
         Thread ffmpegExecuteThread = new Thread(new Runnable() {
             @Override
             public void run() {

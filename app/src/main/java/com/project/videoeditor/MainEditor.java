@@ -3,6 +3,8 @@ package com.project.videoeditor;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.View;
 
@@ -33,6 +35,19 @@ public class MainEditor extends AppCompatActivity {
     {
         Intent intent = new Intent(this, VideoEditPage.class);
         intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
+        startActivity(intent);
+    }
+    public void ClickOpenFilterPage(View view)
+    {
+        Intent intent = new Intent(this, FiltersVideoActivity.class);
+        intent.putExtra(FiltersVideoActivity.EDIT_VIDEO_ID,editVideoInfo);
+        startActivity(intent);
+    }
+    public void ClickCropVideoPage(View view)
+    {
+        Intent intent = new Intent(this, CropVideoActivity.class);
+        String path = editVideoInfo.getPath();
+        intent.putExtra(CropVideoActivity.FRAME_BITMAP_URI,path);
         startActivity(intent);
     }
 

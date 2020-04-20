@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
     // проверяем, доступно ли внешнее хранилище для чтения и записи
     public boolean isExternalStorageWriteable(){
-
+        
         return  ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED;

@@ -14,7 +14,9 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/scotch_tape"
         app:layout_constraintStart_toEndOf="@+id/buttonSplit"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCut" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonCut"
+        android:onClick="ClickCropVideoPage"
+        />
 
     <ImageButton
         android:id="@+id/buttonInfo"
@@ -35,7 +37,9 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/video_player"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEncode" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonEncode"
+        android:onClick="ClickOpenFilterPage"
+        />
 
     <ImageButton
         android:id="@+id/buttonEncode"
