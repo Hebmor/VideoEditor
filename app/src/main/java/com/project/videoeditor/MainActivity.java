@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkPermissions(){
 
-        if(isExternalStorageReadable() || isExternalStorageWriteable()){
-            Toast.makeText(this, "Внешнее хранилище не доступно", Toast.LENGTH_LONG).show();
+        if(isExternalStorageReadable() || isExternalStorageWriteable() || isMICReadable()){
+            //Toast.makeText(this, "Внешнее хранилище не доступно", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -55,19 +55,29 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED;
     }
+    public boolean isMICReadable(){
+
+        return  ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED;
+    }
     private void getPermission() {
         String[] params = null;
         String writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         String readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE;
+        String readMIC = Manifest.permission.RECORD_AUDIO;
 
         int hasWriteExternalStoragePermission = ActivityCompat.checkSelfPermission(this, writeExternalStorage);
         int hasReadExternalStoragePermission = ActivityCompat.checkSelfPermission(this, readExternalStorage);
+        int hasReadMIC = ActivityCompat.checkSelfPermission(this, readMIC);
         List<String> permissions = new ArrayList<String>();
 
         if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
             permissions.add(writeExternalStorage);
         if (hasReadExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
             permissions.add(readExternalStorage);
+        if (hasReadMIC != PackageManager.PERMISSION_GRANTED)
+            permissions.add(readMIC);
 
         if (!permissions.isEmpty()) {
             params = permissions.toArray(new String[permissions.size()]);

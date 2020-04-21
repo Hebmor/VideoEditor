@@ -2,13 +2,17 @@ package com.project.videoeditor;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.media.MediaCodec;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,32 +21,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-class VideoSurfaceView extends GLSurfaceView {
 
-    VideoRender mRenderer;
-    private MediaPlayer mMediaPlayer = null;
-
-    public VideoSurfaceView(Context context, MediaPlayer mp) {
-        super(context);
-
-        setEGLContextClientVersion(2);
-        mMediaPlayer = mp;
-        mRenderer = new VideoRender(context);
-        mRenderer.setMediaPlayer(mp);
-        setRenderer(mRenderer);
-    }
-
-    @Override
-    public void onResume() {
-        queueEvent(new Runnable(){
-            public void run() {
-                mRenderer.setMediaPlayer(mMediaPlayer);
-            }});
-
-        super.onResume();
-    }
-
-    private static class VideoRender
+public class VideoSurfaceRenderer
             implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
         private static String TAG = "VideoRender";
 
@@ -74,11 +54,6 @@ class VideoSurfaceView extends GLSurfaceView {
                 + "precision mediump float;\n"
                 + "varying vec2 vTextureCoord;\n"
                 + "uniform samplerExternalOES sTexture;\n"
-                + "uniform float rt_w;\n"
-                +" uniform float rt_h;\n"
-                + "uniform float stitching_size;\n"
-                + "uniform int invert;\n"
-                + "uniform float time;\n"
                 + "void main() {\n"
                 + "  vec4 color = texture2D(sTexture, vTextureCoord);\n"
                 + "  float colorR = (color.r + color.g + color.b) / 3.0;\n"
@@ -103,14 +78,16 @@ class VideoSurfaceView extends GLSurfaceView {
         private static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
         private MediaPlayer mMediaPlayer;
+        private Context context;
 
-        public VideoRender(Context context) {
+        public VideoSurfaceRenderer(Context context) {
             mTriangleVertices = ByteBuffer.allocateDirect(
                     mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
                     .order(ByteOrder.nativeOrder()).asFloatBuffer();
             mTriangleVertices.put(mTriangleVerticesData).position(0);
 
             Matrix.setIdentityM(mSTMatrix, 0);
+            this.context = context;
         }
 
         public void setMediaPlayer(MediaPlayer player) {
@@ -162,7 +139,7 @@ class VideoSurfaceView extends GLSurfaceView {
 
         @Override
         public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-
+            //onSurfaceChanged(glUnused, width,height);
         }
 
         @Override
@@ -214,23 +191,31 @@ class VideoSurfaceView extends GLSurfaceView {
              * and pass it to the MediaPlayer
              */
             mSurface = new SurfaceTexture(mTextureID);
+
             mSurface.setOnFrameAvailableListener(this);
 
+            File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "myvideo.mp4");
+            if (file.exists()) {
+                file.delete();
+            }
             Surface surface = new Surface(mSurface);
+
             mMediaPlayer.setSurface(surface);
+
             mMediaPlayer.setScreenOnWhilePlaying(true);
-            surface.release();
+
 
             try {
                 mMediaPlayer.prepare();
-            } catch (IOException t) {
-                Log.e(TAG, "media player prepare failed");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
 
             synchronized(this) {
                 updateSurface = false;
             }
-
+            surface.release();
             mMediaPlayer.start();
         }
 
@@ -292,6 +277,4 @@ class VideoSurfaceView extends GLSurfaceView {
             }
         }
 
-    }  // End of class VideoRender.
-
-}  // End of class VideoSurfaceView.
+}

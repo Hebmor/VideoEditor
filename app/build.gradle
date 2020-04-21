@@ -41,4 +41,5 @@ dependencies {
     implementation group: 'lib.kashif', name: 'folderpicker', version: '2.4'
     implementation 'com.github.proghjy:android-gpuimage-videorecording:v1.4.3'
     implementation 'com.github.yalantis:ucrop:2.2.4'
+    implementation 'com.uncorkedstudios.android:recordable-surfaceview:1.5.7'
 }

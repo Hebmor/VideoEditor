@@ -20,7 +20,6 @@ import jp.co.cyberagent.android.gpuimage.GPUImageBoxBlurFilter;
 
 public class FiltersView extends TextureView implements TextureView.SurfaceTextureListener {
 
-    private DrawFilteredVideoThread DrawFilteredVideoThread;
     private MediaPlayer mMediaPlayer;
     private String videoPath;
     private GPUImage filters;
