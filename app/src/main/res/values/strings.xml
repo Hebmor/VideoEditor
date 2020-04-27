@@ -11,14 +11,6 @@
     <string name="frameRate">Частота кадров</string>
     <string name="aspectRatio">Соотношение сторон</string>
 
-    <string name="H264">H.264</string>
-    <string name="H265">H.265</string>
-    <string name="MPEG4">MPEG-4</string>
-    <string name="MPEG2">MPEG-2</string>
-    <string name="Theora">Theora</string>
-    <string name="libx264">libx264</string>
-    <string name="libxvid">libxvid</string>
-
     <string name="preset_rendering">Предустановка рендеринга</string>
 
     <string name="ultrafast">Сверхбыстро</string>
@@ -35,7 +27,6 @@
     <string name="film">Фильм</string>
     <string name="animation">Анимация</string>
     <string name="grain">Зернистость</string>
-    <string name="stillimage">Слайдшоу</string>
     <string name="fastdecode">Производительность</string>
     <string name="zerolatency">Максимально</string>
     <string name="countdown">Отсчет</string>
@@ -43,7 +34,6 @@
 
     <string name="ok">OK</string>
     <string name="сancel">Отмена</string>
-    <string name="AudioBitrate">Аудио Битрейт</string>
     <string name="video_quality_level">Уровень качества видео</string>
     <string name="audio_quality_level">Уровень качества аудио</string>
     <string name="fps">fps</string>
@@ -70,8 +60,6 @@
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="arrowLeft"><![CDATA[<<]]></string>
     <string name="arrowRight"><![CDATA[>>]]></string>
 
 

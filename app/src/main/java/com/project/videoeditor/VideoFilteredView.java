@@ -2,24 +2,23 @@ package com.project.videoeditor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaExtractor;
 import android.media.MediaPlayer;
 
-import com.project.videoeditor.VideoSurfaceRenderer;
 import com.uncorkedstudios.android.view.recordablesurfaceview.RecordableSurfaceView;
 
 public class VideoFilteredView extends RecordableSurfaceView implements RecordableSurfaceView.RendererCallbacks {
 
-    private final VideoSurfaceRenderer videoSurfaceRenderer;
+    private final VideoSurfaceRecorder videoSurfaceRecorder;
     public VideoFilteredView(Context context) {
         super(context);
 
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
+        videoSurfaceRecorder = new VideoSurfaceRecorder(context);
         setRendererCallbacks(this);
     }
-    public VideoFilteredView(Context context, MediaPlayer mediaPlayer) {
+    public VideoFilteredView(Context context, MediaExtractor mediaExtractor) {
         super(context);
-
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
+        videoSurfaceRecorder = new VideoSurfaceRecorder(context);
         MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
 
             @Override
@@ -29,19 +28,19 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
 
             }
         };
-        mediaPlayer.setOnVideoSizeChangedListener(mOnVideoSizeChangedListener);
-        videoSurfaceRenderer.setMediaPlayer(mediaPlayer);
+
+        videoSurfaceRecorder.setExtractor(mediaExtractor);
 
         setRendererCallbacks(this);
     }
     @Override
     public void onSurfaceCreated() {
-        videoSurfaceRenderer.onSurfaceCreated(null,null);
+        videoSurfaceRecorder.onSurfaceCreated(null,null);
     }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
-        videoSurfaceRenderer.onSurfaceChanged(null,width,height);
+        videoSurfaceRecorder.onSurfaceChanged(null,width,height);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
 
     @Override
     public void onDrawFrame() {
-        videoSurfaceRenderer.onDrawFrame(null);
+        videoSurfaceRecorder.onDrawFrame(null);
     }
 
     private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight)

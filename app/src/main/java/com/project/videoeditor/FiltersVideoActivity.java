@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.media.MediaExtractor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,10 +24,11 @@ public class FiltersVideoActivity extends Activity {
     private FrameLayout filteredVideoContainer;
     private Filters filters;
     private String videoPath;
-    private MediaPlayer mMediaPlayer = null;
+    private MediaExtractor mediaExtractor = null;
     private VideoFilteredView videoFilteredView;
     private boolean isRecording = false;
     private VideoInfo editVideoInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +40,24 @@ public class FiltersVideoActivity extends Activity {
         String path = editVideoInfo.getPath();
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         videoView.setVideoPath(path);
-        mMediaPlayer = new MediaPlayer();
+        mediaExtractor = new MediaExtractor();
         try {
-            mMediaPlayer.setDataSource(this,Uri.parse(path));
+            mediaExtractor.setDataSource(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        videoFilteredView = new VideoFilteredView(this,mMediaPlayer);
+//        try {
+//            decodeEditEncodeTest.testVideoEdit720p();
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
+        videoFilteredView = new VideoFilteredView(this,mediaExtractor);
         filteredVideoContainer.addView(videoFilteredView);
         videoPath = path;
         filters = new Filters(this);
         videoView.start();
+
     }
 
     @Override
@@ -68,15 +76,15 @@ public class FiltersVideoActivity extends Activity {
                     mOutputFile.getPath(),"output.mp4");
 
 
-        try {
-
-            int Height = Math.toIntExact(editVideoInfo.getHeight());
-            int Width = Math.toIntExact(editVideoInfo.getWidth());
-
-           videoFilteredView.initRecorder(mOutputFile,Width,Height,null,null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//
+//            int Height = Math.toIntExact(editVideoInfo.getHeight());
+//            int Width = Math.toIntExact(editVideoInfo.getWidth());
+//
+//          // videoFilteredView.initRecorder(mOutputFile,Width,Height,null,null);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
