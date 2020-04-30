@@ -2,24 +2,32 @@ package com.project.videoeditor;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.MediaExtractor;
 import android.media.MediaPlayer;
+import android.opengl.GLSurfaceView;
+import android.view.SurfaceHolder;
 
-import com.uncorkedstudios.android.view.recordablesurfaceview.RecordableSurfaceView;
 
-public class VideoFilteredView extends RecordableSurfaceView implements RecordableSurfaceView.RendererCallbacks {
+public class VideoFilteredView extends GLSurfaceView {
 
-    private VideoSurfaceRecorder videoSurfaceRecorder;
+    private VideoSurfaceRenderer videoSurfaceRenderer;
+
     public VideoFilteredView(Context context) {
         super(context);
-
-        videoSurfaceRecorder = new VideoSurfaceRecorder(context);
-        setRendererCallbacks(this);
+        setEGLContextClientVersion(2);
+        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
     }
-    public VideoFilteredView(Context context, MediaExtractor mediaExtractor,VideoInfo editVideoInfo) throws Exception {
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        super.surfaceCreated(holder);
+        videoSurfaceRenderer.onSurfaceCreated(null,null);
+    }
+
+    public VideoFilteredView(Context context, MediaPlayer mediaPlayer) throws Exception {
         super(context);
-        videoSurfaceRecorder = new VideoSurfaceRecorder(context);
-        videoSurfaceRecorder.launchApplyFilterToVideo(mediaExtractor,editVideoInfo);
+        setEGLContextClientVersion(2);
+        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
+
         MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
 
             @Override
@@ -29,57 +37,22 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
 
             }
         };
-
-        videoSurfaceRecorder.setExtractor(mediaExtractor);
-
-        setRendererCallbacks(this);
-    }
-    @Override
-    public void onSurfaceCreated() {
-       // videoSurfaceRecorder.onSurfaceCreated(null,null);
+        mediaPlayer.setOnVideoSizeChangedListener(mOnVideoSizeChangedListener);
+        videoSurfaceRenderer.setMediaPlayer(mediaPlayer);
+        this.setRenderer(videoSurfaceRenderer);
     }
 
-    @Override
-    public void onSurfaceChanged(int width, int height) {
-       // videoSurfaceRecorder.onSurfaceChanged(null,width,height);
-    }
-
-    @Override
-    public void onSurfaceDestroyed() {
-
-    }
-
-    @Override
-    public void onContextCreated() {
-
-    }
-
-    @Override
-    public void onPreDrawFrame() {
-
-    }
-
-    @Override
-    public void onDrawFrame() {
-       // videoSurfaceRecorder.onDrawFrame(null);
-    }
-
-    private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight)
-    {
-        if(mp != null)
-        {
+    private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight) {
+        if (mp != null) {
             Integer screenWidth = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getWidth();
             Integer screenHeight = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getHeight();
             android.view.ViewGroup.LayoutParams videoParams = getLayoutParams();
 
 
-            if (videoWidth > videoHeight)
-            {
+            if (videoWidth > videoHeight) {
                 videoParams.width = screenWidth;
                 videoParams.height = screenWidth * videoHeight / videoWidth;
-            }
-            else
-            {
+            } else {
                 videoParams.width = screenHeight * videoWidth / videoHeight;
                 videoParams.height = screenHeight;
             }
@@ -87,5 +60,9 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
 
             setLayoutParams(videoParams);
         }
+    }
+    public void changeFragmentShader(String fragmentShader) {
+        videoSurfaceRenderer.changeFragmentShaderInRealTime(fragmentShader);
+
     }
 }

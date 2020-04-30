@@ -28,6 +28,7 @@ public class FiltersVideoActivity extends Activity {
     private VideoFilteredView videoFilteredView;
     private boolean isRecording = false;
     private VideoInfo editVideoInfo;
+    private MediaPlayer mediaPlayer;
 
 
     @Override
@@ -41,8 +42,10 @@ public class FiltersVideoActivity extends Activity {
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         videoView.setVideoPath(path);
         mediaExtractor = new MediaExtractor();
+        mediaPlayer = new MediaPlayer();
         try {
             mediaExtractor.setDataSource(path);
+            mediaPlayer.setDataSource(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,12 +55,20 @@ public class FiltersVideoActivity extends Activity {
 //        } catch (Throwable throwable) {
 //            throwable.printStackTrace();
 //        }
+      /*  try {
+          //  videoFilteredView = new VideoFilteredView(this,mediaExtractor,editVideoInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
         try {
-            videoFilteredView = new VideoFilteredView(this,mediaExtractor,editVideoInfo);
+            videoFilteredView = new VideoFilteredView(this,mediaPlayer);
+         //   videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
+           // videoFilteredView.
         } catch (Exception e) {
             e.printStackTrace();
         }
         filteredVideoContainer.addView(videoFilteredView);
+        //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
         videoPath = path;
         filters = new Filters(this);
         videoView.start();
@@ -67,20 +78,11 @@ public class FiltersVideoActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        videoFilteredView.resume();
+       // videoFilteredView.resume();
         android.graphics.Point size = new android.graphics.Point();
         getWindowManager().getDefaultDisplay().getRealSize(size);
-        File mOutputFile = null;
 
-            mOutputFile = new File(
-                    getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "captures" + "/");
-            if(!mOutputFile.exists())
-                mOutputFile.mkdirs();
-            mOutputFile = new File(
-                    mOutputFile.getPath(),"output.mp4");
-
-
-//        try {
+//       try {
 //
 //            int Height = Math.toIntExact(editVideoInfo.getHeight());
 //            int Width = Math.toIntExact(editVideoInfo.getWidth());
@@ -94,17 +96,11 @@ public class FiltersVideoActivity extends Activity {
 
     public void ClicksStartRecordVideoFilter(View view)
     {
-        if(!isRecording) {
-            videoFilteredView.startRecording();
-            isRecording = true;
-        }
+        videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
     }
     public void ClicksStopRecordVideoFilter(View view)
     {
-        if(isRecording) {
-            videoFilteredView.stopRecording();
-            isRecording = false;
-        }
+        videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.default_state));
     }
     private Bitmap getBitmapFromView(View view)
     {

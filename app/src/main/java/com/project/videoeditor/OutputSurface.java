@@ -35,6 +35,7 @@ public class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     private TextureRender mTextureRender;
     private HandlerThread mHandlerThread;
     private Handler mHandler;
+
     /**
      * Creates an OutputSurface backed by a pbuffer with the specifed dimensions.  The new
      * EGL context and surface will be made current.  Creates a Surface that can be passed

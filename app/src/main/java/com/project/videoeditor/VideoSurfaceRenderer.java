@@ -2,10 +2,7 @@ package com.project.videoeditor;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.media.MediaCodec;
-import android.media.MediaExtractor;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -15,7 +12,6 @@ import android.view.Surface;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,7 +43,7 @@ public class VideoSurfaceRenderer
 
     private FloatBuffer mTriangleVertices;
 
-    private final String mVertexShader =
+    private final String VERTEX_SHADER =
             "uniform mat4 uMVPMatrix;\n" +
                     "uniform mat4 uSTMatrix;\n" +
                     "attribute vec4 aPosition;\n" +
@@ -57,7 +53,12 @@ public class VideoSurfaceRenderer
                     "  gl_Position = uMVPMatrix * aPosition;\n" +
                     "  vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
                     "}\n";
-    String mFragmentShader = "#extension GL_OES_EGL_image_external : require\n"
+
+    public void setFRAGMENT_SHADER(String FRAGMENT_SHADER) {
+        this.FRAGMENT_SHADER = FRAGMENT_SHADER;
+    }
+
+    String FRAGMENT_SHADER = "#extension GL_OES_EGL_image_external : require\n"
             + "precision mediump float;\n"
             + "varying vec2 vTextureCoord;\n"
             + "uniform samplerExternalOES sTexture;\n"
@@ -82,6 +83,7 @@ public class VideoSurfaceRenderer
     private int pResolution;
     private int pRadius;
     private int pDir;
+    private boolean changeShaderFlag = false;
 
     float color[] = {0.2f, 0.709803922f, 0.898039216f, 1.0f};
     private SurfaceTexture mSurface;
@@ -101,7 +103,7 @@ public class VideoSurfaceRenderer
                 mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         mTriangleVertices.put(mTriangleVerticesData).position(0);
-
+        //this.setEGLContextClientVersion(2);
         Matrix.setIdentityM(mSTMatrix, 0);
         this.context = context;
 
@@ -118,7 +120,7 @@ public class VideoSurfaceRenderer
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        mFragmentShader = total.toString();
+        FRAGMENT_SHADER = total.toString();
     }
 
     public void setMediaPlayer(MediaPlayer player) {
@@ -138,7 +140,14 @@ public class VideoSurfaceRenderer
                 }
             }
         }
-
+        if(changeShaderFlag)
+        {
+           // GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            //GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glFinish();
+            this.changeFragmentShader(FRAGMENT_SHADER);
+            return;
+        }
         GLES20.glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
@@ -189,7 +198,7 @@ public class VideoSurfaceRenderer
 
         //InputStream is = context.getResources().openRawResource();
 
-        mProgram = createProgram(mVertexShader, mFragmentShader);
+        mProgram = createProgram(VERTEX_SHADER, FRAGMENT_SHADER);
         if (mProgram == 0) {
             return;
         }
@@ -286,6 +295,7 @@ public class VideoSurfaceRenderer
 
     private int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
+        checkGlError("glCreateShader type=" + shaderType);
         if (shader != 0) {
             GLES20.glShaderSource(shader, source);
             GLES20.glCompileShader(shader);
@@ -310,6 +320,8 @@ public class VideoSurfaceRenderer
         if (pixelShader == 0) {
             return 0;
         }
+
+
         int program = GLES20.glCreateProgram();
         if (program != 0) {
 
@@ -337,15 +349,21 @@ public class VideoSurfaceRenderer
             throw new RuntimeException(op + ": glError " + error);
         }
     }
-        /*private String OpenShaderFromFile(String path) throws Exception {
-            File shaderFile = new File(path);
-            if(!shaderFile.exists())
-                throw new Exception("Файл не существует!");
-            if(!shaderFile.canRead())
-                throw new Exception("Файл не может быть прочитан!");
+    public void changeFragmentShaderInRealTime(String fragmentShader)
+    {
+        this.setFRAGMENT_SHADER(fragmentShader);
+        changeShaderFlag = true;
+    }
+    private void changeFragmentShader(String fragmentShader) {
+        GLES20.glDeleteProgram(mProgram);
+        mProgram = createProgram(VERTEX_SHADER, fragmentShader);
+        if (mProgram == 0) {
+            throw new RuntimeException("failed creating program");
+        }
+        changeShaderFlag = false;
+    }
 
-
-
-        }*/
-
+    public void setChangeShaderFlag(boolean changeShaderFlag) {
+        this.changeShaderFlag = changeShaderFlag;
+    }
 }
