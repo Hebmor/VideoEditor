@@ -3,7 +3,6 @@ package com.project.videoeditor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.arthenica.mobileffmpeg.FFmpeg;
 import com.arthenica.mobileffmpeg.FFprobe;
 import com.arthenica.mobileffmpeg.MediaInformation;
 import com.arthenica.mobileffmpeg.StreamInformation;
@@ -104,6 +103,7 @@ public class VideoInfo implements Parcelable {
     public String getFrameRate() {
         return frameRate;
     }
+
 
     public String getCodec() {
         return codec;

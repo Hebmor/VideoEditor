@@ -9,16 +9,17 @@ import com.uncorkedstudios.android.view.recordablesurfaceview.RecordableSurfaceV
 
 public class VideoFilteredView extends RecordableSurfaceView implements RecordableSurfaceView.RendererCallbacks {
 
-    private final VideoSurfaceRecorder videoSurfaceRecorder;
+    private VideoSurfaceRecorder videoSurfaceRecorder;
     public VideoFilteredView(Context context) {
         super(context);
 
         videoSurfaceRecorder = new VideoSurfaceRecorder(context);
         setRendererCallbacks(this);
     }
-    public VideoFilteredView(Context context, MediaExtractor mediaExtractor) {
+    public VideoFilteredView(Context context, MediaExtractor mediaExtractor,VideoInfo editVideoInfo) throws Exception {
         super(context);
         videoSurfaceRecorder = new VideoSurfaceRecorder(context);
+        videoSurfaceRecorder.launchApplyFilterToVideo(mediaExtractor,editVideoInfo);
         MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
 
             @Override
@@ -35,12 +36,12 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
     }
     @Override
     public void onSurfaceCreated() {
-        videoSurfaceRecorder.onSurfaceCreated(null,null);
+       // videoSurfaceRecorder.onSurfaceCreated(null,null);
     }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
-        videoSurfaceRecorder.onSurfaceChanged(null,width,height);
+       // videoSurfaceRecorder.onSurfaceChanged(null,width,height);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class VideoFilteredView extends RecordableSurfaceView implements Recordab
 
     @Override
     public void onDrawFrame() {
-        videoSurfaceRecorder.onDrawFrame(null);
+       // videoSurfaceRecorder.onDrawFrame(null);
     }
 
     private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight)

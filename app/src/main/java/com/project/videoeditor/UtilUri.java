@@ -10,6 +10,12 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class UtilUri {
     public static String getPath(final Context context, final Uri uri) {
 
@@ -121,5 +127,36 @@ public class UtilUri {
 
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    public static File CreateFolder(String newFolderPath) throws Exception {
+
+        File folderFile = new File(newFolderPath);
+        if (!folderFile.exists())
+                folderFile.mkdirs();
+        return  folderFile;
+    }
+
+    public static File CreateFileInFolder(String folderPath,String filename)
+    {
+        return new File(folderPath, filename);
+    }
+
+    public static String OpenRawResourcesAsString(Context context,int rawResoursePath)
+    {
+        InputStream inputStream = context.getResources().openRawResource(rawResoursePath);
+        BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder total = new StringBuilder();
+        String line = null;
+        try {
+            line = r.readLine();
+            while (line != null) {
+                total.append(line).append('\n');
+                line = r.readLine();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return  total.toString();
     }
 }

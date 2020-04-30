@@ -52,7 +52,11 @@ public class FiltersVideoActivity extends Activity {
 //        } catch (Throwable throwable) {
 //            throwable.printStackTrace();
 //        }
-        videoFilteredView = new VideoFilteredView(this,mediaExtractor);
+        try {
+            videoFilteredView = new VideoFilteredView(this,mediaExtractor,editVideoInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         filteredVideoContainer.addView(videoFilteredView);
         videoPath = path;
         filters = new Filters(this);
