@@ -1,20 +1,15 @@
 package com.project.videoeditor;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.media.MediaExtractor;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
 
-import java.io.File;
 import java.io.IOException;
 
 public class FiltersVideoActivity extends Activity {
@@ -22,13 +17,14 @@ public class FiltersVideoActivity extends Activity {
     public static final String EDIT_VIDEO_ID = "6001";
     private VideoView videoView;
     private FrameLayout filteredVideoContainer;
-    private Filters filters;
+    private FiltersHandler filtersHandler;
     private String videoPath;
     private MediaExtractor mediaExtractor = null;
     private VideoFilteredView videoFilteredView;
     private boolean isRecording = false;
     private VideoInfo editVideoInfo;
     private MediaPlayer mediaPlayer;
+    private FilterExecutor filterExecutor;
 
 
     @Override
@@ -43,6 +39,8 @@ public class FiltersVideoActivity extends Activity {
         videoView.setVideoPath(path);
         mediaExtractor = new MediaExtractor();
         mediaPlayer = new MediaPlayer();
+        filterExecutor = new FilterExecutor(this);
+
         try {
             mediaExtractor.setDataSource(path);
             mediaPlayer.setDataSource(path);
@@ -70,7 +68,6 @@ public class FiltersVideoActivity extends Activity {
         filteredVideoContainer.addView(videoFilteredView);
         //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
         videoPath = path;
-        filters = new Filters(this);
         videoView.start();
 
     }
@@ -94,13 +91,14 @@ public class FiltersVideoActivity extends Activity {
     }
 
 
-    public void ClicksStartRecordVideoFilter(View view)
-    {
-        videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
+    public void ClicksStartRecordVideoFilter(View view) throws IOException {
+        videoFilteredView.changeFragmentShader(FiltersHandler.nameFilters.DEFAULT);
     }
-    public void ClicksStopRecordVideoFilter(View view)
-    {
-        videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.default_state));
+    public void ClicksStopRecordVideoFilter(View view) throws IOException {
+        videoFilteredView.changeFragmentShader(FiltersHandler.nameFilters.BLACK_AND_WHITE);
+    }
+    public void ClicksTestRecordVideoFilter(View view) throws Exception {
+        filterExecutor.launchApplyFilterToVideo(mediaExtractor,editVideoInfo);
     }
     private Bitmap getBitmapFromView(View view)
     {

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import static java.lang.Thread.sleep;
 
 
-public class FilterRenderer {
+public class FilterExecutor {
     private static final String TAG = "FilterThread_DEBUG";
     MediaCodec decoder = null;
     MediaCodec encoder = null;
@@ -37,13 +37,14 @@ public class FilterRenderer {
     private int trackIndex;
     MediaExtractor extractor = null;
     private Context context;
+    private boolean isSetup = false;
 
     public void setExtractor(MediaExtractor extractor) {
         this.extractor = extractor;
     }
 
 
-    public FilterRenderer(Context context) {
+    public FilterExecutor(Context context) {
         this.context = context;
 
     }
@@ -84,10 +85,11 @@ public class FilterRenderer {
 
     }
 
-    public void run() throws Exception {
+    public void startFiltered() throws Exception {
         encoder.start();
         decoder.start();
         doExtract(extractor, trackIndex, decoder, encoder, outputSurface, inputSurface);
+
     }
 
     public void release() {
@@ -114,7 +116,7 @@ public class FilterRenderer {
         this.setExtractor(extractor);
         this.setEditVideoInfo(editVideoInfo);
         this.setup();
-        this.run();
+        this.startFiltered();
         this.release();
     }
 
@@ -288,4 +290,18 @@ public class FilterRenderer {
             }
         }
     }
+    public void setupSettings(MediaExtractor extractor, VideoInfo editVideoInfo,Long bitrateBitPerSeconds)
+    {
+
+    }
+ /*   @Override
+    public void run() {
+        super.run();
+        if(this.extractor == null)
+            //throw new Exception("MediaExtractor не инициализирован!");
+            if(this.editVideoInfo == null)
+
+        //launchApplyFilterToVideo(extractor,);
+
+    }*/
 }

@@ -6,6 +6,8 @@ import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder;
 
+import java.io.IOException;
+
 
 public class VideoFilteredView extends GLSurfaceView {
 
@@ -26,7 +28,7 @@ public class VideoFilteredView extends GLSurfaceView {
     public VideoFilteredView(Context context, MediaPlayer mediaPlayer) throws Exception {
         super(context);
         setEGLContextClientVersion(2);
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
+        videoSurfaceRenderer = new VideoSurfaceRenderer(context,mediaPlayer,new DefaultFilter());
 
         MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
 
@@ -61,8 +63,8 @@ public class VideoFilteredView extends GLSurfaceView {
             setLayoutParams(videoParams);
         }
     }
-    public void changeFragmentShader(String fragmentShader) {
-        videoSurfaceRenderer.changeFragmentShaderInRealTime(fragmentShader);
+    public void changeFragmentShader(FiltersHandler.nameFilters filter) throws IOException {
+        videoSurfaceRenderer.changeFilter(FiltersHandler.getFiltersByName(filter,getContext()));
 
     }
 }
