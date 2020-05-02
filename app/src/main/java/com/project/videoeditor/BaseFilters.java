@@ -21,15 +21,15 @@ import javax.microedition.khronos.opengles.GL10;
 
 public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener{
 
-    private static final String TAG = "BaseFilters";
+    protected static final String TAG = "BaseFilters";
 
-    private static final int FLOAT_SIZE_BYTES = 4;
-    private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
-    private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
-    private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
+    protected static final int FLOAT_SIZE_BYTES = 4;
+    protected static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
+    protected static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
+    protected static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
 
-    private FloatBuffer mTriangleVertices;
-    private final float[] mTriangleVerticesData = {
+    protected FloatBuffer mTriangleVertices;
+    protected final float[] mTriangleVerticesData = {
             // X, Y, Z, U, V
             -1.0f, -1.0f, 0, 0.f, 0.f,
             1.0f, -1.0f, 0, 1.f, 0.f,
@@ -37,18 +37,61 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
             1.0f, 1.0f, 0, 1.f, 1.f,
     };
 
-    private float[] mMVPMatrix = new float[16];
-    private float[] mSTMatrix = new float[16];
+    protected float[] mMVPMatrix = new float[16];
+    protected float[] mSTMatrix = new float[16];
 
-    private int mProgram;
-    private int mTextureID;
-    private int muMVPMatrixHandle;
-    private int muSTMatrixHandle;
-    private int maPositionHandle;
-    private int maTextureHandle;
+    protected int mProgram;
+    protected int mTextureID;
+    protected int muMVPMatrixHandle;
+    protected int muSTMatrixHandle;
+    protected int maPositionHandle;
+    protected int maTextureHandle;
+    protected Surface surface;
+    protected SurfaceTexture mSurfaceTexture;
 
-    private boolean changeShaderFlag = false;
-    private SurfaceTexture mSurfaceTexture;
+    protected boolean changeShaderFlag = false;
+    protected static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
+
+    public boolean isInvert() {
+        return isInvert;
+    }
+
+    public void setInvert(boolean invert) {
+        isInvert = invert;
+    }
+
+    private boolean isInvert = false;
+
+    protected int _updateTexImageCounter = 0;
+    private int _updateTexImageCompare = 0;
+
+    protected final String VERTEX_SHADER =
+            "uniform mat4 uMVPMatrix;\n" +
+                    "uniform mat4 uSTMatrix;\n" +
+                    "attribute vec4 aPosition;\n" +
+                    "attribute vec4 aTextureCoord;\n" +
+                    "varying vec2 vTextureCoord;\n" +
+                    "void main() {\n" +
+                    "  gl_Position = uMVPMatrix * aPosition;\n" +
+                    "  vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
+                    "}\n";
+
+    protected String FRAGMENT_SHADER = "#extension GL_OES_EGL_image_external : require\n"
+            + "precision mediump float;\n"
+            + "varying vec2 vTextureCoord;\n"
+            + "uniform samplerExternalOES sTexture;\n"
+            + "void main() {\n"
+            + "  vec4 color = texture2D(sTexture, vTextureCoord);\n"
+            + "  gl_FragColor = color;\n"
+            + "}\n";
+
+    public int get_updateTexImageCounter() {
+        return _updateTexImageCounter;
+    }
+
+    public int get_updateTexImageCompare() {
+        return _updateTexImageCompare;
+    }
 
     public BaseFilters() {
         mTriangleVertices = ByteBuffer.allocateDirect(
@@ -62,9 +105,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         return surface;
     }
 
-    private Surface surface;
 
-    private static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
     public MediaPlayer getmMediaPlayer() {
         return mMediaPlayer;
@@ -72,7 +113,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
 
     private MediaPlayer mMediaPlayer;
     private Context context;
-    private void initTriangleVertices()
+    protected void initTriangleVertices()
     {
         mTriangleVertices = ByteBuffer.allocateDirect(
                 mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
@@ -93,36 +134,6 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         this.mMediaPlayer = mediaPlayer;
     }
 
-    public int get_updateTexImageCounter() {
-        return _updateTexImageCounter;
-    }
-
-    public int get_updateTexImageCompare() {
-        return _updateTexImageCompare;
-    }
-
-    private int _updateTexImageCounter = 0;
-    private int _updateTexImageCompare = 0;
-
-    private final String VERTEX_SHADER =
-            "uniform mat4 uMVPMatrix;\n" +
-                    "uniform mat4 uSTMatrix;\n" +
-                    "attribute vec4 aPosition;\n" +
-                    "attribute vec4 aTextureCoord;\n" +
-                    "varying vec2 vTextureCoord;\n" +
-                    "void main() {\n" +
-                    "  gl_Position = uMVPMatrix * aPosition;\n" +
-                    "  vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
-                    "}\n";
-
-    String FRAGMENT_SHADER = "#extension GL_OES_EGL_image_external : require\n"
-            + "precision mediump float;\n"
-            + "varying vec2 vTextureCoord;\n"
-            + "uniform samplerExternalOES sTexture;\n"
-            + "void main() {\n"
-            + "  vec4 color = texture2D(sTexture, vTextureCoord);\n"
-            + "  gl_FragColor = color;\n"
-            + "}\n";
 
     public void setmMediaPlayer(MediaPlayer mMediaPlayer) {
         this.mMediaPlayer = mMediaPlayer;
@@ -238,13 +249,15 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
        // mSurfaceTexture.setOnFrameAvailableListener(this);
 
         surface = new Surface(mSurfaceTexture);
-        mMediaPlayer.setSurface(surface);
-        //mMediaPlayer.setScreenOnWhilePlaying(true);
+        if(mMediaPlayer != null) {
+            mMediaPlayer.setSurface(surface);
+            //mMediaPlayer.setScreenOnWhilePlaying(true);
 
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                mMediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //surface.release();
@@ -265,6 +278,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
                 while(_updateTexImageCompare != _updateTexImageCounter) {
                     mSurfaceTexture.updateTexImage();
                     mSurfaceTexture.getTransformMatrix(mSTMatrix);
+
                     _updateTexImageCompare++;  // increment the compare value until it's the same as _updateTexImageCounter
                 }
             }
@@ -307,7 +321,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         checkGlError("glDrawArrays");
         GLES20.glFinish();
     }
-    private int loadShader(int shaderType, String source) {
+    protected int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
         checkGlError("glCreateShader type=" + shaderType);
         if (shader != 0) {
@@ -325,7 +339,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         return shader;
     }
 
-    private int createProgram(String vertexSource, String fragmentSource) {
+    protected int createProgram(String vertexSource, String fragmentSource) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {
             return 0;
@@ -356,7 +370,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         return program;
     }
 
-    private void checkGlError(String op) {
+    protected void checkGlError(String op) {
         int error;
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             Log.e(TAG, op + ": glError " + error);
@@ -368,7 +382,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         this.FRAGMENT_SHADER = fragmentShader;
         changeShaderFlag = true;
     }
-    private void changeFragmentShader(String fragmentShader) {
+    protected void changeFragmentShader(String fragmentShader) {
         GLES20.glDeleteProgram(mProgram);
         mProgram = createProgram(VERTEX_SHADER, fragmentShader);
         if (mProgram == 0) {
