@@ -13,17 +13,6 @@ public class VideoFilteredView extends GLSurfaceView {
 
     private VideoSurfaceRenderer videoSurfaceRenderer;
 
-    public VideoFilteredView(Context context) {
-        super(context);
-        setEGLContextClientVersion(2);
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        super.surfaceCreated(holder);
-        videoSurfaceRenderer.onSurfaceCreated(null,null);
-    }
 
     public VideoFilteredView(Context context, MediaPlayer mediaPlayer) throws Exception {
         super(context);
@@ -43,7 +32,11 @@ public class VideoFilteredView extends GLSurfaceView {
         videoSurfaceRenderer.setMediaPlayer(mediaPlayer);
         this.setRenderer(videoSurfaceRenderer);
     }
-
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        super.surfaceCreated(holder);
+        videoSurfaceRenderer.onSurfaceCreated(null,null);
+    }
     private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight) {
         if (mp != null) {
             Integer screenWidth = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getWidth();

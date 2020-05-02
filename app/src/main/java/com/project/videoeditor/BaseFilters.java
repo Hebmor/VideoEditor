@@ -6,11 +6,8 @@ import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -20,8 +17,6 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.media.MediaPlayer.SEEK_CLOSEST;
-import static android.media.MediaPlayer.SEEK_PREVIOUS_SYNC;
 
 
 public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener{
@@ -55,6 +50,14 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
     private boolean changeShaderFlag = false;
     private SurfaceTexture mSurfaceTexture;
 
+    public BaseFilters() {
+        mTriangleVertices = ByteBuffer.allocateDirect(
+                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mTriangleVertices.put(mTriangleVerticesData).position(0);
+        Matrix.setIdentityM(mSTMatrix, 0);
+    }
+
     public Surface getSurface() {
         return surface;
     }
@@ -69,6 +72,26 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
 
     private MediaPlayer mMediaPlayer;
     private Context context;
+    private void initTriangleVertices()
+    {
+        mTriangleVertices = ByteBuffer.allocateDirect(
+                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mTriangleVertices.put(mTriangleVerticesData).position(0);
+        Matrix.setIdentityM(mSTMatrix, 0);
+    }
+    public BaseFilters(Context context) {
+
+        initTriangleVertices();
+        this.context = context;
+    }
+
+    public BaseFilters(Context context,MediaPlayer mediaPlayer) {
+
+        initTriangleVertices();
+        this.context = context;
+        this.mMediaPlayer = mediaPlayer;
+    }
 
     public int get_updateTexImageCounter() {
         return _updateTexImageCounter;
@@ -116,36 +139,6 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         return mSurfaceTexture;
     }
 
-    public BaseFilters() {
-
-        mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
-        Matrix.setIdentityM(mSTMatrix, 0);
-    }
-    public BaseFilters(Context context) {
-
-
-        mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
-        Matrix.setIdentityM(mSTMatrix, 0);
-        this.context = context;
-    }
-
-    public BaseFilters(Context context,MediaPlayer mediaPlayer) {
-
-        mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
-        Matrix.setIdentityM(mSTMatrix, 0);
-        this.context = context;
-        this.mMediaPlayer = mediaPlayer;
-    }
-
     void loadFragmentShaderFromResource(int resourceId)
     {
         FRAGMENT_SHADER = UtilUri.OpenRawResourcesAsString(context,resourceId);
@@ -159,6 +152,10 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         }
         this._updateTexImageCounter = oldFilter._updateTexImageCounter;
         this._updateTexImageCompare = oldFilter._updateTexImageCompare;
+
+        if(this._updateTexImageCompare == this._updateTexImageCounter)
+            this._updateTexImageCounter++;
+        
         maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
         checkGlError("glGetAttribLocation aPosition");
         if (maPositionHandle == -1) {

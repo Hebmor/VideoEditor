@@ -5,19 +5,8 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Surface;
-
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -32,10 +21,6 @@ public class VideoSurfaceRenderer
     private boolean isChangeFilter = false;
     SurfaceTexture.OnFrameAvailableListener onFrameAvailableListener;
 
-
-    public VideoSurfaceRenderer(Context context) {
-
-    }
     public VideoSurfaceRenderer(Context context,MediaPlayer mMediaPlayer,BaseFilters filter) {
 
         this.currentFilter = filter;
