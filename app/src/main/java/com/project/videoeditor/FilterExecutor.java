@@ -9,13 +9,8 @@ import android.media.MediaMuxer;
 import android.os.Environment;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -27,6 +22,9 @@ public class FilterExecutor {
     private OutputSurface outputSurface;
     private InputSurface inputSurface;
     private MediaMuxer mediaMuxer;
+    private Long bitrateBitPerSeconds;
+    private int mixerVideoIndex;
+    private int mixerAudioIndex;
 
     public void setEditVideoInfo(VideoInfo editVideoInfo) {
         this.editVideoInfo = editVideoInfo;
@@ -34,13 +32,17 @@ public class FilterExecutor {
 
     private VideoInfo editVideoInfo;
     private boolean isLogDebug = false;
-    private int trackIndex;
-    MediaExtractor extractor = null;
+    private int trackIndexVideo;
+    private int trackIndexAudio;
+    MediaExtractor videoExtractor = null;
+    MediaExtractor audioExtractor = null;
     private Context context;
     private boolean isSetup = false;
-
-    public void setExtractor(MediaExtractor extractor) {
-        this.extractor = extractor;
+    String pathToVideo;
+    String pathFromVideo;
+    MediaFormat inputAudioFormat = null;
+    public void setVideoExtractor(MediaExtractor videoExtractor) {
+        this.videoExtractor = videoExtractor;
     }
 
 
@@ -51,24 +53,38 @@ public class FilterExecutor {
 
 
     public void setup() throws Exception {
-        MediaFormat inputFormat = null;
+        MediaFormat inputVideoFormat = null;
+
         MediaFormat outputFormat = null;
 
         String mime = null;
         String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.black_and_white);
+        videoExtractor = new MediaExtractor();
+        audioExtractor = new MediaExtractor();
 
-        trackIndex = selectTrack(extractor);
-        if (trackIndex < 0) {
+        videoExtractor.setDataSource(pathFromVideo);
+        audioExtractor.setDataSource(pathFromVideo);
+
+        trackIndexVideo = selectTrack(videoExtractor,"video/");
+        if (trackIndexVideo < 0) {
             throw new RuntimeException("No video track found in ");
         }
-        extractor.selectTrack(trackIndex);
+        trackIndexAudio = selectTrack(audioExtractor,"audio/");
+        if (trackIndexAudio < 0) {
+            throw new RuntimeException("No audio track found in ");
+        }
 
-        inputFormat = extractor.getTrackFormat(trackIndex);
-        mime = inputFormat.getString(MediaFormat.KEY_MIME);
-        outputFormat = MediaFormat.createVideoFormat(mime, Math.toIntExact(this.editVideoInfo.getWidth()), Math.toIntExact(this.editVideoInfo.getHeight()));
+        videoExtractor.selectTrack(trackIndexVideo);
+        audioExtractor.selectTrack(trackIndexAudio);
+
+        inputVideoFormat = videoExtractor.getTrackFormat(trackIndexVideo);
+        inputAudioFormat = audioExtractor.getTrackFormat(trackIndexAudio);
+
+        mime = inputVideoFormat.getString(MediaFormat.KEY_MIME);
+        outputFormat = MediaFormat.createVideoFormat(mime, inputVideoFormat.getInteger(MediaFormat.KEY_WIDTH), inputVideoFormat.getInteger(MediaFormat.KEY_HEIGHT));
         outputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, (int) (this.editVideoInfo.getBitrate() * 1024 * 8));
-        outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, inputFormat.getInteger(MediaFormat.KEY_FRAME_RATE));
+        outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds));
+        outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, inputVideoFormat.getInteger(MediaFormat.KEY_FRAME_RATE));
         outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
 
         encoder = MediaCodec.createEncoderByType(mime);
@@ -78,17 +94,19 @@ public class FilterExecutor {
         outputSurface = new OutputSurface();
         outputSurface.changeFragmentShader(fragmentShader);
         decoder = MediaCodec.createDecoderByType(mime);
-        decoder.configure(inputFormat, outputSurface.getSurface(), null, 0);
+        decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
         File folder = UtilUri.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
-        File newFiltredFile = UtilUri.CreateFileInFolder(folder.getCanonicalPath(), "outputTest.avi");
+        File newFiltredFile = UtilUri.CreateFileInFolder(folder.getCanonicalPath(), "outputTest.mp4");
+        this.pathToVideo = newFiltredFile.getCanonicalPath();
         mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-
+        //mixerVideoIndex =  mediaMuxer.addTrack(inputVideoFormat);
+       // mixerAudioIndex = mediaMuxer.addTrack(inputAudioFormat);
     }
 
     public void startFiltered() throws Exception {
         encoder.start();
         decoder.start();
-        doExtract(extractor, trackIndex, decoder, encoder, outputSurface, inputSurface);
+        doExtract(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface);
 
     }
 
@@ -103,8 +121,8 @@ public class FilterExecutor {
             decoder.stop();
             decoder.release();
         }
-        if (extractor != null) {
-            extractor.release();
+        if (videoExtractor != null) {
+            videoExtractor.release();
         }
         if (mediaMuxer != null) {
             mediaMuxer.stop();
@@ -112,30 +130,35 @@ public class FilterExecutor {
         }
     }
 
-    public void launchApplyFilterToVideo(MediaExtractor extractor, VideoInfo editVideoInfo) throws Exception {
-        this.setExtractor(extractor);
-        this.setEditVideoInfo(editVideoInfo);
-        this.setup();
-        this.startFiltered();
-        this.release();
+    public void launchApplyFilterToVideo() throws Exception {
+
+        if(isSetup) {
+            this.setup();
+            this.startFiltered();
+            this.release();
+            //ActionEditor.addAudioFromVideoToVideo(pathFromVideo,pathToVideo);
+        }
+        else
+            throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
     }
 
-    private int selectTrack(MediaExtractor extractor) {
+    private int selectTrack(MediaExtractor extractor,String trackPrefix) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();
         for (int i = 0; i < numTracks; i++) {
             MediaFormat format = extractor.getTrackFormat(i);
             String mime = format.getString(MediaFormat.KEY_MIME);
-            if (mime.startsWith("video/")) {
+            if (mime.startsWith(trackPrefix)) {
                 if(isLogDebug)
                     Log.d(TAG, "Extractor selected track " + i + " (" + mime + "): " + format);
+                return i;
             }
-            return i;
+
         }
         return -1;
     }
 
-    private void doExtract(MediaExtractor extractor, int trackIndex, MediaCodec decoder, MediaCodec encoder, OutputSurface outputSurface, InputSurface inputSurface) throws Exception {
+    private void doExtract(MediaExtractor videoExtractor,MediaExtractor audioExtractor, int trackIndexVideo,int trackIndexAudio, MediaCodec decoder, MediaCodec encoder, OutputSurface outputSurface, InputSurface inputSurface) throws Exception {
         final int TIMEOUT_USEC = 1000;
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
@@ -147,6 +170,7 @@ public class FilterExecutor {
         boolean inputDone = false;
         boolean decoderDone = false;
         boolean muxerStart = false;
+        int maxChunkSize = 1024 * 1024;
 
         while (!outputDone) {
             if(isLogDebug)
@@ -156,7 +180,7 @@ public class FilterExecutor {
                 int inputBufIndex = decoder.dequeueInputBuffer(TIMEOUT_USEC);
                 if (inputBufIndex >= 0) {
                     ByteBuffer inputBuf = decoder.getInputBuffer(inputBufIndex);
-                    int chunkSize = extractor.readSampleData(inputBuf, 0);
+                    int chunkSize = videoExtractor.readSampleData(inputBuf, 0);
 
                     if (chunkSize < 0) {
                         decoder.queueInputBuffer(inputBufIndex, 0, 0, 0L,
@@ -165,12 +189,12 @@ public class FilterExecutor {
                         if(isLogDebug)
                             Log.d(TAG, "sent input EOS");
                     } else {
-                        if (extractor.getSampleTrackIndex() != trackIndex) {
+                        if (videoExtractor.getSampleTrackIndex() != trackIndexVideo) {
                             if(isLogDebug)
                                 Log.w(TAG, "WEIRD: got sample from track " +
-                                    extractor.getSampleTrackIndex() + ", expected " + trackIndex);
+                                    videoExtractor.getSampleTrackIndex() + ", expected " + trackIndexVideo);
                         }
-                        long presentationTimeUs = extractor.getSampleTime();
+                        long presentationTimeUs = videoExtractor.getSampleTime();
                         decoder.queueInputBuffer(inputBufIndex, 0, chunkSize, presentationTimeUs, 0 /*flags*/);
                         {
                             if(isLogDebug)
@@ -178,7 +202,7 @@ public class FilterExecutor {
                                     chunkSize);
                         }
                         inputChunk++;
-                        extractor.advance();
+                        videoExtractor.advance();
                     }
                 } else {
                     if(isLogDebug)
@@ -198,15 +222,13 @@ public class FilterExecutor {
                     if(isLogDebug)
                         Log.d(TAG, "no output from encoder available");
                     encoderOutputAvailable = false;
-                } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    if(isLogDebug)
-                        Log.d(TAG, "encoder output buffers changed");
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     MediaFormat newFormat = encoder.getOutputFormat();
                     if (muxerStart) {
                         throw new RuntimeException("format changed twice");
                     }
                     mTrackIndex = mediaMuxer.addTrack(newFormat);
+                    mixerAudioIndex = mediaMuxer.addTrack(inputAudioFormat);
                     mediaMuxer.start();
                     muxerStart = true;
                     if(isLogDebug)
@@ -289,10 +311,30 @@ public class FilterExecutor {
                 }
             }
         }
-    }
-    public void setupSettings(MediaExtractor extractor, VideoInfo editVideoInfo,Long bitrateBitPerSeconds)
-    {
+        // Copy audio
+        ByteBuffer inputBuf2 = ByteBuffer.allocate(maxChunkSize);
+        MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+        while (true) {
+            int chunkSize = audioExtractor.readSampleData(inputBuf2, 0);
 
+            if (chunkSize >= 0) {
+                bufferInfo.presentationTimeUs = audioExtractor.getSampleTime();
+                bufferInfo.flags = audioExtractor.getSampleFlags();
+                bufferInfo.size = chunkSize;
+
+                mediaMuxer.writeSampleData(trackIndexAudio, inputBuf2, bufferInfo);
+                audioExtractor.advance();
+            } else {
+                break;
+            }
+        }
+    }
+    public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo)
+    {
+        this.videoExtractor = extractor;
+        this.pathFromVideo = pathFromVideo;
+        this.bitrateBitPerSeconds = bitrateBitPerSeconds;
+        this.isSetup = true;
     }
  /*   @Override
     public void run() {

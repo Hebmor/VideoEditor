@@ -163,8 +163,8 @@ public class ActionEditor {
                 ,hoursDuration,minutesDuration,secsDuration,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
-    public static void AddAudioFromVideoToVideo(String fromAudioVideo,String toAudioVideo) throws InterruptedException {
-        String command = String.format("-y -i \"%s\" -i  \"%s\" -c copy -map 0:1 -map 1:0 -shortest  \"%s\"",fromAudioVideo,toAudioVideo,toAudioVideo);
+    public static void addAudioFromVideoToVideo(String fromAudioVideo,String toAudioVideo,String pathResultVideo) throws InterruptedException {
+        String command = String.format("-y -i  \"%s\" -i  \"%s\" -c copy -map 0:1 -map 1:0 -shortest  \"%s\"",fromAudioVideo,toAudioVideo,toAudioVideo);
         RunCommandExecuteFFMPEG(command,false);
     }
 }

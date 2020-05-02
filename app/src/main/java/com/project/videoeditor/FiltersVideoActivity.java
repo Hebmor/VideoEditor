@@ -41,13 +41,14 @@ public class FiltersVideoActivity extends Activity {
         mediaPlayer = new MediaPlayer();
         filterExecutor = new FilterExecutor(this);
 
+
         try {
             mediaExtractor.setDataSource(path);
             mediaPlayer.setDataSource(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024 * 8,path);
 //        try {
 //            decodeEditEncodeTest.testVideoEdit720p();
 //        } catch (Throwable throwable) {
@@ -98,7 +99,8 @@ public class FiltersVideoActivity extends Activity {
         videoFilteredView.changeFragmentShader(FiltersHandler.nameFilters.BLACK_AND_WHITE);
     }
     public void ClicksTestRecordVideoFilter(View view) throws Exception {
-        filterExecutor.launchApplyFilterToVideo(mediaExtractor,editVideoInfo);
+
+        filterExecutor.launchApplyFilterToVideo();
     }
     private Bitmap getBitmapFromView(View view)
     {

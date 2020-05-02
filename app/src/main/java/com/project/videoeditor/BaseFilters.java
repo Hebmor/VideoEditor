@@ -155,7 +155,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
 
         if(this._updateTexImageCompare == this._updateTexImageCounter)
             this._updateTexImageCounter++;
-        
+
         maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
         checkGlError("glGetAttribLocation aPosition");
         if (maPositionHandle == -1) {
@@ -187,10 +187,8 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
                 GLES20.GL_LINEAR);
 
         mTextureID = oldFilter.mTextureID;
-
         mSurfaceTexture = oldFilter.mSurfaceTexture;
-
-        this.surface = surface;
+        this.surface = oldFilter.surface;
         this.mMediaPlayer = oldFilter.mMediaPlayer;
 
     }
