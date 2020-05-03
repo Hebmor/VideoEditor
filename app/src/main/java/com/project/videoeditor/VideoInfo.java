@@ -45,7 +45,7 @@ public class VideoInfo implements Parcelable {
         if(mainVideoStream != null)
         {
             this.path = path;
-            this.bitrate = mainVideoStream.getBitrate();
+            this.bitrate = info.getBitrate();
 
             this.height = mainVideoStream.getHeight();
             this.width = mainVideoStream.getWidth();

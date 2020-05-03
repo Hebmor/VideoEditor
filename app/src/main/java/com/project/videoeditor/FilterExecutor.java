@@ -7,9 +7,11 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static java.lang.Thread.sleep;
@@ -25,8 +27,6 @@ public class FilterExecutor {
     private MediaMuxer mediaMuxer;
     private Long bitrateBitPerSeconds;
 
-    private String pathInVideoFile;
-    private String pathOutVideoFile;
 
     private boolean isLogDebug = true;
     private int trackIndexVideo;
@@ -39,9 +39,12 @@ public class FilterExecutor {
 
     private boolean isSetup = false;
     private boolean noSoundFlag = false;
-    String pathToVideo;
-    String pathFromVideo;
+    String pathOutVideoFile;
+    String pathInVideoFile;
     MediaFormat inputAudioFormat = null;
+    private BaseFilters filter;
+    private String newFilename;
+    private int framerate;
 
     public void setVideoExtractor(MediaExtractor videoExtractor) {
         this.videoExtractor = videoExtractor;
@@ -56,8 +59,7 @@ public class FilterExecutor {
 
     public void setup() throws Exception {
         MediaFormat inputVideoFormat = null;
-
-        MediaFormat outputFormat = null;
+        MediaFormat outputVideoFormat = null;
 
         String mime = null;
         String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.black_and_white);
@@ -65,8 +67,8 @@ public class FilterExecutor {
 
         audioExtractor = new MediaExtractor();
 
-        videoExtractor.setDataSource(pathFromVideo);
-        audioExtractor.setDataSource(pathFromVideo);
+        videoExtractor.setDataSource(pathInVideoFile);
+        audioExtractor.setDataSource(pathInVideoFile);
 
         trackIndexVideo = selectTrack(videoExtractor,"video/");
         if (trackIndexVideo < 0) {
@@ -78,35 +80,48 @@ public class FilterExecutor {
             noSoundFlag = true;
         }
 
-        videoExtractor.selectTrack(trackIndexVideo);
-        audioExtractor.selectTrack(trackIndexAudio);
-
         inputVideoFormat = videoExtractor.getTrackFormat(trackIndexVideo);
-        inputAudioFormat = audioExtractor.getTrackFormat(trackIndexAudio);
+        videoExtractor.selectTrack(trackIndexVideo);
+
+        if(!noSoundFlag) {
+            audioExtractor.selectTrack(trackIndexAudio);
+            inputAudioFormat = audioExtractor.getTrackFormat(trackIndexAudio);
+        }
 
         mime = inputVideoFormat.getString(MediaFormat.KEY_MIME);
 
-        outputFormat = MediaFormat.createVideoFormat(mime, inputVideoFormat.getInteger(MediaFormat.KEY_WIDTH), inputVideoFormat.getInteger(MediaFormat.KEY_HEIGHT));
-        outputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds));
-        outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, inputVideoFormat.getInteger(MediaFormat.KEY_FRAME_RATE));
-        outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
+        outputVideoFormat = MediaFormat.createVideoFormat(mime, inputVideoFormat.getInteger(MediaFormat.KEY_WIDTH), inputVideoFormat.getInteger(MediaFormat.KEY_HEIGHT));
+        outputVideoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        outputVideoFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds / 3));
+        outputVideoFormat.setInteger(MediaFormat.KEY_FRAME_RATE,framerate);
+        outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
 
         encoder = MediaCodec.createEncoderByType(mime);
-        encoder.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        encoder.configure(outputVideoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         inputSurface = new InputSurface(encoder.createInputSurface());
         inputSurface.makeCurrent();
-        outputSurface = new OutputSurface(new BlackWhiteFilter(context));
+        outputSurface = new OutputSurface(filter);
        // outputSurface.changeFragmentShader(fragmentShader);
         decoder = MediaCodec.createDecoderByType(mime);
         decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
 
         File folder = UtilUri.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
-        File newFiltredFile = UtilUri.CreateFileInFolder(folder.getCanonicalPath(), "outputTest.mp4");
-        this.pathToVideo = newFiltredFile.getCanonicalPath();
-        mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        File newFiltredFile = UtilUri.CreateFileInFolder(folder.getCanonicalPath(), newFilename);
+        this.pathOutVideoFile = newFiltredFile.getCanonicalPath();
+        int outputFormat = getMediaMixerOutputFormatByMimeType(mime);
+        mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), outputFormat);
     }
-
+    private int getMediaMixerOutputFormatByMimeType(String mime)
+    {
+        switch (mime)
+        {
+            case MediaFormat.MIMETYPE_VIDEO_VP9:
+            case MediaFormat.MIMETYPE_VIDEO_VP8:
+                return MediaMuxer.OutputFormat.MUXER_OUTPUT_WEBM;
+            default:
+                return MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4;
+        }
+    }
     public void startFiltered() throws Exception {
         encoder.start();
         decoder.start();
@@ -348,12 +363,16 @@ public class FilterExecutor {
             }
         }
     }
-    public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo)
-    {
+    public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo,int framerate,BaseFilters filter) throws IOException {
         this.videoExtractor = extractor;
-        this.pathFromVideo = pathFromVideo;
+        this.pathInVideoFile = pathFromVideo;
         this.bitrateBitPerSeconds = bitrateBitPerSeconds;
+        String filename = new File(pathFromVideo).getName();
+        int idx = filename.lastIndexOf(".");
+        this.newFilename = filename.substring(0,idx) + "_" + filter.getFilterName()+filename.substring(idx);
+        this.filter = filter;
         this.isSetup = true;
+        this.framerate = framerate;
     }
 
  /*   @Override

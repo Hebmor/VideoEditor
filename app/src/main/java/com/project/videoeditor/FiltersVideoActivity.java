@@ -48,7 +48,11 @@ public class FiltersVideoActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024 * 8,path);
+        try {
+            filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024 * 8,path,framerate,new BlackWhiteFilter(this));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        try {
 //            decodeEditEncodeTest.testVideoEdit720p();
 //        } catch (Throwable throwable) {

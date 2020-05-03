@@ -52,6 +52,9 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
     protected boolean changeShaderFlag = false;
     protected static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
+
+    abstract public String getFilterName();
+
     public boolean isInvert() {
         return isInvert;
     }
