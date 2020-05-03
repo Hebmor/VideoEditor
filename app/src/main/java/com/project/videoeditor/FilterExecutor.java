@@ -6,6 +6,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.os.Debug;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -28,7 +29,7 @@ public class FilterExecutor {
     private Long bitrateBitPerSeconds;
 
 
-    private boolean isLogDebug = true;
+    private boolean isLogDebug = false;
     private int trackIndexVideo;
     private int trackIndexAudio;
 
@@ -45,6 +46,9 @@ public class FilterExecutor {
     private BaseFilters filter;
     private String newFilename;
     private int framerate;
+    private Thread encoderThread;
+    private Thread decoderThread;
+    private Thread extractorThread;
 
     public void setVideoExtractor(MediaExtractor videoExtractor) {
         this.videoExtractor = videoExtractor;
@@ -92,9 +96,10 @@ public class FilterExecutor {
 
         outputVideoFormat = MediaFormat.createVideoFormat(mime, inputVideoFormat.getInteger(MediaFormat.KEY_WIDTH), inputVideoFormat.getInteger(MediaFormat.KEY_HEIGHT));
         outputVideoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        outputVideoFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds / 3));
+        outputVideoFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds));
         outputVideoFormat.setInteger(MediaFormat.KEY_FRAME_RATE,framerate);
         outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
+        outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
 
         encoder = MediaCodec.createEncoderByType(mime);
         encoder.configure(outputVideoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
@@ -176,35 +181,7 @@ public class FilterExecutor {
         }
         return -1;
     }
-    private boolean extractChunksToDecoder(int inputBufIndex)
-    {
-        if (inputBufIndex >= 0) {
-            ByteBuffer inputBuf = decoder.getInputBuffer(inputBufIndex);
-            int chunkSize = videoExtractor.readSampleData(inputBuf, 0);
 
-            if (chunkSize < 0) {
-                decoder.queueInputBuffer(inputBufIndex, 0, 0, 0L,
-                        MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                if(isLogDebug)
-                    Log.d(TAG, "sent input EOS");
-                return true;
-            } else {
-                if (videoExtractor.getSampleTrackIndex() != trackIndexVideo) {
-                    if(isLogDebug)
-                        Log.w(TAG, "WEIRD: got sample from track " +
-                                videoExtractor.getSampleTrackIndex() + ", expected " + trackIndexVideo);
-                }
-                long presentationTimeUs = videoExtractor.getSampleTime();
-                decoder.queueInputBuffer(inputBufIndex, 0, chunkSize, presentationTimeUs, 0 /*flags*/);
-                videoExtractor.advance();
-
-            }
-        } else {
-            if(isLogDebug)
-                Log.d(TAG, "input buffer not available");
-        }
-        return false;
-    }
 
     private void doExtract(MediaExtractor videoExtractor,MediaExtractor audioExtractor, int trackIndexVideo,int trackIndexAudio, MediaCodec decoder, MediaCodec encoder, OutputSurface outputSurface, InputSurface inputSurface) throws Exception {
         final int TIMEOUT_USEC = 1000;
@@ -220,22 +197,19 @@ public class FilterExecutor {
         int mixerAudioIndex = 0;
 
         boolean outputDone = false;
-        boolean inputVideoDone = false;
+
         boolean decoderDone = false;
         boolean muxerStart = false;
         boolean inputAudioDone = false;
-
+        extractorThread = new Thread(new ExtractorRunnable(decoder,videoExtractor,isLogDebug,trackIndexVideo,1));
+        long beginTime = System.currentTimeMillis();
+        if(!extractorThread.isAlive())
+            extractorThread.start();
         while (!outputDone) {
             if (isLogDebug)
                 Log.d(TAG, "loop");
 
-            if (!inputVideoDone) {
-                int inputBufIndex = decoder.dequeueInputBuffer(TIMEOUT_USEC);
 
-                if (isLogDebug)
-                    Log.d(TAG, "Кадр: " + extractChunkCount++ + " извлечен!");
-                inputVideoDone = extractChunksToDecoder(inputBufIndex);
-            }
             // Assume output is available.  Loop until both assumptions are false.
             boolean decoderOutputAvailable = !decoderDone;
             boolean encoderOutputAvailable = true;
@@ -362,6 +336,7 @@ public class FilterExecutor {
                 }
             }
         }
+        Log.d("Время выполнения фильтрации: ",(System.currentTimeMillis() - beginTime) + " MS");
     }
     public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo,int framerate,BaseFilters filter) throws IOException {
         this.videoExtractor = extractor;
