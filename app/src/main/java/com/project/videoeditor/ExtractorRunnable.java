@@ -16,12 +16,13 @@ public class ExtractorRunnable implements Runnable {
     private long TIMEOUT_USEC = 0;
     private int extractChunkCount = 0;
 
-    public ExtractorRunnable(MediaCodec decoder, MediaExtractor videoExtractor, boolean isLogDebug, int trackIndexVideo, long TIMEOUT_USEC) {
+    public ExtractorRunnable(MediaCodec decoder, MediaExtractor videoExtractor, int trackIndexVideo, long TIMEOUT_USEC,boolean isLogDebug) {
         this.decoder = decoder;
         this.videoExtractor = videoExtractor;
         this.isLogDebug = isLogDebug;
         this.trackIndexVideo = trackIndexVideo;
         this.TIMEOUT_USEC = TIMEOUT_USEC;
+        this.isLogDebug = isLogDebug;
     }
 
 

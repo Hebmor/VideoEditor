@@ -131,16 +131,7 @@ public class OutputSurface  implements SurfaceTexture.OnFrameAvailableListener {
      * Discard all resources held by this class, notably the EGL context.
      */
     public void release() {
-        if (mEGL != null) {
-            if (mEGL.eglGetCurrentContext().equals(mEGLContext)) {
-                // Clear the current context and surface to ensure they are discarded immediately.
-                mEGL.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE,
-                        EGL10.EGL_NO_CONTEXT);
-            }
-            mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface);
-            mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
-            //mEGL.eglTerminate(mEGLDisplay);
-        }
+
         filters.surface.release();
         // this causes a bunch of warnings that appear harmless but might confuse someone:
         //  W BufferQueue: [unnamed-3997-2] cancelBuffer: BufferQueue has been abandoned!
