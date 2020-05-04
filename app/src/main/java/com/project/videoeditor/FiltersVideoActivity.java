@@ -104,7 +104,7 @@ public class FiltersVideoActivity extends Activity {
     }
     public void ClicksTestRecordVideoFilter(View view) throws Exception {
 
-        filterExecutor.launchApplyFilterToVideo();
+        filterExecutor.start();
     }
     private Bitmap getBitmapFromView(View view)
     {

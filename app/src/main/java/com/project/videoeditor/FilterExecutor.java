@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 import static java.lang.Thread.sleep;
 
 
-public class FilterExecutor {
+public class FilterExecutor extends Thread {
     private static final String TAG = "FilterThread_DEBUG";
     MediaCodec decoder = null;
     MediaCodec encoder = null;
@@ -46,8 +46,7 @@ public class FilterExecutor {
     private BaseFilters filter;
     private String newFilename;
     private int framerate;
-    private Thread encoderThread;
-    private Thread decoderThread;
+
     private Thread extractorThread;
 
     public void setVideoExtractor(MediaExtractor videoExtractor) {
@@ -201,18 +200,22 @@ public class FilterExecutor {
         boolean decoderDone = false;
         boolean muxerStart = false;
         boolean inputAudioDone = false;
+        boolean decoderOutputAvailable = false;
+        boolean encoderOutputAvailable = false;
+
         extractorThread = new Thread(new ExtractorRunnable(decoder,videoExtractor,isLogDebug,trackIndexVideo,1));
         long beginTime = System.currentTimeMillis();
-        if(!extractorThread.isAlive())
-            extractorThread.start();
+
+        extractorThread.start();
+
         while (!outputDone) {
             if (isLogDebug)
                 Log.d(TAG, "loop");
 
 
             // Assume output is available.  Loop until both assumptions are false.
-            boolean decoderOutputAvailable = !decoderDone;
-            boolean encoderOutputAvailable = true;
+            decoderOutputAvailable = !decoderDone;
+            encoderOutputAvailable = true;
 
             while (decoderOutputAvailable || encoderOutputAvailable) {
                 // Start by draining any pending output from the encoder.  It's important to
@@ -268,7 +271,7 @@ public class FilterExecutor {
                     continue;
                 }
 
-                if (!outputDone) {
+                if (!decoderDone) {
                     int decoderStatus = decoder.dequeueOutputBuffer(infoVideo, TIMEOUT_USEC);
                     if (decoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                         decoderOutputAvailable = false;
@@ -292,7 +295,7 @@ public class FilterExecutor {
                         if ((infoVideo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                             Log.d(TAG, "output EOS");
 
-                            outputDone = true;
+                            //outputDone = true;
                             decoderOutputAvailable = false;
                             decoderDone = true;
                             encoder.signalEndOfInputStream();
@@ -318,6 +321,7 @@ public class FilterExecutor {
                 }
             }
         }
+        extractorThread.join();
         // Copy audio
         if (!noSoundFlag) {
             ByteBuffer inputBuf = ByteBuffer.allocate(maxChunkSize);
@@ -336,6 +340,7 @@ public class FilterExecutor {
                 }
             }
         }
+
         Log.d("Время выполнения фильтрации: ",(System.currentTimeMillis() - beginTime) + " MS");
     }
     public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo,int framerate,BaseFilters filter) throws IOException {
@@ -350,14 +355,14 @@ public class FilterExecutor {
         this.framerate = framerate;
     }
 
- /*   @Override
+
+    @Override
     public void run() {
         super.run();
-        if(this.extractor == null)
-            //throw new Exception("MediaExtractor не инициализирован!");
-            if(this.editVideoInfo == null)
-
-        //launchApplyFilterToVideo(extractor,);
-
-    }*/
+        try {
+            launchApplyFilterToVideo();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
