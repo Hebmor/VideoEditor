@@ -10,12 +10,15 @@ import android.os.Bundle;
 import android.view.View;
 
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+
+import com.project.videoeditor.activity.MainEditor;
+import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     VideoInfo info = new VideoInfo(path);
                     ActionEditor.setVideoInfo(info);
-                    Intent intent = new Intent(this,MainEditor.class);
+                    Intent intent = new Intent(this, MainEditor.class);
                     intent.putExtra(MainEditor.EDIT_VIDEO_ID,info);
                     startActivity(intent);
                     break;

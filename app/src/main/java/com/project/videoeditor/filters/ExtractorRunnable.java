@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.media.MediaCodec;
 import android.media.MediaExtractor;

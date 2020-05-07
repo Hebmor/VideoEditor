@@ -7,6 +7,18 @@
     android:background="#F4F4F4"
     tools:context=".MainActivity" >
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/start_background" />
+
     <Button
         android:id="@+id/buttonStick"
         android:layout_width="200dp"
@@ -15,12 +27,29 @@
         android:layout_marginTop="342dp"
         android:layout_marginEnd="160dp"
         android:layout_marginBottom="342dp"
+        android:drawableLeft="@drawable/ic_video_call_black_24dp"
+        android:onClick="ClickUploadVideo"
         android:pointerIcon="arrow"
         android:text="@string/select_video"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="ClickUploadVideo"
-        android:drawableLeft="@drawable/add"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonOpenProject"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="160dp"
+        android:drawableLeft="@drawable/ic_open_in_new_black_24dp"
+        android:onClick="ClickUploadVideo"
+        android:pointerIcon="arrow"
+        android:text="Открыть проект"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonStick" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

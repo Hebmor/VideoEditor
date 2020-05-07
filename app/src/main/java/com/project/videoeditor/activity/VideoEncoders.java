@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoInfo;
+import com.project.videoeditor.codecs.SettingsMPEG4Fragment;
+import com.project.videoeditor.codecs.Settings_h265Fragment;
 
 
 public class VideoEncoders extends AppCompatActivity {

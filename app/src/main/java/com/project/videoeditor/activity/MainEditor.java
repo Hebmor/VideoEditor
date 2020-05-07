@@ -1,12 +1,15 @@
-package com.project.videoeditor;
+package com.project.videoeditor.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.View;
+
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoInfo;
+import com.project.videoeditor.VideoInfoPage;
+import com.project.videoeditor.filters.FiltersVideoActivity;
 
 public class MainEditor extends AppCompatActivity {
 

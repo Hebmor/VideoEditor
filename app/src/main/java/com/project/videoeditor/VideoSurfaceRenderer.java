@@ -5,6 +5,9 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+
+import com.project.videoeditor.filters.BaseFilters;
+
 import java.io.IOException;
 
 

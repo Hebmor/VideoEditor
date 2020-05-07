@@ -1,13 +1,8 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.content.Context;
-import android.opengl.GLES20;
-import android.opengl.Matrix;
-import android.util.Log;
 
-import java.nio.FloatBuffer;
-
-import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
+import com.project.videoeditor.R;
 
 public class FiltersHandler {
 

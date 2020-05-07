@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.content.Context;
 import android.media.MediaCodec;
@@ -6,10 +6,11 @@ import android.media.MediaCodecInfo;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.os.Debug;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
+
+import com.project.videoeditor.R;
+import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
 import java.io.IOException;

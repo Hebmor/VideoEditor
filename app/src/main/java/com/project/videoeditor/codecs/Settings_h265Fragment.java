@@ -1,8 +1,7 @@
-package com.project.videoeditor;
+package com.project.videoeditor.codecs;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.arthenica.mobileffmpeg.Config;
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoInfo;
+import com.project.videoeditor.support.UtilUri;
 import com.warkiz.widget.IndicatorSeekBar;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
 

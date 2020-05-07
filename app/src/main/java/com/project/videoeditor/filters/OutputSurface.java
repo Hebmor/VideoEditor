@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;

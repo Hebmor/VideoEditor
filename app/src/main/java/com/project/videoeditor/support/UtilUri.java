@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.support;
 
 import android.content.ContentUris;
 import android.content.Context;

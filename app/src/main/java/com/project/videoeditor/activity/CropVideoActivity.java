@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.project.videoeditor.R;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.view.GestureCropImageView;
 import com.yalantis.ucrop.view.UCropView;

@@ -1,19 +1,16 @@
-package com.project.videoeditor;
+package com.project.videoeditor.codecs;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.DocumentsContract;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.project.videoeditor.VideoInfo;
+
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ActionEditor {

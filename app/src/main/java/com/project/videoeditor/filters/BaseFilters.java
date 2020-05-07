@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -8,6 +8,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
+
+import com.project.videoeditor.support.UtilUri;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

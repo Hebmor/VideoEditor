@@ -6,6 +6,9 @@ import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder;
 
+import com.project.videoeditor.filters.DefaultFilter;
+import com.project.videoeditor.filters.FiltersHandler;
+
 import java.io.IOException;
 
 

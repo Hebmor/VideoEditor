@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
+
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoFilteredView;
+import com.project.videoeditor.VideoInfo;
 
 import java.io.IOException;
 

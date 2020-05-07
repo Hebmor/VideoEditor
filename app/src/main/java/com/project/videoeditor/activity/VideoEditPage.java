@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
@@ -12,7 +12,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-public class VideoEditPage extends AppCompatActivity implements FilenameDialogFragment.FilenameDialogFragmentListener  {
+import com.project.videoeditor.FilenameDialogFragment;
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoInfo;
+import com.project.videoeditor.VideoTimeline;
+import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.support.UtilUri;
+
+public class VideoEditPage extends AppCompatActivity implements FilenameDialogFragment.FilenameDialogFragmentListener {
 
     private VideoInfo videoInfo;
     private VideoView videoView;

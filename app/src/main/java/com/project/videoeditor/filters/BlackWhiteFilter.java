@@ -1,6 +1,8 @@
-package com.project.videoeditor;
+package com.project.videoeditor.filters;
 
 import android.content.Context;
+
+import com.project.videoeditor.R;
 
 public class BlackWhiteFilter extends BaseFilters {
 

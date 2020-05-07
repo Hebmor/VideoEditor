@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsMPEG4Fragment">
+    tools:context=".codecs.SettingsMPEG4Fragment">
 
     <LinearLayout
         android:layout_width="match_parent"

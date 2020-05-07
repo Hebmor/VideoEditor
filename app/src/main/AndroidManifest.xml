@@ -14,11 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CropVideoActivity"></activity>
-        <activity android:name=".FiltersVideoActivity" />
-        <activity android:name=".VideoEditPage" />
-        <activity android:name=".MainEditor" />
-        <activity android:name=".VideoEncoders" />
+        <activity android:name=".activity.CropVideoActivity"></activity>
+        <activity android:name=".filters.FiltersVideoActivity" />
+        <activity android:name=".activity.VideoEditPage" />
+        <activity android:name=".activity.MainEditor" />
+        <activity android:name=".activity.VideoEncoders" />
         <activity android:name=".VideoInfoPage" />
         <activity android:name=".MainActivity">
             <intent-filter>
