@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.provider.DocumentsContract;
@@ -28,6 +30,7 @@ import android.widget.VideoView;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.jaygoo.widget.SeekBar;
+import com.project.videoeditor.codecs.ActionEditor;
 
 import java.io.File;
 
@@ -39,6 +42,8 @@ public class VideoTimeline extends Fragment {
 
     private  RangeSeekBar seekBar;
     private VideoEditBar videoEditBar;
+    private RecyclerView recyclerTimeline;
+    private LinearLayoutManager layoutManager;
 
     public SeekBar getSBR() {
         return SBR;
@@ -67,7 +72,8 @@ public class VideoTimeline extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         seekBar = view.findViewById(R.id.seekBarVideo);
         videoEditBar = view.findViewById(R.id.rectVideo);
-        videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
+        recyclerTimeline = (RecyclerView) view.findViewById(R.id.rectVideo);
+        //videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
         //linearLayout = view.findViewById(R.id.linear_layout);
 
 
@@ -112,12 +118,23 @@ public class VideoTimeline extends Fragment {
         super.onStart();
         pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
         seekBar.setRange(0,videoInfo.getDuration(),10);
+        String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(),getActivity());
+        VideoAdapter videoAdapter = new VideoAdapter(getBitmapByPath(pathCollage),videoInfo.getFilename());
+        layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
+        recyclerTimeline.setLayoutManager(layoutManager);
+        recyclerTimeline.setAdapter(videoAdapter);
         updateTimeline(0,videoInfo.getDuration());
         //pVideoView = getActivity().findViewById(R.id.videoView);
     }
     public void setVideoInfo(VideoInfo videoInfo)
     {
         this.videoInfo = videoInfo;
+    }
+    private Bitmap getBitmapByPath(String PathToFrameСollage)
+    {
+        File image = new File(PathToFrameСollage);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        return BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
     }
     public void setFramesFromVideo(String PathToFrameСollage)
     {

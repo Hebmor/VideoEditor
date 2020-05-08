@@ -1,12 +1,15 @@
 package com.project.videoeditor;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.provider.OpenableColumns;
 import android.view.View;
 
 import android.widget.Toast;
@@ -21,6 +24,8 @@ import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,18 +100,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_TAKE_GALLERY_VIDEO:
+                    VideoInfo info = new VideoInfo();
                     Uri selectedVideoUri = data.getData();
-                    String path = UtilUri.getPath(this, selectedVideoUri);
+                    String ffmpegPath = UtilUri.safUriToFFmpegPath(this,selectedVideoUri);
 
-                    File file = new File(path);
-                    if (!file.exists()) {
-                        Toast.makeText(this, "Файл не найдет!", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    VideoInfo info = new VideoInfo(path);
+                    String displayName = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.DISPLAY_NAME);
+                    String filesize = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);
+
+                    info.setFilename(displayName);
+                    info.setSizeInBytes(Long.parseLong(filesize));
+                    info.parseInfoFromPath(ffmpegPath);
                     ActionEditor.setVideoInfo(info);
                     Intent intent = new Intent(this, MainEditor.class);
                     intent.putExtra(MainEditor.EDIT_VIDEO_ID,info);

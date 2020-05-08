@@ -9,18 +9,25 @@ import android.view.View;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoInfoPage;
+import com.project.videoeditor.VideoTimeline;
+import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.filters.FiltersVideoActivity;
 
 public class MainEditor extends AppCompatActivity {
 
     public static final String EDIT_VIDEO_ID = "6001";
     private VideoInfo editVideoInfo;
+    private VideoTimeline videoTimeline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_editor);
-
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
+        videoTimeline = (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragmentTimeline);
+        videoTimeline.setVideoInfo(editVideoInfo);
+
+
     }
 
     public void ClickOpenEncodersPage(View view) {

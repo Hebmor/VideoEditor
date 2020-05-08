@@ -25,9 +25,40 @@ public class VideoInfo implements Parcelable {
     private long frameCount;
     private String pathFrameCollage;
     private String extension;
+    private String filename;
+    private Long sizeInBytes;
 
 
-    public VideoInfo(String path) {
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+    public Long getSizeInBytes() {
+        return sizeInBytes;
+    }
+
+    public void setSizeInBytes(Long sizeInBytes) {
+        this.sizeInBytes = sizeInBytes;
+    }
+
+
+
+    public VideoInfo()
+    {
+
+    }
+
+    public VideoInfo(String path)
+    {
+        parseInfoFromPath(path);
+
+    }
+
+    public void parseInfoFromPath(String path)
+    {
         StreamInformation mainVideoStream = null;
         StreamInformation mainAudioStream;
         MediaInformation info = FFprobe.getMediaInformation(path);
@@ -40,12 +71,13 @@ public class VideoInfo implements Parcelable {
         }
         this.duration = info.getDuration();
         this.startTime = info.getStartTime();
-        this.extension = path.substring(path.lastIndexOf("."));
+        //this.extension = path.substring(path.lastIndexOf("."));
 
-        if(mainVideoStream != null)
-        {
+        if(mainVideoStream != null) {
             this.path = path;
             this.bitrate = info.getBitrate();
+            if(this.bitrate == null)
+                this.bitrate = computeBitrate();
 
             this.height = mainVideoStream.getHeight();
             this.width = mainVideoStream.getWidth();
@@ -56,11 +88,9 @@ public class VideoInfo implements Parcelable {
             this.format = mainVideoStream.getFormat();
             this.aspectRatio = mainVideoStream.getDisplayAspectRatio();
             //Приблизительное количество кадров
-            this.frameCount = (long)((( this.duration / 1000) % 60) * Float.parseFloat(frameRate));
-
+            this.frameCount = (long) (((this.duration / 1000) % 60) * Float.parseFloat(frameRate));
         }
     }
-
     public VideoInfo(Parcel parcel) {
 
         this.startTime = parcel.readLong();
@@ -77,8 +107,16 @@ public class VideoInfo implements Parcelable {
         this.aspectRatio = parcel.readString();
         this.path = parcel.readString();
         this.extension = parcel.readString();
+        this.sizeInBytes = parcel.readLong();
     }
-
+    private Long computeBitrate()
+    {
+        if(this.duration != null && this.sizeInBytes != null)
+        {
+            return (sizeInBytes / 1024) / (duration / 1000);
+        }
+        return null;
+    }
     public void GeneratePreviewFrames()
     {
 
@@ -150,6 +188,7 @@ public class VideoInfo implements Parcelable {
         dest.writeString(aspectRatio);
         dest.writeString(path);
         dest.writeString(extension);
+        dest.writeLong(sizeInBytes);
 
     }
 

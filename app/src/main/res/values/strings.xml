@@ -61,6 +61,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="arrowRight"><![CDATA[>>]]></string>
+    <string name="nameVideo">Название видео</string>
+    <string name="videoPreview">Превью видео</string>
 
 
 </resources>

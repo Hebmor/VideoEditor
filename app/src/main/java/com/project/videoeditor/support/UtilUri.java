@@ -6,15 +6,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class UtilUri {
     public static String getPath(final Context context, final Uri uri) {
@@ -38,10 +42,14 @@ public class UtilUri {
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
 
-                final String id = DocumentsContract.getDocumentId(uri);
+                String id = DocumentsContract.getDocumentId(uri);
                 if (!TextUtils.isEmpty(id)) {
+
                     if (id.startsWith("raw:")) {
                         return id.replaceFirst("raw:", "");
+                    }
+                    if (id.startsWith("msf:")) {
+                        return  safUriToFFmpegPath(context,uri);
                     }
                     try {
                         final Uri contentUri = ContentUris.withAppendedId(
@@ -136,7 +144,35 @@ public class UtilUri {
                 folderFile.mkdirs();
         return  folderFile;
     }
-
+    public static String safUriToFFmpegPath(final Context context, final Uri uri) {
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+            return String.format(Locale.getDefault(), "pipe:%d", parcelFileDescriptor.getFd());
+        } catch (FileNotFoundException e) {
+            return "";
+        }
+    }
+    public static String getInfoByUri(final Context context,final Uri uri,final String columnName)
+    {
+        File myFile = new File(uri.toString());
+        if (uri.toString().startsWith("content://")) {
+            Cursor cursor = null;
+            try {
+                cursor = context.getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    return cursor.getString(cursor.getColumnIndex(columnName));
+                }
+            } finally {
+                cursor.close();
+            }
+        } else if (uri.toString().startsWith("file://")) {
+            if(columnName.equals(OpenableColumns.DISPLAY_NAME))
+                return myFile.getName();
+            else if(columnName.equals(OpenableColumns.SIZE))
+                return String.valueOf(myFile.getTotalSpace());
+        }
+        return null;
+    }
     public static File CreateFileInFolder(String folderPath,String filename)
     {
         return new File(folderPath, filename);
