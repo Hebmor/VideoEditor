@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">#9900574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="rsbColorSeekBarDefault">#c3c3c3</color>
     <color name="rsbColorThumbPressed">#FFE7E7E7</color>
@@ -11,4 +11,5 @@
     <color name="darkGrey">#A9A9A9</color>
     <color name="peach">#F85C50</color>
     <color name="honey">#A7AD02</color>
+    <color name="transparency">#00000000</color>
 </resources>

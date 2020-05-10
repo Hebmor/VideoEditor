@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.project.videoeditor"
-        minSdkVersion 25
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -43,4 +43,5 @@ dependencies {
     implementation 'com.github.yalantis:ucrop:2.2.4'
     implementation 'com.uncorkedstudios.android:recordable-surfaceview:1.5.7'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }

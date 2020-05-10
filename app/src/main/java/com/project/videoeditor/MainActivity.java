@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.provider.OpenableColumns;
@@ -106,7 +107,11 @@ public class MainActivity extends AppCompatActivity {
                 case REQUEST_TAKE_GALLERY_VIDEO:
                     VideoInfo info = new VideoInfo();
                     Uri selectedVideoUri = data.getData();
-                    String ffmpegPath = UtilUri.safUriToFFmpegPath(this,selectedVideoUri);
+                    String ffmpegPath;
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                        ffmpegPath = UtilUri.safUriToFFmpegPath(this,selectedVideoUri);
+                    else
+                        ffmpegPath = UtilUri.getPath(this,selectedVideoUri);
 
                     String displayName = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.DISPLAY_NAME);
                     String filesize = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);

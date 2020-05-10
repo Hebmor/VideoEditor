@@ -107,7 +107,8 @@ public class VideoInfo implements Parcelable {
         this.aspectRatio = parcel.readString();
         this.path = parcel.readString();
         this.extension = parcel.readString();
-        this.sizeInBytes = parcel.readLong();
+        //this.sizeInBytes = parcel.readLong();
+        this.filename = parcel.readString();
     }
     private Long computeBitrate()
     {
@@ -188,8 +189,8 @@ public class VideoInfo implements Parcelable {
         dest.writeString(aspectRatio);
         dest.writeString(path);
         dest.writeString(extension);
-        dest.writeLong(sizeInBytes);
-
+        //dest.writeLong(sizeInBytes);
+        dest.writeString(filename);
     }
 
     public static final Parcelable.Creator<VideoInfo> CREATOR = new Parcelable.Creator<VideoInfo>() {

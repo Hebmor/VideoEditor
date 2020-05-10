@@ -36,7 +36,7 @@ public class FiltersVideoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters_video);
         videoView = this.findViewById(R.id.videoView);
-        filteredVideoContainer = this.findViewById(R.id.filteredVideoContainer);
+        filteredVideoContainer = this.findViewById(R.id.videoContainer);
         editVideoInfo = ((VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID));
         String path = editVideoInfo.getPath();
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());

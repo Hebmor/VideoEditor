@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.widget.MediaController;
 
 import com.project.videoeditor.filters.BaseFilters;
 
@@ -18,6 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class VideoSurfaceRenderer
         implements GLSurfaceView.Renderer {
     private static String TAG = "VideoRender";
+
     private MediaPlayer mMediaPlayer;
     private BaseFilters currentFilter;
     private BaseFilters newFilter;
@@ -100,7 +102,7 @@ public class VideoSurfaceRenderer
             if(currentFilter.getSurfaceTexture() != null && currentFilter.getmMediaPlayer() != null) {
 
                 currentFilter.getSurfaceTexture().setOnFrameAvailableListener(onFrameAvailableListener);
-                currentFilter.getmMediaPlayer().start();
+                //currentFilter.getmMediaPlayer().start();
             }
         }
 

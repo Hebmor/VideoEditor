@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".VideoTimeline">
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
@@ -11,54 +11,44 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/timeline_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:scrollbarSize="4dp"
         android:scrollbars="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="24" />
+        tools:targetApi="24">
 
-    <com.project.videoeditor.VideoEditBar
-        android:id="@+id/rectVideo"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:piv_BottomBackground="110"
-        app:piv_LeftBackground="0"
-        app:piv_RightBackground="1100"
-        app:piv_TopBackground="0" />
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/seekBarVideo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/rectVideo"
-        app:layout_constraintStart_toStartOf="@+id/rectVideo"
-        app:layout_constraintVertical_bias="1.0"
-        app:rsb_gravity="center"
-        app:rsb_indicator_background_color="@color/white"
-        app:rsb_indicator_show_mode="alwaysShow"
-        app:rsb_indicator_text_color="@color/darkGrey"
-        app:rsb_indicator_text_size="10sp"
-        app:rsb_max="5000"
+        android:layout_height="0dp"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:outlineProvider="none"
+        android:saveEnabled="false"
+        android:soundEffectsEnabled="false"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_recycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rsb_gravity="top"
+        app:rsb_indicator_height="wrap_content"
+        app:rsb_indicator_show_mode="alwaysShowAfterTouch"
+        app:rsb_max="10"
         app:rsb_min="0"
-        app:rsb_min_interval="10"
-        app:rsb_mode="range"
-        app:rsb_progress_color="@color/honey"
-        app:rsb_thumb_drawable="@drawable/dot"
-        app:singleThumb="false" />
+        app:rsb_min_interval="1"
+        app:rsb_progress_color="@color/cardview_dark_background"
+        app:rsb_progress_default_color="@color/transparency"
+        app:singleThumb="false"></com.jaygoo.widget.RangeSeekBar>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

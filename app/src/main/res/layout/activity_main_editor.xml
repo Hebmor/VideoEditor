@@ -8,13 +8,15 @@
     tools:context=".activity.MainEditor">
 
     <FrameLayout
-        android:id="@+id/filteredVideoContainer"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:id="@+id/videoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:foregroundGravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/containerFrag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,24 +25,14 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="409dp"
-        android:layout_height="424dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
+        android:id="@+id/containerFrag"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filteredVideoContainer"
-        app:layout_constraintVertical_bias="0.0">
-
-        <fragment
-            android:id="@+id/fragmentTimeline"
-            android:name="com.project.videoeditor.VideoTimeline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/videoContainer"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

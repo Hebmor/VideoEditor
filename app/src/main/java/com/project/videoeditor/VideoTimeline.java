@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -57,7 +59,12 @@ public class VideoTimeline extends Fragment {
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
-    private VideoView pVideoView;
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
+
+    private MediaPlayer mediaPlayer;
 
 
     private float tempLeftValue = 0;
@@ -71,8 +78,8 @@ public class VideoTimeline extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         seekBar = view.findViewById(R.id.seekBarVideo);
-        videoEditBar = view.findViewById(R.id.rectVideo);
-        recyclerTimeline = (RecyclerView) view.findViewById(R.id.rectVideo);
+        //videoEditBar = view.findViewById(R.id.rectVideo);
+        recyclerTimeline = (RecyclerView) view.findViewById(R.id.timeline_recycler);
         //videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
         //linearLayout = view.findViewById(R.id.linear_layout);
 
@@ -80,9 +87,12 @@ public class VideoTimeline extends Fragment {
 
         SBR = seekBar.getRightSeekBar();
         SBL = seekBar.getLeftSeekBar();
-        videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
-        videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
-        videoEditBar.invalidate();
+        String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(),getActivity());
+        Bitmap bitmap = getBitmapByPath(pathCollage);
+        VideoAdapter videoAdapter = new VideoAdapter(bitmap,videoInfo.getFilename());
+        layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
+        recyclerTimeline.setLayoutManager(layoutManager);
+        recyclerTimeline.setAdapter(videoAdapter);
 
         seekBar.setOnRangeChangedListener(new OnRangeChangedListener()
         {
@@ -105,6 +115,25 @@ public class VideoTimeline extends Fragment {
             }
         });
 
+        getView().post(new Runnable() {
+            @Override
+            public void run() {
+
+                //seekBar.setProgressRight(recyclerTimeline.getRight());
+                //seekBar.setProgressLeft(recyclerTimeline.getLeft());
+                seekBar.setProgressHeight(100);
+
+                //seekBar.setTop(recyclerTimeline.getTop());
+              //  recyclerTimeline.setVisibility(View.INVISIBLE);
+                //seekBar.setProgressHeight(-100);
+               //SBR.setIndicatorPaddingTop(recyclerTimeline.getBottom());
+                //seekBar.setBottom(recyclerTimeline.getBottom());
+                seekBar.setProgressColor(Color.parseColor("#9900574B"));
+                seekBar.setProgressTop(53);
+                seekBar.setProgressBottom(211);
+                seekBar.invalidate();
+            }
+        });
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -116,14 +145,15 @@ public class VideoTimeline extends Fragment {
     public void onStart() {
 
         super.onStart();
-        pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
-        seekBar.setRange(0,videoInfo.getDuration(),10);
-        String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(),getActivity());
-        VideoAdapter videoAdapter = new VideoAdapter(getBitmapByPath(pathCollage),videoInfo.getFilename());
-        layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
-        recyclerTimeline.setLayoutManager(layoutManager);
-        recyclerTimeline.setAdapter(videoAdapter);
-        updateTimeline(0,videoInfo.getDuration());
+       // pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
+        seekBar.setRange(0,videoInfo.getDuration(),1000);
+        seekBar.setProgress(0,videoInfo.getDuration());
+
+        //updateTimeline(0,videoInfo.getDuration());
+
+
+        //
+
         //pVideoView = getActivity().findViewById(R.id.videoView);
     }
     public void setVideoInfo(VideoInfo videoInfo)
@@ -133,8 +163,12 @@ public class VideoTimeline extends Fragment {
     private Bitmap getBitmapByPath(String PathToFrameСollage)
     {
         File image = new File(PathToFrameСollage);
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        return BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        if(image.canRead())
+        {
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            return BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        }
+        return null;
     }
     public void setFramesFromVideo(String PathToFrameСollage)
     {
@@ -145,8 +179,10 @@ public class VideoTimeline extends Fragment {
     }
     private void updateTimeline(float leftValue, float rightValue)
     {
-        videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
-        videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
+        float leftProgress = SBL.getProgress();
+        float rightProgress = SBR.getProgress();
+       // videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
+        //videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
 
         if(tempLeftValue != leftValue) {
             long millisSBL = (long) SBL.getProgress() % 1000;
@@ -155,7 +191,7 @@ public class VideoTimeline extends Fragment {
             // long hourSBL = ((long)SBL.getProgress() / (1000 * 60 * 60)) % 24;
             tempLeftValue = leftValue;
             SBL.setIndicatorText(String.format("%02d:%02d.%d",minuteSBL, secondSBL, millisSBL));
-            pVideoView.seekTo((int)leftValue);
+            mediaPlayer.seekTo((int)leftValue);
         }
         if(tempRightValue != rightValue) {
             long millisSBR = (long) SBR.getProgress() % 1000;
@@ -164,9 +200,9 @@ public class VideoTimeline extends Fragment {
             // long hourSBR = ((long)SBR.getProgress() / (1000 * 60 * 60)) % 24;
             tempRightValue = rightValue;
             SBR.setIndicatorText(String.format("%02d:%02d.%d",minuteSBR, secondSBR, millisSBR));
-            pVideoView.seekTo((int)rightValue);
+            mediaPlayer.seekTo((int)rightValue);
         }
-        videoEditBar.invalidate();
+        //videoEditBar.invalidate();
     }
 
 }
