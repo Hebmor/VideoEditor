@@ -1,8 +1,10 @@
 package com.project.videoeditor;
 
+import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -94,6 +96,7 @@ public class VideoTimeline extends Fragment {
         recyclerTimeline.setLayoutManager(layoutManager);
         recyclerTimeline.setAdapter(videoAdapter);
 
+
         seekBar.setOnRangeChangedListener(new OnRangeChangedListener()
         {
             @Override
@@ -116,11 +119,12 @@ public class VideoTimeline extends Fragment {
         });
 
         getView().post(new Runnable() {
+            //@SuppressLint("ResourceType")
             @Override
             public void run() {
 
-                //seekBar.setProgressRight(recyclerTimeline.getRight());
-                //seekBar.setProgressLeft(recyclerTimeline.getLeft());
+                seekBar.setProgressBottom(recyclerTimeline.getBottom());
+                seekBar.setProgressTop(recyclerTimeline.getTop());
                 seekBar.setProgressHeight(100);
 
                 //seekBar.setTop(recyclerTimeline.getTop());
@@ -128,9 +132,7 @@ public class VideoTimeline extends Fragment {
                 //seekBar.setProgressHeight(-100);
                //SBR.setIndicatorPaddingTop(recyclerTimeline.getBottom());
                 //seekBar.setBottom(recyclerTimeline.getBottom());
-                seekBar.setProgressColor(Color.parseColor("#9900574B"));
-                seekBar.setProgressTop(53);
-                seekBar.setProgressBottom(211);
+                seekBar.setProgressColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
                 seekBar.invalidate();
             }
         });
@@ -148,6 +150,7 @@ public class VideoTimeline extends Fragment {
        // pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
         seekBar.setRange(0,videoInfo.getDuration(),1000);
         seekBar.setProgress(0,videoInfo.getDuration());
+
 
         //updateTimeline(0,videoInfo.getDuration());
 

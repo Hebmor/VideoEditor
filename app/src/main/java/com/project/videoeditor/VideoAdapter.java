@@ -24,8 +24,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     public VideoAdapter(@NonNull Bitmap frameCollage,@NonNull String nameCollage) {
         framesCollage = new ArrayList<>();
         namesCollage = new ArrayList<>();
-        this.framesCollage.add(frameCollage);
-        this.namesCollage.add(nameCollage);
+        addItem(frameCollage,nameCollage);
+
     }
     public VideoAdapter(ArrayList<Bitmap> framesCollage, ArrayList<String> namesCollage) {
         this.framesCollage = framesCollage;
@@ -65,5 +65,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return framesCollage.size();
+    }
+    public void addItem(@NonNull Bitmap frameCollage,@NonNull String nameCollage)
+    {
+        this.framesCollage.add(frameCollage);
+        this.namesCollage.add(nameCollage);
     }
 }

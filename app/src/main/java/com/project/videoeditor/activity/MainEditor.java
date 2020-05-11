@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
@@ -37,6 +38,7 @@ public class MainEditor extends AppCompatActivity {
     private FilterExecutor filterExecutor;
     private MediaExtractor mediaExtractor;
     private MediaController mediaController;
+    private VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class MainEditor extends AppCompatActivity {
 
         mediaController = new MediaController(this);
         mediaPlayer = new MediaPlayer();
+        videoView = new VideoView(this);
+
         mediaExtractor = new MediaExtractor();
         filterExecutor = new FilterExecutor(this);
 
@@ -61,6 +65,7 @@ public class MainEditor extends AppCompatActivity {
 
         try {
             mediaPlayer.setDataSource(editVideoInfo.getPath());
+            videoView.setVideoPath(editVideoInfo.getPath());
             mediaExtractor.setDataSource(editVideoInfo.getPath());
             filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),framerate,new BlackWhiteFilter(this));
             videoFilteredView = new VideoFilteredView(this,mediaPlayer);
@@ -70,9 +75,8 @@ public class MainEditor extends AppCompatActivity {
             e.printStackTrace();
         }
         videoContainer.addView(videoFilteredView);
-        //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
 
-        //videoTimeline.onStart();
+        //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
     }
 
     public void ClickOpenEncodersPage(View view) {

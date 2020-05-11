@@ -264,7 +264,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
                 e.printStackTrace();
             }
         }
-
+        mMediaPlayer.start();
         //surface.release();
        // mMediaPlayer.start();
     }
@@ -283,7 +283,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
                 while(_updateTexImageCompare != _updateTexImageCounter) {
                     mSurfaceTexture.updateTexImage();
                     mSurfaceTexture.getTransformMatrix(mSTMatrix);
-
+                    Log.d("Sync","Sinhron");
                     _updateTexImageCompare++;  // increment the compare value until it's the same as _updateTexImageCounter
                 }
             }
@@ -296,8 +296,8 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
             this.changeFragmentShader(FRAGMENT_SHADER);
             return;
         }
-
-        GLES20.glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        Log.d("Draw","Draw frame: " + _updateTexImageCounter);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
         checkGlError("glUseProgram");

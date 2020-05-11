@@ -2,9 +2,14 @@ package com.project.videoeditor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.media.MediaPlayer;
+import android.media.TimedMetaData;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
+import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -39,9 +44,21 @@ public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPr
 
             }
         };
-
+        this.mMediaPlayer.setOnTimedMetaDataAvailableListener(new MediaPlayer.OnTimedMetaDataAvailableListener() {
+            @Override
+            public void onTimedMetaDataAvailable(MediaPlayer mp, TimedMetaData data) {
+                Log.d("onTimedMetaDataAvailable","time!");
+            }
+        });
         this.mMediaPlayer.setOnVideoSizeChangedListener(mOnVideoSizeChangedListener);
         this.mMediaPlayer.setOnPreparedListener(this::onPrepared);
+        this.mMediaPlayer.setScreenOnWhilePlaying(true);
+        this.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                Log.d("TEST BUFFERING","------------");
+            }
+        });
         videoSurfaceRenderer.setMediaPlayer(this.mMediaPlayer);
 
         this.setOnTouchListener(new OnTouchListener() {
@@ -64,21 +81,26 @@ public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPr
     }
     private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight) {
         if (mp != null) {
-            Integer screenWidth = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getWidth();
-            Integer screenHeight = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getHeight();
-            android.view.ViewGroup.LayoutParams videoParams = getLayoutParams();
+            Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            Integer screenWidth = this.getWidth();
+            Integer screenHeight = this.getHeight();
+            android.view.ViewGroup.LayoutParams videoParams = this.getLayoutParams();
 
+            float videoProportion = (float) videoWidth / (float) videoHeight;
+            float screenProportion = (float) screenWidth / (float) screenHeight;
 
-            if (videoWidth > videoHeight) {
+            if (videoProportion > screenProportion) {
                 videoParams.width = screenWidth;
-                videoParams.height = screenWidth * videoHeight / videoWidth;
+                videoParams.height = (int) ((float) screenWidth / videoProportion);
             } else {
-                videoParams.width = screenHeight * videoWidth / videoHeight;
+                videoParams.width = (int) (videoProportion * (float) screenHeight);
                 videoParams.height = screenHeight;
             }
-
-
+            // Commit the layout parameters
             setLayoutParams(videoParams);
+
         }
     }
     public void changeFragmentShader(FiltersHandler.nameFilters filter) throws IOException {
@@ -88,7 +110,7 @@ public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPr
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        mMediaPlayer.start();
+
         mediaController.setMediaPlayer(this);
         mediaController.setAnchorView(this);
         handler.post(new Runnable() {
@@ -98,6 +120,7 @@ public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPr
                 mediaController.show();
             }
         });
+
     }
 
     @Override
