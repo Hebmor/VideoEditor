@@ -9,6 +9,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
+import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.support.UtilUri;
 
 import java.io.IOException;
@@ -54,17 +55,6 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
     protected boolean changeShaderFlag = false;
     protected static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
-
-    abstract public String getFilterName();
-
-    public boolean isInvert() {
-        return isInvert;
-    }
-
-    public void setInvert(boolean invert) {
-        isInvert = invert;
-    }
-
     private boolean isInvert = false;
 
     protected int _updateTexImageCounter = 0;
@@ -90,6 +80,14 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
             + "  gl_FragColor = color;\n"
             + "}\n";
 
+
+    public Surface getSurface() {
+        return surface;
+    }
+    private Context context;
+    private PlayerController playerController;
+
+
     public int get_updateTexImageCounter() {
         return _updateTexImageCounter;
     }
@@ -106,18 +104,15 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         Matrix.setIdentityM(mSTMatrix, 0);
     }
 
-    public Surface getSurface() {
-        return surface;
+    abstract public String getFilterName();
+
+    public boolean isInvert() {
+        return isInvert;
     }
 
-
-
-    public MediaPlayer getmMediaPlayer() {
-        return mMediaPlayer;
+    public void setInvert(boolean invert) {
+        isInvert = invert;
     }
-
-    private MediaPlayer mMediaPlayer;
-    private Context context;
     protected void initTriangleVertices()
     {
         mTriangleVertices = ByteBuffer.allocateDirect(
@@ -132,16 +127,11 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         this.context = context;
     }
 
-    public BaseFilters(Context context,MediaPlayer mediaPlayer) {
+    public BaseFilters(Context context,PlayerController playerController) {
 
         initTriangleVertices();
         this.context = context;
-        this.mMediaPlayer = mediaPlayer;
-    }
-
-
-    public void setmMediaPlayer(MediaPlayer mMediaPlayer) {
-        this.mMediaPlayer = mMediaPlayer;
+        this.playerController = playerController;
     }
 
     public void setContext(Context context) {
@@ -205,7 +195,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         mTextureID = oldFilter.mTextureID;
         mSurfaceTexture = oldFilter.mSurfaceTexture;
         this.surface = oldFilter.surface;
-        this.mMediaPlayer = oldFilter.mMediaPlayer;
+        this.playerController = oldFilter.playerController;
 
     }
     @Override
@@ -254,19 +244,11 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
        // mSurfaceTexture.setOnFrameAvailableListener(this);
 
         surface = new Surface(mSurfaceTexture);
-        if(mMediaPlayer != null) {
-            mMediaPlayer.setSurface(surface);
+        if(playerController != null) {
+            playerController.getPlayer().setVideoSurface(surface);
             //mMediaPlayer.setScreenOnWhilePlaying(true);
 
-            try {
-                mMediaPlayer.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-        mMediaPlayer.start();
-        //surface.release();
-       // mMediaPlayer.start();
     }
 
     @Override
@@ -401,4 +383,13 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
         _updateTexImageCounter++;
     }
+
+    public  void setPlayerController(PlayerController playerController)
+    {
+        this.playerController = playerController;
+    }
+    public PlayerController getPlayerController() {
+        return playerController;
+    }
+
 }

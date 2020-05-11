@@ -20,18 +20,18 @@ public class VideoSurfaceRenderer
         implements GLSurfaceView.Renderer {
     private static String TAG = "VideoRender";
 
-    private MediaPlayer mMediaPlayer;
+    private PlayerController playerController;
     private BaseFilters currentFilter;
     private BaseFilters newFilter;
     private boolean isChangeFilter = false;
     SurfaceTexture.OnFrameAvailableListener onFrameAvailableListener;
 
-    public VideoSurfaceRenderer(Context context,MediaPlayer mMediaPlayer,BaseFilters filter) {
+    public VideoSurfaceRenderer(Context context,PlayerController playerController,BaseFilters filter) {
 
         this.currentFilter = filter;
-        this.mMediaPlayer = mMediaPlayer;
+        this.playerController = playerController;
         filter.setContext(context);
-        filter.setmMediaPlayer(mMediaPlayer);
+        filter.setPlayerController(playerController);
         onFrameAvailableListener = new SurfaceTexture.OnFrameAvailableListener()
         {
 
@@ -42,9 +42,6 @@ public class VideoSurfaceRenderer
         };
     }
 
-    public void setMediaPlayer(MediaPlayer player) {
-        mMediaPlayer = player;
-    }
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
@@ -99,7 +96,7 @@ public class VideoSurfaceRenderer
                 }
             }
             currentFilter.onSurfaceCreated(glUnused,config);
-            if(currentFilter.getSurfaceTexture() != null && currentFilter.getmMediaPlayer() != null) {
+            if(currentFilter.getSurfaceTexture() != null && currentFilter.getPlayerController() != null) {
 
                 currentFilter.getSurfaceTexture().setOnFrameAvailableListener(onFrameAvailableListener);
                 //currentFilter.getmMediaPlayer().start();
@@ -113,8 +110,11 @@ public class VideoSurfaceRenderer
         if(currentFilter != null)
         {
             newFilter = filter;
-            newFilter.setmMediaPlayer(this.mMediaPlayer);
+            newFilter.setPlayerController(playerController);
             isChangeFilter = true;
         }
+    }
+
+    public void setPlayerController(PlayerController playerController) {
     }
 }

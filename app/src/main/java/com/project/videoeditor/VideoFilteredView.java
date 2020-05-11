@@ -15,51 +15,26 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.MediaController;
 
+import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.FiltersHandler;
 
 import java.io.IOException;
 
 
-public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPreparedListener,
-        MediaController.MediaPlayerControl {
+public class VideoFilteredView extends GLSurfaceView {
 
     private VideoSurfaceRenderer videoSurfaceRenderer;
-    private MediaPlayer mMediaPlayer;
+    private PlayerController playerController;
     private MediaController mediaController;
     private Handler handler = new Handler();
 
-    public VideoFilteredView(Context context, MediaPlayer mediaPlayer) throws Exception {
+    public VideoFilteredView(Context context,PlayerController playerController) throws Exception {
         super(context);
         setEGLContextClientVersion(2);
-        this.mMediaPlayer  = mediaPlayer;
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context,mediaPlayer,new DefaultFilter());
-
-        MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
-
-            @Override
-            public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-
-                setFitToFillAspectRatio(mp, width, height);
-
-            }
-        };
-        this.mMediaPlayer.setOnTimedMetaDataAvailableListener(new MediaPlayer.OnTimedMetaDataAvailableListener() {
-            @Override
-            public void onTimedMetaDataAvailable(MediaPlayer mp, TimedMetaData data) {
-                Log.d("onTimedMetaDataAvailable","time!");
-            }
-        });
-        this.mMediaPlayer.setOnVideoSizeChangedListener(mOnVideoSizeChangedListener);
-        this.mMediaPlayer.setOnPreparedListener(this::onPrepared);
-        this.mMediaPlayer.setScreenOnWhilePlaying(true);
-        this.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                Log.d("TEST BUFFERING","------------");
-            }
-        });
-        videoSurfaceRenderer.setMediaPlayer(this.mMediaPlayer);
+        this.playerController  = playerController;
+        videoSurfaceRenderer = new VideoSurfaceRenderer(context,playerController,new DefaultFilter(context));
+        videoSurfaceRenderer.setPlayerController(playerController);
 
         this.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -79,102 +54,9 @@ public class VideoFilteredView extends GLSurfaceView implements MediaPlayer.OnPr
         mediaController = new MediaController(getContext());
         videoSurfaceRenderer.onSurfaceCreated(null,null);
     }
-    private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight) {
-        if (mp != null) {
-            Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            Integer screenWidth = this.getWidth();
-            Integer screenHeight = this.getHeight();
-            android.view.ViewGroup.LayoutParams videoParams = this.getLayoutParams();
 
-            float videoProportion = (float) videoWidth / (float) videoHeight;
-            float screenProportion = (float) screenWidth / (float) screenHeight;
-
-            if (videoProportion > screenProportion) {
-                videoParams.width = screenWidth;
-                videoParams.height = (int) ((float) screenWidth / videoProportion);
-            } else {
-                videoParams.width = (int) (videoProportion * (float) screenHeight);
-                videoParams.height = screenHeight;
-            }
-            // Commit the layout parameters
-            setLayoutParams(videoParams);
-
-        }
-    }
     public void changeFragmentShader(FiltersHandler.nameFilters filter) throws IOException {
         videoSurfaceRenderer.changeFilter(FiltersHandler.getFiltersByName(filter,getContext()));
 
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-
-        mediaController.setMediaPlayer(this);
-        mediaController.setAnchorView(this);
-        handler.post(new Runnable() {
-
-            public void run() {
-                mediaController.setEnabled(true);
-                mediaController.show();
-            }
-        });
-
-    }
-
-    @Override
-    public void start() {
-        mMediaPlayer.start();
-    }
-
-    @Override
-    public void pause() {
-        mMediaPlayer.pause();
-    }
-
-    @Override
-    public int getDuration() {
-        return mMediaPlayer.getDuration();
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        mMediaPlayer.seekTo(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return mMediaPlayer.getAudioSessionId();
     }
 }

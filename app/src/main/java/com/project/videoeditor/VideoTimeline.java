@@ -62,12 +62,8 @@ public class VideoTimeline extends Fragment {
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
 
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
-    }
-
-    private MediaPlayer mediaPlayer;
-
+    //private MediaPlayer mediaPlayer;
+    private PlayerController playerController;
 
     private float tempLeftValue = 0;
     private float tempRightValue = 0;
@@ -137,6 +133,10 @@ public class VideoTimeline extends Fragment {
             }
         });
     }
+
+    public void setPlayerController(PlayerController playerController) {
+        this.playerController = playerController;
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -180,6 +180,7 @@ public class VideoTimeline extends Fragment {
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
         videoFramesCollage.setImageBitmap(bitmap);
     }
+
     private void updateTimeline(float leftValue, float rightValue)
     {
         float leftProgress = SBL.getProgress();
@@ -197,7 +198,8 @@ public class VideoTimeline extends Fragment {
                 SBL.setIndicatorText(String.format("%02d:%02d:%02d.%d",hourSBL,minuteSBL, secondSBL, millisSBL));
             else
                 SBL.setIndicatorText(String.format("%02d:%02d.%d",minuteSBL, secondSBL, millisSBL));
-            mediaPlayer.seekTo((int)leftValue);
+
+            playerController.getPlayer().seekTo((int)leftValue);
         }
         if(tempRightValue != rightValue) {
             long millisSBR = (long) SBR.getProgress() % 1000;
@@ -209,7 +211,7 @@ public class VideoTimeline extends Fragment {
                 SBR.setIndicatorText(String.format("%02d:%02d:%02d.%d",hourSBR,minuteSBR, secondSBR, millisSBR));
             else
                 SBR.setIndicatorText(String.format("%02d:%02d.%d",minuteSBR, secondSBR, millisSBR));
-            mediaPlayer.seekTo((int)rightValue);
+            playerController.getPlayer().seekTo((int)rightValue);
         }
         //videoEditBar.invalidate();
     }

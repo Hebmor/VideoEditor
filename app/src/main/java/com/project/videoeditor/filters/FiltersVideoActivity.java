@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
 
+import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
@@ -27,7 +28,7 @@ public class FiltersVideoActivity extends Activity {
     private VideoFilteredView videoFilteredView;
     private boolean isRecording = false;
     private VideoInfo editVideoInfo;
-    private MediaPlayer mediaPlayer;
+    private PlayerController playerController;
     private FilterExecutor filterExecutor;
 
 
@@ -42,13 +43,13 @@ public class FiltersVideoActivity extends Activity {
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         videoView.setVideoPath(path);
         mediaExtractor = new MediaExtractor();
-        mediaPlayer = new MediaPlayer();
+        playerController = new PlayerController(this,path);
         filterExecutor = new FilterExecutor(this);
 
 
         try {
             mediaExtractor.setDataSource(path);
-            mediaPlayer.setDataSource(path);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +69,7 @@ public class FiltersVideoActivity extends Activity {
             e.printStackTrace();
         }*/
         try {
-            videoFilteredView = new VideoFilteredView(this,mediaPlayer);
+            videoFilteredView = new VideoFilteredView(this,playerController);
          //   videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
            // videoFilteredView.
         } catch (Exception e) {

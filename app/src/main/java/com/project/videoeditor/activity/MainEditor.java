@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
@@ -34,11 +35,10 @@ public class MainEditor extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private FrameLayout videoContainer;
     private VideoFilteredView videoFilteredView;
-    private MediaPlayer mediaPlayer;
     private FilterExecutor filterExecutor;
     private MediaExtractor mediaExtractor;
-    private MediaController mediaController;
     private VideoView videoView;
+    private PlayerController playerController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,30 +50,31 @@ public class MainEditor extends AppCompatActivity {
         videoTimeline = new VideoTimeline();
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
 
-        mediaController = new MediaController(this);
-        mediaPlayer = new MediaPlayer();
+
         videoView = new VideoView(this);
 
         mediaExtractor = new MediaExtractor();
         filterExecutor = new FilterExecutor(this);
 
         videoTimeline.setVideoInfo(editVideoInfo);
-        videoTimeline.setMediaPlayer(mediaPlayer);
 
+        playerController = new PlayerController(this,editVideoInfo.getPath());
+        videoTimeline.setPlayerController(playerController);
         AddFragment(R.id.containerFrag,videoTimeline,"videoTimeline_cut");
 
 
         try {
-            mediaPlayer.setDataSource(editVideoInfo.getPath());
+
             videoView.setVideoPath(editVideoInfo.getPath());
             mediaExtractor.setDataSource(editVideoInfo.getPath());
             filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),framerate,new BlackWhiteFilter(this));
-            videoFilteredView = new VideoFilteredView(this,mediaPlayer);
+            videoFilteredView = new VideoFilteredView(this,playerController);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //videoView.start();
         videoContainer.addView(videoFilteredView);
 
         //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
