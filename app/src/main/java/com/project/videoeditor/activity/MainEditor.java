@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import com.google.android.exoplayer2.util.Util;
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
@@ -76,8 +77,42 @@ public class MainEditor extends AppCompatActivity {
         }
         //videoView.start();
         videoContainer.addView(videoFilteredView);
+        videoContainer.addView(playerController.getPlayerControlView());
 
         //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (Util.SDK_INT < 24) {
+            playerController.releasePlayer();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        playerController.hideSystemUi();
+        if ((Util.SDK_INT < 24 || playerController.getPlayer() == null)) {
+            playerController.initializePlayer();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Util.SDK_INT >= 24) {
+            playerController.initializePlayer();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Util.SDK_INT >= 24) {
+            playerController.releasePlayer();
+        }
     }
 
     public void ClickOpenEncodersPage(View view) {

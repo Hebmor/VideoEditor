@@ -26,7 +26,6 @@ public class VideoFilteredView extends GLSurfaceView {
 
     private VideoSurfaceRenderer videoSurfaceRenderer;
     private PlayerController playerController;
-    private MediaController mediaController;
     private Handler handler = new Handler();
 
     public VideoFilteredView(Context context,PlayerController playerController) throws Exception {
@@ -39,8 +38,8 @@ public class VideoFilteredView extends GLSurfaceView {
         this.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(mediaController != null){
-                    mediaController.show();
+                if(playerController != null){
+                    playerController.getPlayerControlView().show();
                 }
                 return false;
             }
@@ -51,7 +50,6 @@ public class VideoFilteredView extends GLSurfaceView {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         super.surfaceCreated(holder);
-        mediaController = new MediaController(getContext());
         videoSurfaceRenderer.onSurfaceCreated(null,null);
     }
 
