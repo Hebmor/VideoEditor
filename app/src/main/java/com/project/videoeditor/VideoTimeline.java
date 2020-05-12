@@ -61,6 +61,7 @@ public class VideoTimeline extends Fragment {
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
+    private boolean rangeMode = true;
 
     //private MediaPlayer mediaPlayer;
     private PlayerController playerController;
@@ -80,7 +81,7 @@ public class VideoTimeline extends Fragment {
         recyclerTimeline = (RecyclerView) view.findViewById(R.id.timeline_recycler);
         //videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
         //linearLayout = view.findViewById(R.id.linear_layout);
-
+        rangeMode = (seekBar.getSeekBarMode() == RangeSeekBar.SEEKBAR_MODE_RANGE);
 
 
         SBR = seekBar.getRightSeekBar();
@@ -99,13 +100,19 @@ public class VideoTimeline extends Fragment {
             public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
                 if (isFromUser) {
 
-                    updateTimeline(leftValue,rightValue);
+                    if(rangeMode)
+                        updateTimeline(leftValue,rightValue);
+                    else
+                        updateTimeline(leftValue);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
-                updateTimeline(SBL.getProgress(),SBR.getProgress());
+                if(rangeMode)
+                    updateTimeline(SBL.getProgress(),SBR.getProgress());
+                else
+                    updateTimeline(SBL.getProgress());
             }
 
             @Override
@@ -114,24 +121,33 @@ public class VideoTimeline extends Fragment {
             }
         });
 
-        getView().post(new Runnable() {
-            //@SuppressLint("ResourceType")
-            @Override
-            public void run() {
+            getView().post(new Runnable() {
+                @Override
+                public void run() {
 
-                seekBar.setProgressBottom(recyclerTimeline.getBottom());
-                seekBar.setProgressTop(recyclerTimeline.getTop());
-                seekBar.setProgressHeight(100);
+                    if(rangeMode) {
+                        seekBar.setProgressBottom(recyclerTimeline.getBottom());
+                        seekBar.setProgressTop(recyclerTimeline.getTop());
+                        seekBar.setProgressColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
+                        seekBar.setProgressHeight(100);
+                    }
+                    else
+                    {
+                        //seekBar.setScrollIndicators(View.SCROLL_INDICATOR_TOP);
+                        seekBar.setProgressDrawableId(R.drawable.ic_content_cut_black_24dp);
+                        seekBar.setProgressHeight(recyclerTimeline.getBottom() - recyclerTimeline.getTop() + 20);
+                    }
 
-                //seekBar.setTop(recyclerTimeline.getTop());
-              //  recyclerTimeline.setVisibility(View.INVISIBLE);
-                //seekBar.setProgressHeight(-100);
-               //SBR.setIndicatorPaddingTop(recyclerTimeline.getBottom());
-                //seekBar.setBottom(recyclerTimeline.getBottom());
-                seekBar.setProgressColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
-                seekBar.invalidate();
-            }
-        });
+
+                    //seekBar.setTop(recyclerTimeline.getTop());
+                  //  recyclerTimeline.setVisibility(View.INVISIBLE);
+                    //seekBar.setProgressHeight(-100);
+                   //SBR.setIndicatorPaddingTop(recyclerTimeline.getBottom());
+                    //seekBar.setBottom(recyclerTimeline.getBottom());
+
+                    seekBar.invalidate();
+                }
+            });
     }
 
     public void setPlayerController(PlayerController playerController) {
@@ -180,14 +196,24 @@ public class VideoTimeline extends Fragment {
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
         videoFramesCollage.setImageBitmap(bitmap);
     }
+    private void updateTimeline(float value)
+    {
+        if(tempLeftValue != value) {
+            long millisSBL = (long) SBL.getProgress() % 1000;
+            long secondSBL = ((long) SBL.getProgress() / 1000) % 60;
+            long minuteSBL = ((long) SBL.getProgress() / (1000 * 60)) % 60;
+            long hourSBL = ((long)SBL.getProgress() / (1000 * 60 * 60)) % 24;
+            tempLeftValue = value;
+            if(hourSBL > 0)
+                SBL.setIndicatorText(String.format("%02d:%02d:%02d.%d",hourSBL,minuteSBL, secondSBL, millisSBL));
+            else
+                SBL.setIndicatorText(String.format("%02d:%02d.%d",minuteSBL, secondSBL, millisSBL));
 
+            playerController.getPlayer().seekTo((int)value);
+        }
+    }
     private void updateTimeline(float leftValue, float rightValue)
     {
-        float leftProgress = SBL.getProgress();
-        float rightProgress = SBR.getProgress();
-       // videoEditBar.setmLeftBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBL.getProgress()) + seekBar.getPaddingLeft() + SBL.getThumbWidth() / 2));
-        //videoEditBar.setmRightBackground((int) ((seekBar.getProgressWidth() / seekBar.getMaxProgress() * SBR.getProgress()) + seekBar.getPaddingLeft() + SBR.getThumbWidth() / 2));
-
         if(tempLeftValue != leftValue) {
             long millisSBL = (long) SBL.getProgress() % 1000;
             long secondSBL = ((long) SBL.getProgress() / 1000) % 60;
