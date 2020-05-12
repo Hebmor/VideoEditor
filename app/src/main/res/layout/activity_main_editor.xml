@@ -33,6 +33,53 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/videoContainer"/>
+        app:layout_constraintTop_toBottomOf="@+id/videoContainer">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabsEditor"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable"
+            >
+
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_content_cut_black_24dp"
+                android:text="Разбить"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/cut"
+                android:text="Вырезать"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_queue_black_24dp"
+                android:text="Добавить"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_rotate_left_black_24dp"
+                android:text="Повернуть"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_cinema"
+                android:text="Кадрировать"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_photo"
+                android:text="Фильтры"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/ic_multimedia"
+                android:text="Кодировать"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+
+        </com.google.android.material.tabs.TabLayout>
+    </FrameLayout>>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

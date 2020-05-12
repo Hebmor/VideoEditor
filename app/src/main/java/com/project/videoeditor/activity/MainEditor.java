@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.media.MediaExtractor;
@@ -15,6 +16,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.material.tabs.TabLayout;
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
@@ -40,17 +42,21 @@ public class MainEditor extends AppCompatActivity {
     private MediaExtractor mediaExtractor;
     private VideoView videoView;
     private PlayerController playerController;
+    private ViewPager pager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_editor);
         videoContainer = findViewById(R.id.videoContainer);
+
+
         fragmentManager = getSupportFragmentManager();
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
         videoTimeline = new VideoTimeline();
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
-
+        pager = new ViewPager(this);
 
         videoView = new VideoView(this);
 
@@ -63,6 +69,9 @@ public class MainEditor extends AppCompatActivity {
         videoTimeline.setPlayerController(playerController);
         AddFragment(R.id.containerFrag,videoTimeline,"videoTimeline_cut");
 
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabsEditor);
+
+        tabs.setupWithViewPager(pager);
 
         try {
 
