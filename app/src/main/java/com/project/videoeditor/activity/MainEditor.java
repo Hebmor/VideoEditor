@@ -17,6 +17,7 @@ import android.widget.VideoView;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
+import com.project.videoeditor.FragmentPagerAdapter;
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
@@ -50,28 +51,26 @@ public class MainEditor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_editor);
         videoContainer = findViewById(R.id.videoContainer);
-
-
         fragmentManager = getSupportFragmentManager();
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
-        videoTimeline = new VideoTimeline();
-        int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
-        pager = new ViewPager(this);
 
+        playerController = new PlayerController(this,editVideoInfo.getPath());
+        videoTimeline = new VideoTimeline(editVideoInfo,playerController);
+        int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
+        pager = (ViewPager)findViewById(R.id.viewPager_editor);
+        FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
+        fragmentPagerAdapter.addItem(videoTimeline);
+        fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController));
+
+        pager.setAdapter(fragmentPagerAdapter);
         videoView = new VideoView(this);
 
         mediaExtractor = new MediaExtractor();
         filterExecutor = new FilterExecutor(this);
 
-        videoTimeline.setVideoInfo(editVideoInfo);
-
-        playerController = new PlayerController(this,editVideoInfo.getPath());
-        videoTimeline.setPlayerController(playerController);
-        AddFragment(R.id.containerFrag,videoTimeline,"videoTimeline_cut");
-
         TabLayout tabs = (TabLayout) findViewById(R.id.tabsEditor);
-
         tabs.setupWithViewPager(pager);
+        initTabs(tabs);
 
         try {
 
@@ -154,20 +153,11 @@ public class MainEditor extends AppCompatActivity {
         intent.putExtra(CropVideoActivity.FRAME_BITMAP_URI,path);
         startActivity(intent);
     }
-    private void AddFragment(int containerViewId, Fragment fragment, String Tag)
+    private void initTabs(TabLayout tabs)
     {
-        FragmentTransaction fragmentTransaction = fragmentManager
-                .beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment,
-                Tag);
-        fragmentTransaction.commit();
-    }
-    private void ChangeFragment(int containerViewId, Fragment fragment,String Tag)
-    {
-        FragmentTransaction fragmentTransaction = fragmentManager
-                .beginTransaction();
-        fragmentTransaction.replace(containerViewId, fragment,
-                Tag);
-        fragmentTransaction.commit();
+        tabs.getTabAt(0).setText("Выделить");
+        tabs.getTabAt(0).setIcon(R.drawable.ic_content_cut_black_24dp);
+        tabs.getTabAt(1).setText("Выбрать");
+        tabs.getTabAt(1).setIcon(R.drawable.cut);
     }
 }

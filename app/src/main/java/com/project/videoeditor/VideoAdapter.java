@@ -25,7 +25,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         framesCollage = new ArrayList<>();
         namesCollage = new ArrayList<>();
         addItem(frameCollage,nameCollage);
-
     }
     public VideoAdapter(ArrayList<Bitmap> framesCollage, ArrayList<String> namesCollage) {
         this.framesCollage = framesCollage;

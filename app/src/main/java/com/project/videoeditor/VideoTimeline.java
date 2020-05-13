@@ -48,7 +48,21 @@ public class VideoTimeline extends Fragment {
     private VideoEditBar videoEditBar;
     private RecyclerView recyclerTimeline;
     private LinearLayoutManager layoutManager;
+    private  SeekBar SBR;
+    private SeekBar SBL;
+    private ImageView videoFramesCollage;
+    private VideoInfo videoInfo;
+    private boolean rangeMode = true;
+    //private MediaPlayer mediaPlayer;
+    private PlayerController playerController;
 
+    private float tempLeftValue = 0;
+    private float tempRightValue = 0;
+
+    public VideoTimeline(VideoInfo videoInfo, PlayerController playerController) {
+        this.videoInfo = videoInfo;
+        this.playerController = playerController;
+    }
     public SeekBar getSBR() {
         return SBR;
     }
@@ -56,23 +70,10 @@ public class VideoTimeline extends Fragment {
     public SeekBar getSBL() {
         return SBL;
     }
-
-    private  SeekBar SBR;
-    private SeekBar SBL;
-    private ImageView videoFramesCollage;
-    private VideoInfo videoInfo;
-    private boolean rangeMode = true;
-
-    //private MediaPlayer mediaPlayer;
-    private PlayerController playerController;
-
-    private float tempLeftValue = 0;
-    private float tempRightValue = 0;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.video_timeline_fragment, container, false);
+        return inflater.inflate(R.layout.video_timeline_cut, container, false);
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -89,6 +90,10 @@ public class VideoTimeline extends Fragment {
         String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(),getActivity());
         Bitmap bitmap = getBitmapByPath(pathCollage);
         VideoAdapter videoAdapter = new VideoAdapter(bitmap,videoInfo.getFilename());
+        videoAdapter.addItem(bitmap,videoInfo.getFilename());
+        videoAdapter.addItem(bitmap,videoInfo.getFilename());
+        videoAdapter.addItem(bitmap,videoInfo.getFilename());
+        videoAdapter.addItem(bitmap,videoInfo.getFilename());
         layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
         recyclerTimeline.setLayoutManager(layoutManager);
         recyclerTimeline.setAdapter(videoAdapter);
