@@ -114,7 +114,7 @@ public class Settings_h265Fragment extends Fragment {
         Spinner spinner = (Spinner) view.findViewById(R.id.Spinner_FormatVideoFile);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.Formats, android.R.layout.simple_spinner_item);
+                R.array.formats, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 

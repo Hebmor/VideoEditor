@@ -40,24 +40,7 @@
     <string name="kbs">кбит/с</string>
     <string name="select_video">Выбрать видео</string>
     <string name="format">Формат</string>
-    <string-array name="Encoders">
-        <item>H264</item>
-        <item>H265</item>
-        <item>MPEG4</item>
-        <item>MPEG2</item>
-        <item>Theora</item>
-        <item>libx264</item>
-        <item>libxvid</item>
-    </string-array>
-    <string-array name="Formats">
-        <item>mp4</item>
-        <item>avi</item>
-        <item>wmv</item>
-        <item>mov</item>
-        <item>flv</item>
-        <item>gif</item>
-        <item>ogg</item>
-    </string-array>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="arrowRight"><![CDATA[>>]]></string>

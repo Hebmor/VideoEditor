@@ -33,6 +33,14 @@
         <item>59,94</item>
         <item>60</item>
     </array>
-
+    <string-array name="formats">
+        <item>mp4</item>
+        <item>avi</item>
+        <item>wmv</item>
+        <item>mov</item>
+        <item>flv</item>
+        <item>gif</item>
+        <item>ogg</item>
+    </string-array>
 </resources>
 

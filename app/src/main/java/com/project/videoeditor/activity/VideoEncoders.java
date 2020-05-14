@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
@@ -36,7 +35,7 @@ public class VideoEncoders extends AppCompatActivity {
         //Spinner spinner = (Spinner) findViewById(R.id.spinnerEncodersList);
         //WARNING BAD CODE!
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.Encoders, android.R.layout.simple_spinner_item);
+                R.array.encoders, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spinner.setAdapter(adapter);
