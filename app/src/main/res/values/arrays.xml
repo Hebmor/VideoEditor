@@ -18,5 +18,21 @@
         <item>@string/fastdecode</item>
         <item>@string/zerolatency</item>
     </array>
+
+    <array name="framerate_list">
+        <item>16</item>
+        <item>18</item>
+        <item>23,976</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>29,97002616</item>
+        <item>30</item>
+        <item>48</item>
+        <item>50</item>
+        <item>59,94</item>
+        <item>60</item>
+    </array>
+
 </resources>
 

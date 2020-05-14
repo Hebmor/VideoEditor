@@ -7,87 +7,134 @@
     android:visibility="visible"
     tools:context=".activity.VideoEncoders">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="380dp"
-        android:layout_height="380dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="340dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/textView_Countdown"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:hint="@string/countdown"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
-        app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar" />
-
-    <Button
-        android:id="@+id/buttonNext"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="200dp"
-        android:text="@string/arrowRight"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/settingsEncodeLayout"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
-        android:id="@+id/settingsEncodeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
         android:orientation="vertical"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/textView_resolution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Разрешение:" />
+
         <Spinner
-            android:id="@+id/spinnerEncodersList"
+            android:id="@+id/spinner_resolution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/textView_expansion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Расширение:" />
+
+        <Spinner
+            android:id="@+id/spinner_expansion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/textView_Preset_rendering"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
-            android:visibility="visible" />
+            android:text="@string/preset_rendering" />
 
-        <ImageView
-            android:id="@+id/settingsPreview"
+        <com.warkiz.widget.IndicatorSeekBar
+
+            android:id="@+id/SeekBar_PresetRenderer"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:layout_marginTop="10dp"
-            app:srcCompat="@drawable/noimage"
-            />
 
-        <FrameLayout
-            android:id="@+id/containerFrag"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+
+            android:layout_marginRight="10dp"
+            app:isb_indicator_color="@color/darkGrey"
+            app:isb_indicator_text_color="@color/colorAccent"
+            app:isb_indicator_text_size="18sp"
+            app:isb_max="5"
+            app:isb_min="0"
+            app:isb_progress="7"
+            app:isb_seek_smoothly="true"
+            app:isb_show_indicator="circular_bubble"
+            app:isb_show_tick_marks_type="oval"
+            app:isb_show_tick_texts="true"
+            app:isb_thumb_color="@color/darkGrey"
+            app:isb_thumb_size="14dp"
+            app:isb_tick_marks_size="8dp"
+            app:isb_tick_texts_array="@array/preset_rendering_options"
+            app:isb_tick_texts_color="@color/colorPrimary"
+            app:isb_tick_texts_size="4sp"
+            app:isb_ticks_count="9"
+            app:isb_track_background_color="@color/colorPrimaryDark"
+            app:isb_track_background_size="2dp"
+            app:isb_track_progress_color="@color/darkGrey"
+            app:isb_track_progress_size="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText_Filename" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/tune" />
+        <com.warkiz.widget.IndicatorSeekBar
+
+            android:id="@+id/SeekBar_Tune"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
-            android:visibility="visible" >
+            android:layout_marginRight="10dp"
 
-        </FrameLayout>
-
+            app:isb_indicator_color="@color/darkGrey"
+            app:isb_indicator_text_color="@color/colorAccent"
+            app:isb_indicator_text_size="18sp"
+            app:isb_max="4"
+            app:isb_min="0"
+            app:isb_progress="4"
+            app:isb_seek_smoothly="true"
+            app:isb_show_indicator="circular_bubble"
+            app:isb_show_tick_marks_type="oval"
+            app:isb_show_tick_texts="true"
+            app:isb_thumb_color="@color/honey"
+            app:isb_thumb_size="14dp"
+            app:isb_tick_marks_size="12dp"
+            app:isb_tick_texts_array="@array/tune_options"
+            app:isb_tick_texts_color="@color/colorPrimaryDark"
+            app:isb_tick_texts_size="6sp"
+            app:isb_ticks_count="5"
+            app:isb_track_background_color="@color/peach"
+            app:isb_track_background_size="2dp"
+            app:isb_track_progress_color="@color/honey"
+            app:isb_track_progress_size="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText_Filename" />
     </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="62dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

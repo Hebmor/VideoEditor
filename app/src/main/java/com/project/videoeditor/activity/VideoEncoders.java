@@ -33,13 +33,13 @@ public class VideoEncoders extends AppCompatActivity {
         setContentView(R.layout.activity_video_encoders);
 
         videoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
-        Spinner spinner = (Spinner) findViewById(R.id.spinnerEncodersList);
+        //Spinner spinner = (Spinner) findViewById(R.id.spinnerEncodersList);
         //WARNING BAD CODE!
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.Encoders, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        //spinner.setAdapter(adapter);
 
         fragmentManager = getSupportFragmentManager();
         settingsH264Fragment = Settings_h265Fragment.newInstance(videoInfo);
@@ -69,7 +69,7 @@ public class VideoEncoders extends AppCompatActivity {
 
             }
         };
-        spinner.setOnItemSelectedListener(itemSelectedListener);
+        //spinner.setOnItemSelectedListener(itemSelectedListener);
     }
     private void AddFragment(int containerViewId, Fragment fragment,String Tag)
     {

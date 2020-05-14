@@ -65,9 +65,9 @@ public class SettingsMPEG4Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
-        settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+//        countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
+//        settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
+//        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
     }
 
 

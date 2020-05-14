@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
-
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+ext {
+    roomVersion = '2.2.1'
+    archLifecycleVersion = '2.2.0'
+    coreTestingVersion = '2.1.0'
+    materialVersion = '1.0.0'
+}
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -47,4 +58,16 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-core:2.10.5'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.10.5'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.5'
+
+    // Room components
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    androidTestImplementation "androidx.room:room-testing:$roomVersion"
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$archLifecycleVersion"
+    // UI
+    implementation "com.google.android.material:material:$materialVersion"
+    // Testing
+    androidTestImplementation "androidx.arch.core:core-testing:$coreTestingVersion"
 }

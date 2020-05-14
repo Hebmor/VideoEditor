@@ -71,11 +71,11 @@ public class Settings_h265Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
-        settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
-        imageView = (ImageView) getActivity().findViewById(R.id.settingsPreview);
-        nextButton = (Button) getActivity().findViewById(R.id.buttonNext);
+//        countdownText = (TextView) getActivity().findViewById(R.id.textView_Countdown);
+//        settingsEncodeLayout = (LinearLayout) getActivity().findViewById(R.id.settingsEncodeLayout);
+//        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+//        imageView = (ImageView) getActivity().findViewById(R.id.settingsPreview);
+//        nextButton = (Button) getActivity().findViewById(R.id.buttonNext);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
