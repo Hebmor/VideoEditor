@@ -52,7 +52,7 @@ public class VideoTimeline extends Fragment {
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
-    private boolean rangeMode = true;
+    private boolean rangeMode = false;
     //private MediaPlayer mediaPlayer;
     private PlayerController playerController;
 
@@ -63,6 +63,11 @@ public class VideoTimeline extends Fragment {
         this.videoInfo = videoInfo;
         this.playerController = playerController;
     }
+    public VideoTimeline(VideoInfo videoInfo, PlayerController playerController,boolean rangeMode) {
+        this.videoInfo = videoInfo;
+        this.playerController = playerController;
+        this.rangeMode = rangeMode;
+    }
     public SeekBar getSBR() {
         return SBR;
     }
@@ -70,19 +75,35 @@ public class VideoTimeline extends Fragment {
     public SeekBar getSBL() {
         return SBL;
     }
+
+    public boolean isRangeMode() {
+        return rangeMode;
+    }
+
+    public void setRangeMode(boolean rangeMode) {
+        this.rangeMode = rangeMode;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.video_timeline_cut, container, false);
+        if(rangeMode)
+            return inflater.inflate(R.layout.video_timeline_cut, container, false);
+        else
+            return inflater.inflate(R.layout.video_timeline_fragment, container, false);
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         seekBar = view.findViewById(R.id.seekBarVideo);
+        if(rangeMode)
+            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_RANGE);
+        else
+            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_SINGLE);
         //videoEditBar = view.findViewById(R.id.rectVideo);
         recyclerTimeline = (RecyclerView) view.findViewById(R.id.timeline_recycler);
         //videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
         //linearLayout = view.findViewById(R.id.linear_layout);
-        rangeMode = (seekBar.getSeekBarMode() == RangeSeekBar.SEEKBAR_MODE_RANGE);
+        //rangeMode = (seekBar.getSeekBarMode() == RangeSeekBar.SEEKBAR_MODE_RANGE);
 
 
         SBR = seekBar.getRightSeekBar();

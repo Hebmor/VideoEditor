@@ -46,6 +46,7 @@
     <string name="arrowRight"><![CDATA[>>]]></string>
     <string name="nameVideo">Название видео</string>
     <string name="videoPreview">Превью видео</string>
+    <string name="videoResolution">Разрешение видео</string>
 
 
 </resources>

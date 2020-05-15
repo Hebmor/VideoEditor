@@ -33,29 +33,15 @@
                 android:id="@+id/textView_resolution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Разрешение:" />
+                android:text="@string/videoResolution" />
 
             <Spinner
                 android:id="@+id/spinner_resolution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp" />
-
             <TextView
-                android:id="@+id/textView_expansion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Формат:" />
-
-            <Spinner
-                android:id="@+id/spinner_expansion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/textView_Preset_rendering"
+                android:id="@+id/textView_PresetRendering"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -98,7 +84,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/editText_Filename" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textViewTune"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -141,7 +127,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/editText_Filename" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/textView_bitrate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -174,7 +160,7 @@
                 app:isb_track_progress_size="4dp" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/textView_framerate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -188,11 +174,11 @@
                 android:entries="@array/framerate_list" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/textView_format"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="@string/frameRate" />
+                android:text="@string/format" />
 
             <Spinner
                 android:id="@+id/spinner_format"

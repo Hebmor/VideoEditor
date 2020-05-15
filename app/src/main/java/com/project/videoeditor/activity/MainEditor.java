@@ -75,7 +75,7 @@ public class MainEditor extends AppCompatActivity {
         pager = (ViewPager)findViewById(R.id.viewPager_editor);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
         fragmentPagerAdapter.addItem(videoTimeline);
-        fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController));
+        fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController,true));
 
         pager.setAdapter(fragmentPagerAdapter);
         videoView = new VideoView(this);

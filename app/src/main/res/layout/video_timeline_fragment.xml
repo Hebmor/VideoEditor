@@ -3,63 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".VideoTimeline">
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
+    <include
+        android:id="@+id/timeline"
+        layout="@layout/timeline"
+        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </include>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:fillViewport="true"
+        android:overScrollMode="always"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="start"
-            android:isScrollContainer="false"
-            android:keepScreenOn="false"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/timeline_recycler"
+            <Button
+                android:id="@+id/buttonSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="false"
-                android:layout_centerVertical="false"
-                android:scrollbarSize="4dp"
-                tools:targetApi="24">
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_playlist_add_black_18dp"
+                android:text="Добавить"
+                android:textSize="12sp" />
 
-            </androidx.recyclerview.widget.RecyclerView>
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_split_18dp"
+                android:text="Разбить"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/buttonExtractFrame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_extract_video_frame_18dp"
+                android:text="Извлечь кадр"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/buttonEncode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_encode_to_file_18dp"
+                android:text="Сохранить"
+                android:textSize="12sp" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.jaygoo.widget.RangeSeekBar
-        android:id="@+id/seekBarVideo"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:outlineProvider="none"
-        android:saveEnabled="false"
-        android:soundEffectsEnabled="false"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView"
+    <View
+        android:id="@+id/dividerArea"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rsb_gravity="top"
-        app:rsb_indicator_height="wrap_content"
-        app:rsb_indicator_show_mode="alwaysShowAfterTouch"
-        app:rsb_max="10"
-        app:rsb_min="0"
-        app:rsb_min_interval="1"
-        app:rsb_mode="range"
-        app:rsb_progress_color="@color/cardview_dark_background"
-        app:rsb_progress_default_color="@color/transparency"
-        app:singleThumb="false">
-
-    </com.jaygoo.widget.RangeSeekBar>
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

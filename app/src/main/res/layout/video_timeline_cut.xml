@@ -3,52 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".VideoTimeline">
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/timeline_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:scrollbarSize="4dp"
-        android:scrollbars="horizontal"
+    <include
+        android:id="@+id/timeline"
+        layout="@layout/timeline"
+        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="24">
+        app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+    </include>
 
-    <com.jaygoo.widget.RangeSeekBar
-        android:id="@+id/seekBarVideo"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:outlineProvider="none"
-        android:saveEnabled="false"
-        android:soundEffectsEnabled="false"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/timeline_recycler"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:fillViewport="true"
+        android:overScrollMode="always"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rsb_gravity="top"
-        app:rsb_indicator_height="wrap_content"
-        app:rsb_indicator_show_mode="alwaysShowAfterTouch"
-        app:rsb_max="10"
-        app:rsb_min="0"
-        app:rsb_min_interval="1"
-        app:rsb_progress_color="@color/cardview_dark_background"
-        app:rsb_progress_default_color="@color/transparency"
-        app:singleThumb="false"></com.jaygoo.widget.RangeSeekBar>
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_speed_18dp"
+                android:text="Скорость"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_split_18dp"
+                android:text="Извлечь аудио"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/buttonExtractFrame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_extract_video_frames_18dp"
+                android:text="Извлечь кадры"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/buttonEncode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_encode_to_file_18dp"
+                android:text="Сохранить"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/dividerArea"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
