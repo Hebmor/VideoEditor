@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

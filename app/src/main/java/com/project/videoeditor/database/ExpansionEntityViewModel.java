@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.database;
 
 import android.app.Application;
 
@@ -6,7 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.project.videoeditor.support.ExpansionEntityRepository;
+import com.project.videoeditor.database.ExpansionEntity;
+import com.project.videoeditor.database.ExpansionEntityRepository;
 
 import java.util.List;
 

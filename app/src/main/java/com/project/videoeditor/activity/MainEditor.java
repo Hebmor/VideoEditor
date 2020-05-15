@@ -2,34 +2,29 @@ package com.project.videoeditor.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.media.MediaExtractor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
-import com.project.videoeditor.ExpansionEntity;
-import com.project.videoeditor.ExpansionEntityViewModel;
+import com.project.videoeditor.database.ExpansionEntity;
+import com.project.videoeditor.database.ExpansionEntityViewModel;
 import com.project.videoeditor.FragmentPagerAdapter;
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
-import com.project.videoeditor.VideoInfoPage;
+import com.project.videoeditor.VideoInfoFragment;
 import com.project.videoeditor.VideoTimeline;
-import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.FiltersVideoActivity;
@@ -51,6 +46,7 @@ public class MainEditor extends AppCompatActivity {
     private VideoView videoView;
     private PlayerController playerController;
     private ViewPager pager;
+    private VideoInfoFragment videoInfoFragment;
 
 
     @Override
@@ -71,11 +67,13 @@ public class MainEditor extends AppCompatActivity {
 
         playerController = new PlayerController(this,editVideoInfo.getPath());
         videoTimeline = new VideoTimeline(editVideoInfo,playerController);
+        videoInfoFragment = new VideoInfoFragment(editVideoInfo);
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         pager = (ViewPager)findViewById(R.id.viewPager_editor);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
         fragmentPagerAdapter.addItem(videoTimeline);
         fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController,true));
+        fragmentPagerAdapter.addItem(videoInfoFragment);
 
         pager.setAdapter(fragmentPagerAdapter);
         videoView = new VideoView(this);
@@ -145,7 +143,7 @@ public class MainEditor extends AppCompatActivity {
     }
     public void ClickOpenVideoInfoPage(View view)
     {
-        Intent intent = new Intent(this, VideoInfoPage.class);
+        Intent intent = new Intent(this, VideoInfoFragment.class);
         intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
         startActivity(intent);
     }
@@ -174,5 +172,7 @@ public class MainEditor extends AppCompatActivity {
         tabs.getTabAt(0).setIcon(R.drawable.ic_content_cut_black_24dp);
         tabs.getTabAt(1).setText("Выбрать");
         tabs.getTabAt(1).setIcon(R.drawable.cut);
+        tabs.getTabAt(2).setText("Информация");
+        tabs.getTabAt(2).setIcon(R.drawable.ic_signs_24dp);
     }
 }

@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

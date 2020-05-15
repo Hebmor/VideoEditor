@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.database;
 
 import android.content.Context;
 
@@ -10,7 +10,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 
 @Database(entities = {ExpansionEntity.class}, version = 1, exportSchema = false)
 public abstract class ExpansionEntityRoomDatabase extends RoomDatabase {

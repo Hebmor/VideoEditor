@@ -1,12 +1,8 @@
-package com.project.videoeditor.support;
+package com.project.videoeditor.database;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-
-import com.project.videoeditor.ExpansionEntity;
-import com.project.videoeditor.ExpansionEntityDao;
-import com.project.videoeditor.ExpansionEntityRoomDatabase;
 
 import java.util.List;
 

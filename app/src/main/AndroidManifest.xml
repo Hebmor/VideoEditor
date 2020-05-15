@@ -19,7 +19,7 @@
         <activity android:name=".activity.VideoEditPage" />
         <activity android:name=".activity.MainEditor" />
         <activity android:name=".activity.VideoEncoders" />
-        <activity android:name=".VideoInfoPage" />
+        <activity android:name=".VideoInfoFragment" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
