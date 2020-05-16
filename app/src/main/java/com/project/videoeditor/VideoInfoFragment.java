@@ -53,17 +53,17 @@ public class VideoInfoFragment extends Fragment {
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.ic_file_20dp, null), "Расширение", videoInfo.getExtension());
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Кодек", videoInfo.getCodec());
+                R.drawable.ic_encode_20dp, null), "Кодек", videoInfo.getCodec());
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Разрешение", videoInfo.getWidth()+ "x" + videoInfo.getHeight());
+                R.drawable.ic_resolution_20dp, null), "Разрешение", videoInfo.getWidth()+ "x" + videoInfo.getHeight());
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Соотношение сторон", videoInfo.getAspectRatio());
+                R.drawable.ic_aspect_ratio_20dp, null), "Соотношение сторон", videoInfo.getAspectRatio());
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Путь к файлу", videoInfo.getPath());
+                R.drawable.ic_path_20dp, null), "Путь к файлу", videoInfo.getPath());
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Кадры в секунду", videoInfo.getFrameRate() + " к/с");
+                R.drawable.ic_framerate_20dp, null), "Кадры в секунду", videoInfo.getFrameRate() + " к/с");
         videoInfoAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.ic_filename_20dp, null), "Битрейт", videoInfo.getBitrate() + " кбит/с");
+                R.drawable.ic_bitrate_20dp, null), "Битрейт", videoInfo.getBitrate() + " кбит/с");
 
         return videoInfoAdapter;
     }

@@ -16,6 +16,7 @@ import android.widget.VideoView;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
+import com.project.videoeditor.FilterListFragment;
 import com.project.videoeditor.database.ExpansionEntity;
 import com.project.videoeditor.database.ExpansionEntityViewModel;
 import com.project.videoeditor.FragmentPagerAdapter;
@@ -47,6 +48,7 @@ public class MainEditor extends AppCompatActivity {
     private PlayerController playerController;
     private ViewPager pager;
     private VideoInfoFragment videoInfoFragment;
+    private FilterListFragment filterListFragment;
 
 
     @Override
@@ -68,12 +70,15 @@ public class MainEditor extends AppCompatActivity {
         playerController = new PlayerController(this,editVideoInfo.getPath());
         videoTimeline = new VideoTimeline(editVideoInfo,playerController);
         videoInfoFragment = new VideoInfoFragment(editVideoInfo);
+        filterListFragment = new FilterListFragment();
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         pager = (ViewPager)findViewById(R.id.viewPager_editor);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
         fragmentPagerAdapter.addItem(videoTimeline);
         fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController,true));
+        fragmentPagerAdapter.addItem(filterListFragment);
         fragmentPagerAdapter.addItem(videoInfoFragment);
+
 
         pager.setAdapter(fragmentPagerAdapter);
         videoView = new VideoView(this);
@@ -169,10 +174,12 @@ public class MainEditor extends AppCompatActivity {
     private void initTabs(TabLayout tabs)
     {
         tabs.getTabAt(0).setText("Выделить");
-        tabs.getTabAt(0).setIcon(R.drawable.ic_content_cut_black_24dp);
+        tabs.getTabAt(0).setIcon(R.drawable.ic_video_crop_24dp);
         tabs.getTabAt(1).setText("Выбрать");
-        tabs.getTabAt(1).setIcon(R.drawable.cut);
-        tabs.getTabAt(2).setText("Информация");
-        tabs.getTabAt(2).setIcon(R.drawable.ic_signs_24dp);
+        tabs.getTabAt(1).setIcon(R.drawable.ic_cut_24dp);
+        tabs.getTabAt(2).setText("Фильтры");
+        tabs.getTabAt(2).setIcon(R.drawable.ic_filter_24dp);
+        tabs.getTabAt(3).setText("Информация");
+        tabs.getTabAt(3).setIcon(R.drawable.ic_info_24dp);
     }
 }
