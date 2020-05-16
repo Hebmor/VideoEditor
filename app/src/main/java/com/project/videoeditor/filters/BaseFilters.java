@@ -258,31 +258,30 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        synchronized (this) {
-            if( mSurfaceTexture !=null && _updateTexImageCompare != _updateTexImageCounter )
-            {
-                // loop and call updateTexImage() for each time the onFrameAvailable() method was called below.
-                while(_updateTexImageCompare != _updateTexImageCounter) {
-                    mSurfaceTexture.updateTexImage();
-                    mSurfaceTexture.getTransformMatrix(mSTMatrix);
-                    Log.d("Sync","Sinhron");
-                    _updateTexImageCompare++;  // increment the compare value until it's the same as _updateTexImageCounter
-                }
+        this.synchronizeDrawFrame();
+        this.preDraw();
+        this.bindResource();
+        this.draw();
+    }
+    protected int loadShader(int shaderType, String source) {
+        int shader = GLES20.glCreateShader(shaderType);
+        checkGlError("glCreateShader type=" + shaderType);
+        if (shader != 0) {
+            GLES20.glShaderSource(shader, source);
+            GLES20.glCompileShader(shader);
+            int[] compiled = new int[1];
+            GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+            if (compiled[0] == 0) {
+                Log.e(TAG, "Could not compile shader " + shaderType + ":");
+                Log.e(TAG, GLES20.glGetShaderInfoLog(shader));
+                GLES20.glDeleteShader(shader);
+                shader = 0;
             }
         }
-        if(changeShaderFlag)
-        {
-            // GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            //GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-            GLES20.glFinish();
-            this.changeFragmentShader(FRAGMENT_SHADER);
-            return;
-        }
-        Log.d("Draw","Draw frame: " + _updateTexImageCounter);
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glUseProgram(mProgram);
-        checkGlError("glUseProgram");
+        return shader;
+    }
+    protected void bindResource()
+    {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureID);
 
@@ -303,29 +302,41 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         Matrix.setIdentityM(mMVPMatrix, 0);
         GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
         GLES20.glUniformMatrix4fv(muSTMatrixHandle, 1, false, mSTMatrix, 0);
-
+    }
+    protected void draw()
+    {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         checkGlError("glDrawArrays");
         GLES20.glFinish();
     }
-    protected int loadShader(int shaderType, String source) {
-        int shader = GLES20.glCreateShader(shaderType);
-        checkGlError("glCreateShader type=" + shaderType);
-        if (shader != 0) {
-            GLES20.glShaderSource(shader, source);
-            GLES20.glCompileShader(shader);
-            int[] compiled = new int[1];
-            GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
-            if (compiled[0] == 0) {
-                Log.e(TAG, "Could not compile shader " + shaderType + ":");
-                Log.e(TAG, GLES20.glGetShaderInfoLog(shader));
-                GLES20.glDeleteShader(shader);
-                shader = 0;
+    protected void synchronizeDrawFrame()
+    {
+        synchronized (this) {
+            if( mSurfaceTexture !=null && _updateTexImageCompare != _updateTexImageCounter )
+            {
+                // loop and call updateTexImage() for each time the onFrameAvailable() method was called below.
+                while(_updateTexImageCompare != _updateTexImageCounter) {
+                    mSurfaceTexture.updateTexImage();
+                    mSurfaceTexture.getTransformMatrix(mSTMatrix);
+                    _updateTexImageCompare++;  // increment the compare value until it's the same as _updateTexImageCounter
+                }
             }
         }
-        return shader;
     }
-
+    protected void preDraw()
+    {
+        if(changeShaderFlag)
+        {
+            GLES20.glFinish();
+            this.changeFragmentShader(FRAGMENT_SHADER);
+            return;
+        }
+        Log.d("Draw","Draw frame: " + _updateTexImageCounter);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glUseProgram(mProgram);
+        checkGlError("glUseProgram");
+    }
     protected int createProgram(String vertexSource, String fragmentSource) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {

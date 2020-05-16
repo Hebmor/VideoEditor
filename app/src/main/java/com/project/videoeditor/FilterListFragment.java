@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.project.videoeditor.filters.BaseFilters;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.DefaultFilter;
+import com.project.videoeditor.filters.ImageKernelFilter;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class FilterListFragment extends Fragment {
     private FilterListAdapter filterListAdapter;
     private ArrayList<BaseFilters> baseFiltersArrayList;
     private VideoFilteredView videoFilteredView;
+    private VideoInfo videoInfo;
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -34,6 +36,9 @@ public class FilterListFragment extends Fragment {
         }
     };
 
+    public void setVideoInfo(VideoInfo videoInfo) {
+        this.videoInfo = videoInfo;
+    }
     public void setVideoFilteredView(VideoFilteredView videoFilteredView) {
         this.videoFilteredView = videoFilteredView;
     }
@@ -66,7 +71,8 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"Черно-белый");
         baseFiltersArrayList.add(new BlackWhiteFilter(getContext()));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"Гауссовское размытие");
+        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),

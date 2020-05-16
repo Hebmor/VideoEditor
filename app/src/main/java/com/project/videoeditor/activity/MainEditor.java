@@ -100,6 +100,7 @@ public class MainEditor extends AppCompatActivity {
         }
         //videoView.start();
         filterListFragment.setVideoFilteredView(videoFilteredView);
+        //filterListFragment.setVideoInfo(editVideoInfo);
         videoContainer.addView(videoFilteredView);
         videoContainer.addView(playerController.getPlayerControlView());
 
