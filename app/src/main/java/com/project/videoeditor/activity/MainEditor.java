@@ -44,7 +44,6 @@ public class MainEditor extends AppCompatActivity {
     private VideoFilteredView videoFilteredView;
     private FilterExecutor filterExecutor;
     private MediaExtractor mediaExtractor;
-    private VideoView videoView;
     private PlayerController playerController;
     private ViewPager pager;
     private VideoInfoFragment videoInfoFragment;
@@ -81,7 +80,6 @@ public class MainEditor extends AppCompatActivity {
 
 
         pager.setAdapter(fragmentPagerAdapter);
-        videoView = new VideoView(this);
 
         mediaExtractor = new MediaExtractor();
         filterExecutor = new FilterExecutor(this);
@@ -92,7 +90,6 @@ public class MainEditor extends AppCompatActivity {
 
         try {
 
-            videoView.setVideoPath(editVideoInfo.getPath());
             mediaExtractor.setDataSource(editVideoInfo.getPath());
             filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),framerate,new BlackWhiteFilter(this));
             videoFilteredView = new VideoFilteredView(this,playerController);
@@ -102,6 +99,7 @@ public class MainEditor extends AppCompatActivity {
             e.printStackTrace();
         }
         //videoView.start();
+        filterListFragment.setVideoFilteredView(videoFilteredView);
         videoContainer.addView(videoFilteredView);
         videoContainer.addView(playerController.getPlayerControlView());
 

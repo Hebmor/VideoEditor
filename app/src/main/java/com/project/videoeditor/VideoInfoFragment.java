@@ -24,7 +24,6 @@ public class VideoInfoFragment extends Fragment {
     private VideoInfoAdapter videoInfoAdapter;
     private VideoInfo videoInfo;
 
-
     public VideoInfoFragment(VideoInfo videoInfo) {
         this.videoInfo = videoInfo;
     }

@@ -12,11 +12,35 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.videoeditor.filters.BaseFilters;
+import com.project.videoeditor.filters.BlackWhiteFilter;
+import com.project.videoeditor.filters.DefaultFilter;
+
+import java.util.ArrayList;
+
 public class FilterListFragment extends Fragment {
 
     private RecyclerView recyclerVideoInfo;
     private LinearLayoutManager layoutManager;
     private FilterListAdapter filterListAdapter;
+    private ArrayList<BaseFilters> baseFiltersArrayList;
+    private VideoFilteredView videoFilteredView;
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int itemPosition = recyclerVideoInfo.getChildLayoutPosition(view);
+            if(itemPosition < baseFiltersArrayList.size())
+                videoFilteredView.changeFilter(baseFiltersArrayList.get(itemPosition));
+        }
+    };
+
+    public void setVideoFilteredView(VideoFilteredView videoFilteredView) {
+        this.videoFilteredView = videoFilteredView;
+    }
+
+    public FilterListFragment() {
+        baseFiltersArrayList = new ArrayList<>();
+    }
 
     @Nullable
     @Override
@@ -37,6 +61,10 @@ public class FilterListFragment extends Fragment {
     {
         FilterListAdapter filterListAdapter = new FilterListAdapter(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.default_filter,null),"По умолчанию");
+        baseFiltersArrayList.add(new DefaultFilter());
+        filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
+                R.drawable.black_filter,null),"Черно-белый");
+        baseFiltersArrayList.add(new BlackWhiteFilter(getContext()));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
@@ -55,8 +83,7 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
-        filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+        filterListAdapter.setOnClickListener(onClickListener);
         return  filterListAdapter;
     }
 }

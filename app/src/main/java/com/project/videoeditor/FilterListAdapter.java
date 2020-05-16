@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class FilterListAdapter  extends RecyclerView.Adapter<FilterListAdapter.ViewHolder> {
+
     private ArrayList<Drawable> idCoversDrawable;
     private ArrayList<String> namesFilters;
+    private View.OnClickListener mOnClickListener;
 
     public FilterListAdapter(@NonNull ArrayList<Drawable> idCoversDrawable,@NonNull ArrayList<String> namesFilters) {
         this.idCoversDrawable = idCoversDrawable;
@@ -39,10 +41,17 @@ public class FilterListAdapter  extends RecyclerView.Adapter<FilterListAdapter.V
             this.cardView = cardView;
         }
     }
+
+    public void setOnClickListener(View.OnClickListener mOnClickListener) {
+        this.mOnClickListener = mOnClickListener;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cv = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.card_filter,parent,false);
+        if(mOnClickListener != null)
+            cv.setOnClickListener(mOnClickListener);
         return new FilterListAdapter.ViewHolder(cv);
     }
 

@@ -37,6 +37,7 @@ public class VideoInfoAdapter extends RecyclerView.Adapter<VideoInfoAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }

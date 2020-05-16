@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.MediaController;
 
+import com.project.videoeditor.filters.BaseFilters;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.FiltersHandler;
@@ -28,11 +29,11 @@ public class VideoFilteredView extends GLSurfaceView {
     private PlayerController playerController;
     private Handler handler = new Handler();
 
-    public VideoFilteredView(Context context,PlayerController playerController) throws Exception {
+    public VideoFilteredView(Context context, PlayerController playerController) throws Exception {
         super(context);
         setEGLContextClientVersion(2);
         this.playerController  = playerController;
-        videoSurfaceRenderer = new VideoSurfaceRenderer(context,playerController,new DefaultFilter(context));
+        videoSurfaceRenderer = new VideoSurfaceRenderer(context,playerController,new DefaultFilter());
         videoSurfaceRenderer.setPlayerController(playerController);
 
         this.setOnTouchListener(new OnTouchListener() {
@@ -56,5 +57,9 @@ public class VideoFilteredView extends GLSurfaceView {
     public void changeFragmentShader(FiltersHandler.nameFilters filter) throws IOException {
         videoSurfaceRenderer.changeFilter(FiltersHandler.getFiltersByName(filter,getContext()));
 
+    }
+    public void changeFilter(BaseFilters filter)
+    {
+        videoSurfaceRenderer.changeFilter(filter);
     }
 }
