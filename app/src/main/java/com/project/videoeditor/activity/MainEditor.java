@@ -69,7 +69,7 @@ public class MainEditor extends AppCompatActivity {
         playerController = new PlayerController(this,editVideoInfo.getPath());
         videoTimeline = new VideoTimeline(editVideoInfo,playerController);
         videoInfoFragment = new VideoInfoFragment(editVideoInfo);
-        filterListFragment = new FilterListFragment();
+        filterListFragment = new FilterListFragment(editVideoInfo);
         int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
         pager = (ViewPager)findViewById(R.id.viewPager_editor);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);

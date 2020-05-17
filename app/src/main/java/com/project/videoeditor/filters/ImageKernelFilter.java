@@ -82,5 +82,4 @@ public class ImageKernelFilter extends BaseFilter {
         GLES20.glUniformMatrix3fv(mKernelHandle, 1,false, currentKernelMatrix,0);
         super.draw();
     }
-
 }

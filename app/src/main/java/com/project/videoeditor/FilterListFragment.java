@@ -18,6 +18,7 @@ import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
 import com.project.videoeditor.filters.ImageParamFilter;
+import com.project.videoeditor.filters.PixellationFilter;
 
 import java.util.ArrayList;
 
@@ -48,7 +49,10 @@ public class FilterListFragment extends Fragment {
     public FilterListFragment() {
         baseFilterArrayList = new ArrayList<>();
     }
-
+    public FilterListFragment(VideoInfo info) {
+        baseFilterArrayList = new ArrayList<>();
+        this.videoInfo = info;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,7 +92,8 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"C and B");
         baseFilterArrayList.add(new ImageParamFilter(getContext(),0.2f,-2f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"Pixellation");
+        baseFilterArrayList.add(new PixellationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),20f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
@@ -97,5 +102,6 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.setOnClickListener(onClickListener);
         return  filterListAdapter;
+
     }
 }
