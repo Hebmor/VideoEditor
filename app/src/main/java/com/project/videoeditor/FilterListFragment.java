@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.project.videoeditor.filters.BaseFilters;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.DefaultFilter;
+import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
 
 import java.util.ArrayList;
@@ -72,13 +73,16 @@ public class FilterListFragment extends Fragment {
         baseFiltersArrayList.add(new BlackWhiteFilter(getContext()));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Гауссовское размытие");
-        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200));
+        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.gaussianBlur_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"EDGE detection");
+        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edge_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"EDGE Enhance");
+        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edgeEnhance_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"sharp_kernel");
+        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.sharp_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),

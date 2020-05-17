@@ -15,12 +15,12 @@ public class ImageKernelFilter extends BaseFilters {
     private float [] resolutionVideo = new float[2];
     private float [] kernelMatrix = new float[9];
     private boolean isGetLocation = false;
-    protected final float[] gaussianBlur_kernel = {
-            // X, Y, Z
-            1.0f / 16.0f,   2.0f / 16.0f,  1.0f / 16.0f,
-            2.0f / 16.0f,   4.0f / 16.0f,  2.0f / 16.0f,
-            1.0f / 16.0f,   2.0f / 16.0f,  1.0f / 16.0f
-    } ;
+    private float [] currentKernelMatrix = ImageKernelMatrix.edge_kernel;
+
+    public void setCurrentKernelMatrix(float[] currentKernelMatrix) {
+        this.currentKernelMatrix = currentKernelMatrix;
+    }
+
     @Override
     public String getFilterName() {
         return "ImageKernel";
@@ -33,6 +33,12 @@ public class ImageKernelFilter extends BaseFilters {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
         this.setResolutionVideo(heightVideo,widthVideo);
+    }
+    public ImageKernelFilter(Context context,float heightVideo,float widthVideo,float [] kernelMatrix) {
+        super(context);
+        this.loadFragmentShaderFromResource(R.raw.image_kernel);
+        this.setResolutionVideo(heightVideo,widthVideo);
+        this.setCurrentKernelMatrix(kernelMatrix);
     }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -69,7 +75,7 @@ public class ImageKernelFilter extends BaseFilters {
         super.preDraw();
         super.bindResource();
         GLES20.glUniform2fv(mImageResolutionHandle, 1, resolutionVideo, 0);
-        GLES20.glUniformMatrix3fv(mKernelHandle, 1,false, gaussianBlur_kernel,0);
+        GLES20.glUniformMatrix3fv(mKernelHandle, 1,false, currentKernelMatrix,0);
         super.draw();
     }
 
