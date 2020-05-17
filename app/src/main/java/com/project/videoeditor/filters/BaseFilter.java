@@ -311,6 +311,11 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     protected void synchronizeDrawFrame()
     {
         synchronized (this) {
+            if(_updateTexImageCompare > Integer.MAX_VALUE - 2 || _updateTexImageCounter > Integer.MAX_VALUE - 1)
+            {
+                _updateTexImageCompare = 0;
+                _updateTexImageCounter = 1;
+            }
             if( mSurfaceTexture !=null && _updateTexImageCompare != _updateTexImageCounter )
             {
                 // loop and call updateTexImage() for each time the onFrameAvailable() method was called below.
@@ -330,7 +335,6 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
             this.changeFragmentShader(FRAGMENT_SHADER);
             return;
         }
-        Log.d("Draw","Draw frame: " + _updateTexImageCounter);
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);

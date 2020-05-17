@@ -18,7 +18,7 @@ public class PixellationFilter extends BaseFilter {
 
     @Override
     public String getFilterName() {
-        return "ImageKernel";
+        return "PixellationFilter";
     }
 
     public PixellationFilter(Context context) {

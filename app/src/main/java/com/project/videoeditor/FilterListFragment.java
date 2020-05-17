@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.BlackWhiteFilter;
+import com.project.videoeditor.filters.CelShadingFilter;
 import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
@@ -77,7 +78,7 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"Черно-белый");
         baseFilterArrayList.add(new BlackWhiteFilter(getContext()));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Гауссовское размытие");
+                R.drawable.black_filter,null),"GAUSS");
         baseFilterArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.gaussianBlur_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"EDGE detection");
@@ -95,11 +96,9 @@ public class FilterListFragment extends Fragment {
                 R.drawable.black_filter,null),"Pixellation");
         baseFilterArrayList.add(new PixellationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),20f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
-        filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
-        filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"CellShading");
+        baseFilterArrayList.add(new CelShadingFilter(getContext(),4f));
+
         filterListAdapter.setOnClickListener(onClickListener);
         return  filterListAdapter;
 
