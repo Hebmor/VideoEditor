@@ -28,7 +28,7 @@ public class OutputSurface  implements SurfaceTexture.OnFrameAvailableListener {
     private boolean mFrameAvailable;
     private HandlerThread mHandlerThread;
     private Handler mHandler;
-    private BaseFilters filters;
+    private BaseFilter filters;
 
     /**
      * Creates an OutputSurface backed by a pbuffer with the specifed dimensions.  The new
@@ -44,7 +44,7 @@ public class OutputSurface  implements SurfaceTexture.OnFrameAvailableListener {
         filters = new DefaultFilter();
         setup();
     }
-    public OutputSurface(BaseFilters filter) {
+    public OutputSurface(BaseFilter filter) {
         this.filters = filter;
         setup();
 

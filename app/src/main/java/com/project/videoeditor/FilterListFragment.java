@@ -12,11 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.videoeditor.filters.BaseFilters;
+import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
+import com.project.videoeditor.filters.ImageParamFilter;
 
 import java.util.ArrayList;
 
@@ -25,15 +26,15 @@ public class FilterListFragment extends Fragment {
     private RecyclerView recyclerVideoInfo;
     private LinearLayoutManager layoutManager;
     private FilterListAdapter filterListAdapter;
-    private ArrayList<BaseFilters> baseFiltersArrayList;
+    private ArrayList<BaseFilter> baseFilterArrayList;
     private VideoFilteredView videoFilteredView;
     private VideoInfo videoInfo;
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             int itemPosition = recyclerVideoInfo.getChildLayoutPosition(view);
-            if(itemPosition < baseFiltersArrayList.size())
-                videoFilteredView.changeFilter(baseFiltersArrayList.get(itemPosition));
+            if(itemPosition < baseFilterArrayList.size())
+                videoFilteredView.changeFilter(baseFilterArrayList.get(itemPosition));
         }
     };
 
@@ -45,7 +46,7 @@ public class FilterListFragment extends Fragment {
     }
 
     public FilterListFragment() {
-        baseFiltersArrayList = new ArrayList<>();
+        baseFilterArrayList = new ArrayList<>();
     }
 
     @Nullable
@@ -67,24 +68,25 @@ public class FilterListFragment extends Fragment {
     {
         FilterListAdapter filterListAdapter = new FilterListAdapter(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.default_filter,null),"По умолчанию");
-        baseFiltersArrayList.add(new DefaultFilter());
+        baseFilterArrayList.add(new DefaultFilter());
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
-        baseFiltersArrayList.add(new BlackWhiteFilter(getContext()));
+        baseFilterArrayList.add(new BlackWhiteFilter(getContext()));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Гауссовское размытие");
-        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.gaussianBlur_kernel));
+        baseFilterArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.gaussianBlur_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"EDGE detection");
-        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edge_kernel));
+        baseFilterArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edge_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"EDGE Enhance");
-        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edgeEnhance_kernel));
+        baseFilterArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.edgeEnhance_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"sharp_kernel");
-        baseFiltersArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.sharp_kernel));
+        baseFilterArrayList.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.sharp_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.black_filter,null),"Черно-белый");
+                R.drawable.black_filter,null),"C and B");
+        baseFilterArrayList.add(new ImageParamFilter(getContext(),0.2f,-2f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Черно-белый");
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),

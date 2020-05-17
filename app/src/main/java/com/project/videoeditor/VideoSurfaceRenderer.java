@@ -2,12 +2,10 @@ package com.project.videoeditor;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.widget.MediaController;
 
-import com.project.videoeditor.filters.BaseFilters;
+import com.project.videoeditor.filters.BaseFilter;
 
 import java.io.IOException;
 
@@ -21,12 +19,12 @@ public class VideoSurfaceRenderer
     private static String TAG = "VideoRender";
 
     private PlayerController playerController;
-    private BaseFilters currentFilter;
-    private BaseFilters newFilter;
+    private BaseFilter currentFilter;
+    private BaseFilter newFilter;
     private boolean isChangeFilter = false;
     SurfaceTexture.OnFrameAvailableListener onFrameAvailableListener;
 
-    public VideoSurfaceRenderer(Context context,PlayerController playerController,BaseFilters filter) {
+    public VideoSurfaceRenderer(Context context, PlayerController playerController, BaseFilter filter) {
 
         this.currentFilter = filter;
         this.playerController = playerController;
@@ -106,7 +104,7 @@ public class VideoSurfaceRenderer
 
     }
 
-    public void changeFilter(BaseFilters filter) {
+    public void changeFilter(BaseFilter filter) {
         if(currentFilter != null)
         {
             newFilter = filter;

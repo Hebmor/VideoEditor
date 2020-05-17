@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.project.videoeditor.R;
 
-public class BlackWhiteFilter extends BaseFilters {
+public class BlackWhiteFilter extends BaseFilter {
 
     private final String filterName = "BlackWhiteFilter";
     @Override

@@ -22,7 +22,7 @@ public class FiltersHandler {
     {
         return R.raw.black_and_white;
     }
-    public static BaseFilters getFiltersByName(nameFilters name,Context context)
+    public static BaseFilter getFiltersByName(nameFilters name, Context context)
     {
         switch (name)
         {

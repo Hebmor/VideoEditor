@@ -1,22 +1,13 @@
 package com.project.videoeditor;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.Point;
-import android.media.MediaPlayer;
-import android.media.TimedMetaData;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.MediaController;
 
-import com.project.videoeditor.filters.BaseFilters;
-import com.project.videoeditor.filters.BlackWhiteFilter;
+import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.DefaultFilter;
 import com.project.videoeditor.filters.FiltersHandler;
 
@@ -58,7 +49,7 @@ public class VideoFilteredView extends GLSurfaceView {
         videoSurfaceRenderer.changeFilter(FiltersHandler.getFiltersByName(filter,getContext()));
 
     }
-    public void changeFilter(BaseFilters filter)
+    public void changeFilter(BaseFilter filter)
     {
         videoSurfaceRenderer.changeFilter(filter);
     }

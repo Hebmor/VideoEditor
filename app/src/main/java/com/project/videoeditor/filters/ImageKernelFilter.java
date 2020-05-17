@@ -8,7 +8,7 @@ import com.project.videoeditor.R;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class ImageKernelFilter extends BaseFilters {
+public class ImageKernelFilter extends BaseFilter {
 
     private int mImageResolutionHandle;
     private int mKernelHandle;
@@ -25,21 +25,25 @@ public class ImageKernelFilter extends BaseFilters {
     public String getFilterName() {
         return "ImageKernel";
     }
+
     public ImageKernelFilter(Context context) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
     }
+
     public ImageKernelFilter(Context context,float heightVideo,float widthVideo) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
         this.setResolutionVideo(heightVideo,widthVideo);
     }
+
     public ImageKernelFilter(Context context,float heightVideo,float widthVideo,float [] kernelMatrix) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
         this.setResolutionVideo(heightVideo,widthVideo);
         this.setCurrentKernelMatrix(kernelMatrix);
     }
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);

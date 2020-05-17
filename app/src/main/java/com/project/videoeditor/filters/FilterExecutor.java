@@ -44,7 +44,7 @@ public class FilterExecutor extends Thread {
     String pathOutVideoFile;
     String pathInVideoFile;
     MediaFormat inputAudioFormat = null;
-    private BaseFilters filter;
+    private BaseFilter filter;
     private String newFilename;
     private int framerate;
 
@@ -344,7 +344,7 @@ public class FilterExecutor extends Thread {
 
         Log.d("Время выполнения фильтрации: ",(System.currentTimeMillis() - beginTime) + " MS");
     }
-    public void setupSettings(MediaExtractor extractor,Long bitrateBitPerSeconds,String pathFromVideo,int framerate,BaseFilters filter) throws IOException {
+    public void setupSettings(MediaExtractor extractor, Long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws IOException {
         this.videoExtractor = extractor;
         this.pathInVideoFile = pathFromVideo;
         this.bitrateBitPerSeconds = bitrateBitPerSeconds;

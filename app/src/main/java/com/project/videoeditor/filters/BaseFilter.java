@@ -2,7 +2,6 @@ package com.project.videoeditor.filters;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -22,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
-public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener{
+public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener{
 
     protected static final String TAG = "BaseFilters";
 
@@ -96,7 +95,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         return _updateTexImageCompare;
     }
 
-    public BaseFilters() {
+    public BaseFilter() {
         mTriangleVertices = ByteBuffer.allocateDirect(
                 mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -121,13 +120,13 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         mTriangleVertices.put(mTriangleVerticesData).position(0);
         Matrix.setIdentityM(mSTMatrix, 0);
     }
-    public BaseFilters(Context context) {
+    public BaseFilter(Context context) {
 
         initTriangleVertices();
         this.context = context;
     }
 
-    public BaseFilters(Context context,PlayerController playerController) {
+    public BaseFilter(Context context, PlayerController playerController) {
 
         initTriangleVertices();
         this.context = context;
@@ -150,7 +149,7 @@ public abstract class BaseFilters implements GLSurfaceView.Renderer,SurfaceTextu
         FRAGMENT_SHADER = UtilUri.OpenRawResourcesAsString(context,resourceId);
     }
 
-    public void recreate(BaseFilters oldFilter) throws IOException {
+    public void recreate(BaseFilter oldFilter) throws IOException {
         GLES20.glDeleteProgram(mProgram);
         mProgram = createProgram(VERTEX_SHADER, FRAGMENT_SHADER);
         if (mProgram == 0) {
