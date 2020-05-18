@@ -1,16 +1,9 @@
 package com.project.videoeditor;
 
 import androidx.core.content.ContextCompat;
-import androidx.documentfile.provider.DocumentFile;
-import androidx.lifecycle.ViewModelProviders;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,17 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
@@ -38,22 +25,18 @@ import com.project.videoeditor.codecs.ActionEditor;
 
 import java.io.File;
 
-import static android.app.Activity.RESULT_OK;
-
 
 public class VideoTimeline extends Fragment {
 
-
-    private  RangeSeekBar seekBar;
-    private VideoEditBar videoEditBar;
+    private RangeSeekBar seekBar;
     private RecyclerView recyclerTimeline;
     private LinearLayoutManager layoutManager;
-    private  SeekBar SBR;
+    private SeekBar SBR;
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
     private boolean rangeMode = false;
-    //private MediaPlayer mediaPlayer;
+
     private PlayerController playerController;
 
     private float tempLeftValue = 0;
@@ -90,31 +73,28 @@ public class VideoTimeline extends Fragment {
         if(rangeMode)
             return inflater.inflate(R.layout.video_timeline_cut, container, false);
         else
-            return inflater.inflate(R.layout.video_timeline_fragment, container, false);
+            return inflater.inflate(R.layout.video_timeline_split, container, false);
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         seekBar = view.findViewById(R.id.seekBarVideo);
-        if(rangeMode)
-            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_RANGE);
-        else
-            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_SINGLE);
-        //videoEditBar = view.findViewById(R.id.rectVideo);
-        recyclerTimeline = (RecyclerView) view.findViewById(R.id.timeline_recycler);
-        //videoFramesCollage = view.findViewById(R.id.videoFramesCollage);
-        //linearLayout = view.findViewById(R.id.linear_layout);
-        //rangeMode = (seekBar.getSeekBarMode() == RangeSeekBar.SEEKBAR_MODE_RANGE);
-
-
         SBR = seekBar.getRightSeekBar();
         SBL = seekBar.getLeftSeekBar();
+        if(rangeMode)
+            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_RANGE);
+        else {
+            seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_SINGLE);
+            seekBar.setProgressWidth(2000);
+            SBL.setThumbDrawableId(R.drawable.ic_shapes);
+            SBL.setThumbHeight(500);
+        }
+
+        recyclerTimeline = (RecyclerView) view.findViewById(R.id.timeline_recycler);
+
         String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(),getActivity());
         Bitmap bitmap = getBitmapByPath(pathCollage);
         VideoAdapter videoAdapter = new VideoAdapter(bitmap,videoInfo.getFilename());
-        videoAdapter.addItem(bitmap,videoInfo.getFilename());
-        videoAdapter.addItem(bitmap,videoInfo.getFilename());
-        videoAdapter.addItem(bitmap,videoInfo.getFilename());
-        videoAdapter.addItem(bitmap,videoInfo.getFilename());
         layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
         recyclerTimeline.setLayoutManager(layoutManager);
         recyclerTimeline.setAdapter(videoAdapter);
@@ -153,25 +133,11 @@ public class VideoTimeline extends Fragment {
 
                     if(rangeMode) {
                         seekBar.setProgressBottom(recyclerTimeline.getBottom());
-                        seekBar.setProgressTop(recyclerTimeline.getTop());
+                        seekBar.setProgressTop(recyclerTimeline.getTop() - 48);
                         seekBar.setProgressColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
-                        seekBar.setProgressHeight(100);
+                        seekBar.setProgressHeight(200);
+                        seekBar.invalidate();
                     }
-                    else
-                    {
-                        //seekBar.setScrollIndicators(View.SCROLL_INDICATOR_TOP);
-                        seekBar.setProgressDrawableId(R.drawable.ic_content_cut_black_24dp);
-                        seekBar.setProgressHeight(recyclerTimeline.getBottom() - recyclerTimeline.getTop() + 20);
-                    }
-
-
-                    //seekBar.setTop(recyclerTimeline.getTop());
-                  //  recyclerTimeline.setVisibility(View.INVISIBLE);
-                    //seekBar.setProgressHeight(-100);
-                   //SBR.setIndicatorPaddingTop(recyclerTimeline.getBottom());
-                    //seekBar.setBottom(recyclerTimeline.getBottom());
-
-                    seekBar.invalidate();
                 }
             });
     }
@@ -189,17 +155,9 @@ public class VideoTimeline extends Fragment {
     public void onStart() {
 
         super.onStart();
-       // pVideoView = getActivity().findViewById(R.id.videoView_EditVideo);
+
         seekBar.setRange(0,videoInfo.getDuration(),1000);
         seekBar.setProgress(0,videoInfo.getDuration());
-
-
-        //updateTimeline(0,videoInfo.getDuration());
-
-
-        //
-
-        //pVideoView = getActivity().findViewById(R.id.videoView);
     }
     public void setVideoInfo(VideoInfo videoInfo)
     {
@@ -265,7 +223,6 @@ public class VideoTimeline extends Fragment {
                 SBR.setIndicatorText(String.format("%02d:%02d.%d",minuteSBR, secondSBR, millisSBR));
             playerController.getPlayer().seekTo((int)rightValue);
         }
-        //videoEditBar.invalidate();
     }
 
 }
