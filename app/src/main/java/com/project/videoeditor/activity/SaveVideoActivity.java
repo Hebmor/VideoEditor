@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,7 +17,9 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import com.arthenica.mobileffmpeg.Config;
 import com.jaygoo.widget.RangeSeekBar;
+import com.project.videoeditor.LoadingEncodeDialog;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.codecs.ActionEditor;
@@ -31,6 +34,8 @@ import com.warkiz.widget.SeekParams;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class SaveVideoActivity extends AppCompatActivity {
 
@@ -44,6 +49,8 @@ public class SaveVideoActivity extends AppCompatActivity {
     private VideoInfo editVideoInfo;
     private RadioGroup radioGroupCodecs;
 
+    private LoadingEncodeDialog loadingEncodeDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +62,7 @@ public class SaveVideoActivity extends AppCompatActivity {
         computeOutputFileSize = findViewById(R.id.textView_computeSizeValue);
         framerateSpinner = findViewById(R.id.spinner_framerate);
         radioGroupCodecs = findViewById(R.id.radioGroupCodecs);
-
+        loadingEncodeDialog = new LoadingEncodeDialog(this);
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
         bitrateIndicator.setIndicatorTextFormat("${PROGRESS} mb/s");
         mExpansionViewModel = new ViewModelProvider(this).get(PresetEntityViewModel.class);
@@ -124,6 +131,28 @@ public class SaveVideoActivity extends AppCompatActivity {
         Codecs.CodecsName codec = Codecs.fromString(getSelectedTextFromRadioGroup());
         String scaleResolution = ((String) videoResolutionSpinner.getSelectedItem()).replace("×","x");
         ActionEditor.executeCommand(inputVideoPath,outputVideoPath,bitrateInMbit,framerate,fromTimeMS,toTimeMS,codec,scaleResolution);
+        Handler handler = new Handler();
+        loadingEncodeDialog.startLoadingDialog();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+                long ms = (long)((editVideoInfo.getDuration() - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                long secs = TimeUnit.MILLISECONDS.toSeconds(ms)  % 60;
+                long hours = TimeUnit.MILLISECONDS.toHours(ms)  % 24;
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)  % 60;
+
+                loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
+                        "%d:%02d:%02d", hours, minutes, secs));
+                if(secs > 0) {
+                    handler.postDelayed(this, 1000);
+                }
+                else {
+                    loadingEncodeDialog.dismissDialog();
+                }
+            }
+        });
     }
     public String getSelectedTextFromRadioGroup()
     {
