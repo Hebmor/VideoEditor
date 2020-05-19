@@ -11,5 +11,10 @@
     <color name="darkGrey">#A9A9A9</color>
     <color name="peach">#F85C50</color>
     <color name="honey">#A7AD02</color>
+    <color name="orange">#FFA901</color>
+    <color name="black">#0D0000</color>
+    <color name="paleOrange">#FCF5D4</color>
+    <color name="madras">#322401</color>
+    <color name="harmonies">#8C5C03</color>
     <color name="transparency">#00000000</color>
 </resources>

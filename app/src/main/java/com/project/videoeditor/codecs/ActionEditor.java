@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 public class ActionEditor {
 
     private static VideoInfo videoInfo;
-    public final String availableEncodeList[] = {"MPEG4","libx264","H.265","libtheora","mpeg2","libxvid"};
-
     public ActionEditor() {
 
 
@@ -162,6 +160,29 @@ public class ActionEditor {
     }
     public static void addAudioFromVideoToVideo(String fromAudioVideo,String toAudioVideo,String pathResultVideo) throws InterruptedException {
         String command = String.format("-y -i  \"%s\" -i  \"%s\" -c copy -map 0:1 -map 1:0 -shortest  \"%s\"",fromAudioVideo,toAudioVideo,toAudioVideo);
+        RunCommandExecuteFFMPEG(command,false);
+    }
+    public static void executeCommand(String inputVideoPath,String outputVideoPath,float bitrateInMbit,String framerate,long fromTimeMS,long toTimeMS,Codecs.CodecsName codec,String scaleResolution) throws Exception {
+
+        String command = "";
+        long msFrom = fromTimeMS % 1000;
+        long secsFrom = TimeUnit.MILLISECONDS.toSeconds(fromTimeMS)  % 60;
+        long hoursFrom = TimeUnit.MILLISECONDS.toHours(fromTimeMS)  % 24;
+        long minutesFrom = TimeUnit.MILLISECONDS.toMinutes(fromTimeMS)  % 60;
+
+        long durationMS = toTimeMS - fromTimeMS;
+        long msDuration = durationMS % 1000;
+        long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
+        long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
+        long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+        String currentCodec = Codecs.toStringFFMPEGName(codec);
+        if(fromTimeMS == toTimeMS || fromTimeMS < 0 || fromTimeMS < 0)
+            command = String.format("-y -i \"%s\" -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
+                    inputVideoPath,currentCodec,"libopus",bitrateInMbit,scaleResolution,framerate,outputVideoPath);
+        else
+            command = String.format("-y -i \"%s\" -ss %d:%d:%d -t %d:%d:%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
+                    inputVideoPath,hoursFrom,minutesFrom,secsFrom,hoursDuration,minutesDuration,secsDuration,
+                    currentCodec,"libopus",bitrateInMbit,scaleResolution,framerate,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
 }

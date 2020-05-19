@@ -66,7 +66,7 @@ public class FilterExecutor extends Thread {
         MediaFormat outputVideoFormat = null;
 
         String mime = null;
-        String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.black_and_white);
+        String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.default_state);
         videoExtractor = new MediaExtractor();
 
         audioExtractor = new MediaExtractor();

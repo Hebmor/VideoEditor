@@ -9,13 +9,11 @@ import androidx.room.Query;
 import java.util.List;
 
 @Dao
-public interface ExpansionEntityDao {
+public interface PresetEntityDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(ExpansionEntity expansion);
-
-    @Query("DELETE FROM expansion")
+    void insert(PresetEntity expansion);
+    @Query("DELETE FROM presets")
     void deleteAll();
-
-    @Query("SELECT * from expansion ORDER BY nameFormat ASC")
-    LiveData<List<ExpansionEntity>> getAlphabetizedWords();
+    @Query("SELECT * from presets")
+    LiveData<List<PresetEntity>> getAllExpansion();
 }

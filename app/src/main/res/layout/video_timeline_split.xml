@@ -71,7 +71,9 @@
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_encode_to_file_18dp"
                 android:text="Сохранить"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:onClick="ClickOpenSavePage"
+                />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

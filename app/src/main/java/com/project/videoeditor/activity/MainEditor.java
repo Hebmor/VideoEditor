@@ -1,10 +1,7 @@
 package com.project.videoeditor.activity;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -12,13 +9,10 @@ import android.media.MediaExtractor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.VideoView;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
 import com.project.videoeditor.FilterListFragment;
-import com.project.videoeditor.database.ExpansionEntity;
-import com.project.videoeditor.database.ExpansionEntityViewModel;
 import com.project.videoeditor.FragmentPagerAdapter;
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
@@ -31,12 +25,10 @@ import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.FiltersVideoActivity;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainEditor extends AppCompatActivity {
 
     public static final String EDIT_VIDEO_ID = "6001";
-    private ExpansionEntityViewModel mExpansionViewModel;
     private VideoInfo editVideoInfo;
     private VideoTimeline videoTimeline;
     private FragmentManager fragmentManager;
@@ -52,16 +44,9 @@ public class MainEditor extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_editor);
-        mExpansionViewModel = new ViewModelProvider(this).get(ExpansionEntityViewModel.class);
-        mExpansionViewModel.getAllWords().observe(this, new Observer<List<ExpansionEntity>>() {
-            @Override
-            public void onChanged(@Nullable final List<ExpansionEntity> words) {
-                // Update the cached copy of the words in the adapter.
-               // adapter.setWords(words);
-            }
-        });
         videoContainer = findViewById(R.id.videoContainer);
         fragmentManager = getSupportFragmentManager();
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
@@ -140,8 +125,8 @@ public class MainEditor extends AppCompatActivity {
         }
     }
 
-    public void ClickOpenEncodersPage(View view) {
-        Intent intent = new Intent(this, VideoEncoders.class);
+    public void ClickOpenSavePage(View view) {
+        Intent intent = new Intent(this, SaveVideoActivity.class);
         intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
         startActivity(intent);
     }
