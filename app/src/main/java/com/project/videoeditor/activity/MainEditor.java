@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.media.MediaExtractor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
+import com.project.videoeditor.FilterListAdapter;
 import com.project.videoeditor.FilterListFragment;
 import com.project.videoeditor.FragmentPagerAdapter;
 import com.project.videoeditor.PlayerController;
@@ -27,69 +29,64 @@ import com.project.videoeditor.filters.FiltersVideoActivity;
 import java.io.IOException;
 
 public class MainEditor extends AppCompatActivity {
-
-    public static final String EDIT_VIDEO_ID = "6001";
+    public static final String EDIT_VIDEO_ID = "EditVideoInfo";
     private VideoInfo editVideoInfo;
-    private VideoTimeline videoTimeline;
-    private FragmentManager fragmentManager;
+    private VideoTimeline videoTimelineSplit;
+    private VideoTimeline videoTimelineCut;
     private FrameLayout videoContainer;
     private VideoFilteredView videoFilteredView;
     private FilterExecutor filterExecutor;
     private MediaExtractor mediaExtractor;
     private PlayerController playerController;
-    private ViewPager pager;
+    private ViewPager viewPager;
     private VideoInfoFragment videoInfoFragment;
     private FilterListFragment filterListFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_editor);
         videoContainer = findViewById(R.id.videoContainer);
-        fragmentManager = getSupportFragmentManager();
+        viewPager = (ViewPager)findViewById(R.id.viewPager_editor);
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabsEditor);
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
 
         playerController = new PlayerController(this,editVideoInfo.getPath());
-        videoTimeline = new VideoTimeline(editVideoInfo,playerController);
+        videoTimelineSplit = new VideoTimeline(editVideoInfo,playerController);
+        videoTimelineCut = new VideoTimeline(editVideoInfo,playerController,true);
         videoInfoFragment = new VideoInfoFragment(editVideoInfo);
         filterListFragment = new FilterListFragment(editVideoInfo);
-        int framerate = (int)Float.parseFloat(editVideoInfo.getFrameRate());
-        pager = (ViewPager)findViewById(R.id.viewPager_editor);
-        FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
-        fragmentPagerAdapter.addItem(videoTimeline);
-        fragmentPagerAdapter.addItem(new VideoTimeline(editVideoInfo,playerController,true));
+
+        FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
+                androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
+
+        fragmentPagerAdapter.addItem(videoTimelineCut);
+        fragmentPagerAdapter.addItem(videoTimelineSplit);
         fragmentPagerAdapter.addItem(filterListFragment);
         fragmentPagerAdapter.addItem(videoInfoFragment);
 
-
-        pager.setAdapter(fragmentPagerAdapter);
+        viewPager.setAdapter(fragmentPagerAdapter);
 
         mediaExtractor = new MediaExtractor();
         filterExecutor = new FilterExecutor(this);
+        tabs.setupWithViewPager(viewPager);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabsEditor);
-        tabs.setupWithViewPager(pager);
         initTabs(tabs);
 
         try {
 
             mediaExtractor.setDataSource(editVideoInfo.getPath());
-            filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),framerate,new BlackWhiteFilter(this));
+            filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),(int)Float.parseFloat(editVideoInfo.getFrameRate()),new BlackWhiteFilter(this));
             videoFilteredView = new VideoFilteredView(this,playerController);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //videoView.start();
+
         filterListFragment.setVideoFilteredView(videoFilteredView);
-        //filterListFragment.setVideoInfo(editVideoInfo);
         videoContainer.addView(videoFilteredView);
         videoContainer.addView(playerController.getPlayerControlView());
-
-        //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
     }
 
     @Override
@@ -126,35 +123,23 @@ public class MainEditor extends AppCompatActivity {
     }
 
     public void ClickOpenSavePage(View view) {
-        Intent intent = new Intent(this, SaveVideoActivity.class);
-        intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
-        startActivity(intent);
+        if(view instanceof Button) {
+
+            Intent intent = new Intent(this, SaveVideoActivity.class);
+            intent.putExtra(VideoInfo.class.getCanonicalName(), editVideoInfo);
+            String test = (String) view.getTag();
+            if((String) view.getTag() == "saveSplit") {
+                intent.putExtra("beginValue", videoTimelineSplit.getLeftValue());
+                intent.putExtra("endValue", videoTimelineSplit.getRightValue());
+            }
+            if((String)view.getTag() == "saveCut") {
+                intent.putExtra("beginValue", videoTimelineCut.getLeftValue());
+                intent.putExtra("endValue", videoTimelineCut.getRightValue());
+            }
+            startActivity(intent);
+        }
     }
-    public void ClickOpenVideoInfoPage(View view)
-    {
-        Intent intent = new Intent(this, VideoInfoFragment.class);
-        intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
-        startActivity(intent);
-    }
-    public void ClickOpenEditorPage(View view)
-    {
-        Intent intent = new Intent(this, VideoEditPage.class);
-        intent.putExtra(VideoInfo.class.getCanonicalName(),editVideoInfo);
-        startActivity(intent);
-    }
-    public void ClickOpenFilterPage(View view)
-    {
-        Intent intent = new Intent(this, FiltersVideoActivity.class);
-        intent.putExtra(FiltersVideoActivity.EDIT_VIDEO_ID,editVideoInfo);
-        startActivity(intent);
-    }
-    public void ClickCropVideoPage(View view)
-    {
-        Intent intent = new Intent(this, CropVideoActivity.class);
-        String path = editVideoInfo.getPath();
-        intent.putExtra(CropVideoActivity.FRAME_BITMAP_URI,path);
-        startActivity(intent);
-    }
+
     private void initTabs(TabLayout tabs)
     {
         tabs.getTabAt(0).setText("Выделить");

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jaygoo.widget.OnRangeChangedListener;
@@ -36,6 +37,7 @@ public class VideoTimeline extends Fragment {
     private ImageView videoFramesCollage;
     private VideoInfo videoInfo;
     private boolean rangeMode = false;
+    private Button saveButton;
 
     private PlayerController playerController;
 
@@ -81,6 +83,7 @@ public class VideoTimeline extends Fragment {
         seekBar = view.findViewById(R.id.seekBarVideo);
         SBR = seekBar.getRightSeekBar();
         SBL = seekBar.getLeftSeekBar();
+
         if(rangeMode)
             seekBar.setSeekBarMode(RangeSeekBar.SEEKBAR_MODE_RANGE);
         else {
@@ -225,4 +228,11 @@ public class VideoTimeline extends Fragment {
         }
     }
 
+    public float getLeftValue() {
+        return tempLeftValue;
+    }
+
+    public float getRightValue() {
+        return tempRightValue;
+    }
 }

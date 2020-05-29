@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoTimeline">
+    tools:context=".activity.MainEditor">
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
@@ -52,7 +52,8 @@
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_split_18dp"
                 android:text="Извлечь аудио"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:tag="saveCut"/>
 
             <Button
                 android:id="@+id/buttonExtractFrame"
@@ -70,7 +71,8 @@
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_encode_to_file_18dp"
                 android:text="Сохранить"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:onClick="ClickOpenSavePage"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

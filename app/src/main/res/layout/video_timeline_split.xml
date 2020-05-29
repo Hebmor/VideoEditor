@@ -73,7 +73,7 @@
                 android:text="Сохранить"
                 android:textSize="12sp"
                 android:onClick="ClickOpenSavePage"
-                />
+                android:tag="saveSplit"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -18,7 +18,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.arthenica.mobileffmpeg.Config;
-import com.jaygoo.widget.RangeSeekBar;
 import com.project.videoeditor.LoadingEncodeDialog;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
@@ -42,13 +41,14 @@ public class SaveVideoActivity extends AppCompatActivity {
     private PresetEntityViewModel mExpansionViewModel;
     private PresetCollection expansionCollection;
     private Spinner videoResolutionSpinner;
-    private Spinner formatSpinner;
-    private Spinner framerateSpinner;
+    private Spinner formatValueSpinner;
+    private Spinner framerateInfoSpinner;
     private IndicatorSeekBar  bitrateIndicator;
     private TextView computeOutputFileSize;
     private VideoInfo editVideoInfo;
     private RadioGroup radioGroupCodecs;
-
+    private float beginValue = 0;
+    private float endValue = 0;
     private LoadingEncodeDialog loadingEncodeDialog;
 
     @Override
@@ -56,14 +56,23 @@ public class SaveVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_video_encoders);
+
         videoResolutionSpinner = findViewById(R.id.spinner_videoResolution);
-        formatSpinner = findViewById(R.id.spinner_format);
+        formatValueSpinner = findViewById(R.id.spinner_format);
         bitrateIndicator = findViewById(R.id.bitrateIndicator);
         computeOutputFileSize = findViewById(R.id.textView_computeSizeValue);
-        framerateSpinner = findViewById(R.id.spinner_framerate);
+        framerateInfoSpinner = findViewById(R.id.spinner_framerate);
         radioGroupCodecs = findViewById(R.id.radioGroupCodecs);
+
         loadingEncodeDialog = new LoadingEncodeDialog(this);
+
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
+        beginValue = getIntent().getFloatExtra("beginValue",0f);
+        endValue = getIntent().getFloatExtra("endValue",0f);
+
+        if(beginValue >= endValue)
+            endValue = beginValue = 0;
+
         bitrateIndicator.setIndicatorTextFormat("${PROGRESS} mb/s");
         mExpansionViewModel = new ViewModelProvider(this).get(PresetEntityViewModel.class);
         mExpansionViewModel.getAllPreset().observe(this, new Observer<List<PresetEntity>>() {
@@ -78,11 +87,11 @@ public class SaveVideoActivity extends AppCompatActivity {
                 SpinnerAdapter adapterAspectRatio = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_list_item_1,expansionCollection.getAllAspectRatio());
                 videoResolutionSpinner.setAdapter(adapterResolutionVideo);
-                formatSpinner.setAdapter(adapterNameFormat);
+                formatValueSpinner.setAdapter(adapterNameFormat);
             }
         });
 
-        formatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        formatValueSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 videoResolutionSpinner.setSelection(position);
@@ -113,6 +122,7 @@ public class SaveVideoActivity extends AppCompatActivity {
                         editVideoInfo.getDuration()) + " MB"));
             }
         });
+
     }
 
     private float computeOutputFileSize(float cbrInMbit,float videoDurationInMs)
@@ -125,9 +135,9 @@ public class SaveVideoActivity extends AppCompatActivity {
         File folder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "EncodeVideo");
         String outputVideoPath = folder.getAbsolutePath() + "/" + editVideoInfo.getFilename();
         float bitrateInMbit = bitrateIndicator.getProgressFloat();
-        String framerate = (String) framerateSpinner.getSelectedItem();
-        long fromTimeMS = 0;
-        long toTimeMS = 0;
+        String framerate = (String) framerateInfoSpinner.getSelectedItem();
+        long fromTimeMS = (long) beginValue;
+        long toTimeMS = (long) endValue;
         Codecs.CodecsName codec = Codecs.fromString(getSelectedTextFromRadioGroup());
         String scaleResolution = ((String) videoResolutionSpinner.getSelectedItem()).replace("×","x");
         ActionEditor.executeCommand(inputVideoPath,outputVideoPath,bitrateInMbit,framerate,fromTimeMS,toTimeMS,codec,scaleResolution);
