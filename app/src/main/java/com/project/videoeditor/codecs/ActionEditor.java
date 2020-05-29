@@ -176,13 +176,15 @@ public class ActionEditor {
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
         long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
         String currentCodec = Codecs.toStringFFMPEGName(codec);
+        String framerateNorm = framerate.replace(",",".");
+
         if(fromTimeMS == toTimeMS || fromTimeMS < 0 || fromTimeMS < 0)
             command = String.format("-y -i \"%s\" -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
-                    inputVideoPath,currentCodec,"libopus",bitrateInMbit,scaleResolution,framerate,outputVideoPath);
+                    inputVideoPath,currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         else
             command = String.format("-y -i \"%s\" -ss %d:%d:%d -t %d:%d:%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
                     inputVideoPath,hoursFrom,minutesFrom,secsFrom,hoursDuration,minutesDuration,secsDuration,
-                    currentCodec,"libopus",bitrateInMbit,scaleResolution,framerate,outputVideoPath);
+                    currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
 }

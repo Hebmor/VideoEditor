@@ -35,8 +35,8 @@ public class FiltersVideoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_filters_video);
-        videoView = this.findViewById(R.id.videoView);
+       // setContentView(R.layout.activity_filters_video);
+        //videoView = this.findViewById(R.id.videoView);
         filteredVideoContainer = this.findViewById(R.id.videoContainer);
         editVideoInfo = ((VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID));
         String path = editVideoInfo.getPath();

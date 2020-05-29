@@ -80,7 +80,8 @@
             <Spinner
                 android:id="@+id/spinner_format"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:gravity="center" />
             <TextView
                 android:id="@+id/textView_resolution"
                 android:layout_width="match_parent"
@@ -91,7 +92,7 @@
                 android:id="@+id/spinner_videoResolution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/textView_bitrate"
@@ -141,7 +142,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:entries="@array/framerate_list"/>
+                android:clipToPadding="false"
+                android:entries="@array/framerate_list" />
 
             <TextView
                 android:id="@+id/textView_expansion"
