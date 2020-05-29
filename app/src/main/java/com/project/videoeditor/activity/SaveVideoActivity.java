@@ -143,12 +143,16 @@ public class SaveVideoActivity extends AppCompatActivity {
         ActionEditor.executeCommand(inputVideoPath,outputVideoPath,bitrateInMbit,framerate,fromTimeMS,toTimeMS,codec,scaleResolution);
         Handler handler = new Handler();
         loadingEncodeDialog.startLoadingDialog();
+
         handler.post(new Runnable() {
+            long durationChunk = toTimeMS - fromTimeMS;
             @Override
             public void run() {
-
+                if(durationChunk == 0)
+                    durationChunk = editVideoInfo.getDuration();
                 double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
-                long ms = (long)((editVideoInfo.getDuration() - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+
+                long ms = (long)((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
                 long secs = TimeUnit.MILLISECONDS.toSeconds(ms)  % 60;
                 long hours = TimeUnit.MILLISECONDS.toHours(ms)  % 24;
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)  % 60;

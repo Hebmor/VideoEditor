@@ -128,12 +128,12 @@ public class MainEditor extends AppCompatActivity {
             Intent intent = new Intent(this, SaveVideoActivity.class);
             intent.putExtra(VideoInfo.class.getCanonicalName(), editVideoInfo);
             if(view.getId() == R.id.buttonEncodeSplit) {
-                intent.putExtra("beginValue", videoTimelineSplit.getLeftValue());
-                intent.putExtra("endValue", videoTimelineSplit.getRightValue());
+                intent.putExtra("beginValue", 0);
+                intent.putExtra("endValue", videoTimelineSplit.getLeftValue());
             }
             else if(view.getId() == R.id.buttonEncodeCut) {
                 intent.putExtra("beginValue", videoTimelineCut.getLeftValue());
-                intent.putExtra("endValue", videoTimelineCut.getRightValue());
+                intent.putExtra("endValue",  videoTimelineCut.getRightValue());
             }
             startActivity(intent);
         }
