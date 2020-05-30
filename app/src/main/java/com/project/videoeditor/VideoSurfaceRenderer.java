@@ -30,6 +30,7 @@ public class VideoSurfaceRenderer
         this.playerController = playerController;
         filter.setContext(context);
         filter.setPlayerController(playerController);
+        filter.setPlayerMod(true);
         onFrameAvailableListener = new SurfaceTexture.OnFrameAvailableListener()
         {
 

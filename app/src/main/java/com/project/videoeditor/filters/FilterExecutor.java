@@ -54,13 +54,19 @@ public class FilterExecutor extends Thread {
         this.videoExtractor = videoExtractor;
     }
 
-
     public FilterExecutor(Context context) {
         this.context = context;
 
     }
+    public void setFilter(BaseFilter filter) {
+        this.filter = filter;
+    }
 
-
+    public FilterExecutor(Context context,String pathInVideoFile,String pathOutVideoFile) {
+        this.context = context;
+        this.pathInVideoFile = pathInVideoFile;
+        this.pathOutVideoFile = pathOutVideoFile;
+    }
     public void setup() throws Exception {
         MediaFormat inputVideoFormat = null;
         MediaFormat outputVideoFormat = null;
@@ -70,7 +76,7 @@ public class FilterExecutor extends Thread {
         videoExtractor = new MediaExtractor();
 
         audioExtractor = new MediaExtractor();
-
+        newFilename = "output.mp4";
         videoExtractor.setDataSource(pathInVideoFile);
         audioExtractor.setDataSource(pathInVideoFile);
 
@@ -344,8 +350,7 @@ public class FilterExecutor extends Thread {
 
         Log.d("Время выполнения фильтрации: ",(System.currentTimeMillis() - beginTime) + " MS");
     }
-    public void setupSettings(MediaExtractor extractor, Long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws IOException {
-        this.videoExtractor = extractor;
+    public void setupSettings(Long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws IOException {
         this.pathInVideoFile = pathFromVideo;
         this.bitrateBitPerSeconds = bitrateBitPerSeconds;
         String filename = new File(pathFromVideo).getName();

@@ -8,6 +8,8 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.support.UtilUri;
 
@@ -21,7 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
-public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener{
+public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener,Cloneable{
 
     protected static final String TAG = "BaseFilters";
 
@@ -50,6 +52,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     protected int maTextureHandle;
     protected Surface surface;
     protected SurfaceTexture mSurfaceTexture;
+    private boolean isPlayerMod = false;
 
     protected boolean changeShaderFlag = false;
     protected static int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
@@ -103,6 +106,12 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
         Matrix.setIdentityM(mSTMatrix, 0);
     }
 
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     abstract public String getFilterName();
 
     public boolean isInvert() {
@@ -112,6 +121,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     public void setInvert(boolean invert) {
         isInvert = invert;
     }
+
     protected void initTriangleVertices()
     {
         mTriangleVertices = ByteBuffer.allocateDirect(
@@ -243,7 +253,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
        // mSurfaceTexture.setOnFrameAvailableListener(this);
 
         surface = new Surface(mSurfaceTexture);
-        if(playerController != null) {
+        if(playerController != null && isPlayerMod) {
             playerController.getPlayer().setVideoSurface(surface);
             //mMediaPlayer.setScreenOnWhilePlaying(true);
 
@@ -402,8 +412,14 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     {
         this.playerController = playerController;
     }
+    public boolean isPlayerMod() {
+        return isPlayerMod;
+    }
+
+    public void setPlayerMod(boolean playerMod) {
+        isPlayerMod = playerMod;
+    }
     public PlayerController getPlayerController() {
         return playerController;
     }
-
 }

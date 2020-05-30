@@ -54,7 +54,7 @@ public class FiltersVideoActivity extends Activity {
             e.printStackTrace();
         }
         try {
-            filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,path,framerate,new BlackWhiteFilter(this));
+            filterExecutor.setupSettings(editVideoInfo.getBitrate() * 1024,path,framerate,new BlackWhiteFilter(this));
         } catch (IOException e) {
             e.printStackTrace();
         }

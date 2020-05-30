@@ -30,8 +30,6 @@ public class FiltersView extends TextureView implements TextureView.SurfaceTextu
         this.framerate = framerate;
         this.setSurfaceTextureListener(this);
         filters = new GPUImage(context);
-
-
     }
     private void updateTextureViewSize(int viewWidth, int viewHeight) {
         this.setLayoutParams(new RelativeLayout.LayoutParams(viewWidth, viewHeight));

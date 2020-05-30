@@ -74,9 +74,8 @@ public class MainEditor extends AppCompatActivity {
         initTabs(tabs);
 
         try {
-
             mediaExtractor.setDataSource(editVideoInfo.getPath());
-            filterExecutor.setupSettings(mediaExtractor,editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),(int)Float.parseFloat(editVideoInfo.getFrameRate()),new BlackWhiteFilter(this));
+            filterExecutor.setupSettings(editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),(int)Float.parseFloat(editVideoInfo.getFrameRate()),new BlackWhiteFilter(this));
             videoFilteredView = new VideoFilteredView(this,playerController);
         } catch (IOException e) {
             e.printStackTrace();
