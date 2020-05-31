@@ -3,6 +3,7 @@ package com.project.videoeditor.filters;
 import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
@@ -28,9 +29,11 @@ public class FilterExecutor extends Thread {
     private InputSurface inputSurface;
     private MediaMuxer mediaMuxer;
     private Long bitrateBitPerSeconds;
+    private int startMs = 0;
+    private int endMs = 0;
 
 
-    private boolean isLogDebug = false;
+    private boolean isLogDebug = true;
     private int trackIndexVideo;
     private int trackIndexAudio;
 
@@ -68,13 +71,15 @@ public class FilterExecutor extends Thread {
         this.pathOutVideoFile = pathOutVideoFile;
     }
     public void setup() throws Exception {
+
         MediaFormat inputVideoFormat = null;
         MediaFormat outputVideoFormat = null;
+        MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.REGULAR_CODECS);
 
         String mime = null;
         String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.default_state);
-        videoExtractor = new MediaExtractor();
 
+        videoExtractor = new MediaExtractor();
         audioExtractor = new MediaExtractor();
         newFilename = "output.mp4";
         videoExtractor.setDataSource(pathInVideoFile);
@@ -107,13 +112,14 @@ public class FilterExecutor extends Thread {
         outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
         outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
 
-        encoder = MediaCodec.createEncoderByType(mime);
+        encoder = MediaCodec.createByCodecName(mediaCodecList.findEncoderForFormat(inputVideoFormat));
         encoder.configure(outputVideoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+
         inputSurface = new InputSurface(encoder.createInputSurface());
         inputSurface.makeCurrent();
         outputSurface = new OutputSurface(filter);
-       // outputSurface.changeFragmentShader(fragmentShader);
-        decoder = MediaCodec.createDecoderByType(mime);
+
+        decoder = MediaCodec.createByCodecName(mediaCodecList.findDecoderForFormat(outputVideoFormat));
         decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
 
         File folder = UtilUri.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
@@ -136,10 +142,15 @@ public class FilterExecutor extends Thread {
     public void startFiltered() throws Exception {
         encoder.start();
         decoder.start();
-        doExtract(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface);
+        doFilterProcess(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface,0,0);
 
     }
+    public void startFiltered(int startMs, int endMs) throws Exception {
+        encoder.start();
+        decoder.start();
+        doFilterProcess(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface,startMs,endMs);
 
+    }
     public void release() {
         if (outputSurface != null) {
             outputSurface.release();
@@ -171,7 +182,17 @@ public class FilterExecutor extends Thread {
         else
             throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
     }
+    public void launchApplyFilterToVideo(int startMs, int endMs) throws Exception {
 
+        if(isSetup) {
+            this.setup();
+            this.startFiltered(startMs,endMs);
+            this.release();
+            //ActionEditor.addAudioFromVideoToVideo(pathFromVideo,pathToVideo);
+        }
+        else
+            throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
+    }
     private int selectTrack(MediaExtractor extractor,String trackPrefix) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();
@@ -189,7 +210,10 @@ public class FilterExecutor extends Thread {
     }
 
 
-    private void doExtract(MediaExtractor videoExtractor,MediaExtractor audioExtractor, int trackIndexVideo,int trackIndexAudio, MediaCodec decoder, MediaCodec encoder, OutputSurface outputSurface, InputSurface inputSurface) throws Exception {
+    private void doFilterProcess(MediaExtractor videoExtractor, MediaExtractor audioExtractor,
+                                 int trackIndexVideo, int trackIndexAudio, MediaCodec decoder,
+                                 MediaCodec encoder, OutputSurface outputSurface, InputSurface inputSurface,
+                                 int startMs, int endMs) throws Exception {
         final int TIMEOUT_USEC = 1000;
         final int maxChunkSize = 1024 * 1024;
 
@@ -209,6 +233,11 @@ public class FilterExecutor extends Thread {
         boolean inputAudioDone = false;
         boolean decoderOutputAvailable = false;
         boolean encoderOutputAvailable = false;
+
+        if(startMs > 0) {
+            videoExtractor.seekTo(startMs * 1000, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+            audioExtractor.seekTo(startMs * 1000, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+        }
 
         extractorThread = new Thread(new ExtractorRunnable(decoder,videoExtractor,isLogDebug,trackIndexVideo,1));
         long beginTime = System.currentTimeMillis();
@@ -265,7 +294,14 @@ public class FilterExecutor extends Thread {
                             throw new RuntimeException("muxer hasn't started");
                         }
 
-                        mediaMuxer.writeSampleData(mixerVideoIndex, encodedData, infoVideo);
+                        if(endMs > 0 && infoVideo.presentationTimeUs > (endMs * 1000)) {
+                            extractorThread.interrupt();
+                            outputDone = true;
+                            decoderDone = true;
+                            break;
+                        }
+                        else
+                            mediaMuxer.writeSampleData(mixerVideoIndex, encodedData, infoVideo);
                         if (isLogDebug)
                             Log.d(TAG, "encoder output " + infoVideo.size + " bytes");
                     }
@@ -337,6 +373,8 @@ public class FilterExecutor extends Thread {
 
                 if (chunkSize >= 0) {
                     infoAudio.presentationTimeUs = audioExtractor.getSampleTime();
+                    if(endMs > 0 && infoAudio.presentationTimeUs > (endMs * 1000))
+                        break;
                     infoAudio.flags = audioExtractor.getSampleFlags();
                     infoAudio.size = chunkSize;
 
@@ -366,9 +404,17 @@ public class FilterExecutor extends Thread {
     public void run() {
         super.run();
         try {
-            launchApplyFilterToVideo();
+            launchApplyFilterToVideo(this.startMs,this.endMs);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setStartMs(int startMs) {
+        this.startMs = startMs;
+    }
+
+    public void setEndMs(int endMs) {
+        this.endMs = endMs;
     }
 }

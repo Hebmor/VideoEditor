@@ -56,7 +56,7 @@ public class MainEditor extends AppCompatActivity {
         videoTimelineCut = new VideoTimeline(editVideoInfo,playerController,true);
         videoInfoFragment = new VideoInfoFragment(editVideoInfo);
         filterListFragment = new FilterListFragment(editVideoInfo);
-
+        filterListFragment.setCurrentTimeline(videoTimelineCut);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
                 androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
 

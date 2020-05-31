@@ -59,7 +59,7 @@ public class ExtractorRunnable implements Runnable {
     @Override
     public void run() {
         int inputBufIndex = 0;
-        while (!inputVideoDone) {
+        while (!inputVideoDone && !Thread.currentThread().isInterrupted()) {
             inputBufIndex = decoder.dequeueInputBuffer(TIMEOUT_USEC);
             inputVideoDone = extractChunksToDecoder(inputBufIndex);
         }
