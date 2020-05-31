@@ -62,7 +62,8 @@
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_extract_video_frame_18dp"
                 android:text="Извлечь кадр"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:onClick="ClickExtractOneFrame"/>
 
             <Button
                 android:id="@+id/buttonEncodeSplit"

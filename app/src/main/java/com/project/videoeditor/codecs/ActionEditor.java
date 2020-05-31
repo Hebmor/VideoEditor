@@ -187,4 +187,28 @@ public class ActionEditor {
                     currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
+    public static void extractFrames(String videopath,String outfile,long fromTimeMS,long toTimeMS,int countFrame) throws InterruptedException {
+        String command = "";
+        long msFrom = fromTimeMS % 1000;
+        long secsFrom = TimeUnit.MILLISECONDS.toSeconds(fromTimeMS)  % 60;
+        long hoursFrom = TimeUnit.MILLISECONDS.toHours(fromTimeMS)  % 24;
+        long minutesFrom = TimeUnit.MILLISECONDS.toMinutes(fromTimeMS)  % 60;
+
+        long durationMS = toTimeMS - fromTimeMS;
+        if(durationMS < 0)
+            durationMS = 0;
+        long msDuration = durationMS % 1000;
+        long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
+        long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
+        long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+        if(countFrame > 0)
+            command = String.format("-ss %d:%d:%d -t %d:%d:%d -i \"%s\" -frames:v %d \"%s\"",hoursFrom,
+                minutesFrom,secsFrom, hoursDuration,minutesDuration,secsDuration,videopath,countFrame,outfile);
+        else
+            command = String.format("-ss %d:%d:%d -t %d:%d:%d -i \"%s\" \"%s\"",hoursFrom,
+                    minutesFrom,secsFrom, hoursDuration,minutesDuration,secsDuration,videopath,outfile);
+
+
+        RunCommandExecuteFFMPEG(command,false);
+    }
 }

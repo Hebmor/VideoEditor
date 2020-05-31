@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.media.MediaExtractor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,10 +23,13 @@ import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoInfoFragment;
 import com.project.videoeditor.VideoTimeline;
+import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.FiltersVideoActivity;
+import com.project.videoeditor.support.UtilUri;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainEditor extends AppCompatActivity {
@@ -148,5 +152,13 @@ public class MainEditor extends AppCompatActivity {
         tabs.getTabAt(2).setIcon(R.drawable.ic_filter_24dp);
         tabs.getTabAt(3).setText("Информация");
         tabs.getTabAt(3).setIcon(R.drawable.ic_info_24dp);
+    }
+    public void ClickExtractOneFrame(View view) throws Exception {
+        File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
+        ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineSplit.getLeftValue(),0,1);
+    }
+    public void ClickExtractFrameInSeekRange(View view) throws Exception {
+        File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
+        ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineCut.getLeftValue(), (int)videoTimelineCut.getRightValue(),0);
     }
 }
