@@ -15,7 +15,7 @@ import android.widget.VideoView;
 import com.project.videoeditor.FilenameDialogFragment;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
-import com.project.videoeditor.VideoTimeline;
+import com.project.videoeditor.VideoTimelineController;
 import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.support.UtilUri;
 
@@ -23,7 +23,7 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
 
     private VideoInfo videoInfo;
     private VideoView videoView;
-    private VideoTimeline videoTimeline;
+    private VideoTimelineController videoTimelineController;
     private static final int FOLDERPICKER_CODE = 101;
     private String defaultSavePath;
     private TextView textViewSelectPath;
@@ -34,10 +34,14 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
         setContentView(R.layout.activity_video_edit_page);
         videoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
         videoView = (VideoView) this.findViewById(R.id.videoView_EditVideo);
-        videoTimeline = (VideoTimeline)getSupportFragmentManager().findFragmentById(R.id.fragment_Timeline);
+        videoTimelineController = (VideoTimelineController)getSupportFragmentManager().findFragmentById(R.id.fragment_Timeline);
 
-        videoTimeline.setVideoInfo(videoInfo);
-        videoTimeline.setFramesFromVideo(ActionEditor.GenFrameCollage(videoInfo.getPath(), this));
+        videoTimelineController.setVideoInfo(videoInfo);
+        try {
+            videoTimelineController.setFramesFromVideo(ActionEditor.GenFrameCollage(videoInfo.getPath(), this,6));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         defaultSavePath = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath();
     }
@@ -96,7 +100,7 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
     @Override
     public void onFinishEditDialog(String inputText) throws InterruptedException {
         filename = inputText;
-        if(filename != null)
-            ActionEditor.CutPathFromVideo(videoInfo.getPath(),defaultSavePath + "/" + filename + videoInfo.getExtension(),(long)videoTimeline.getSBL().getProgress(),(long)videoTimeline.getSBR().getProgress());
+       // if(filename != null)
+            //ActionEditor.CutPathFromVideo(videoInfo.getPath(),defaultSavePath + "/" + filename + videoInfo.getExtension(),(long)videoTimelineController.getSBL().getProgress(),(long)videoTimelineController.getSBR().getProgress());
     }
 }

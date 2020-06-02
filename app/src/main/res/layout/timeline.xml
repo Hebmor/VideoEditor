@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".VideoTimeline"
-    >
+    tools:context=".VideoTimelineController">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/timeline_recycler"
@@ -28,7 +27,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.jaygoo.widget.RangeSeekBar
-        android:id="@+id/seekBarVideo"
+        android:id="@+id/seekBarTimeline"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
 

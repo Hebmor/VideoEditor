@@ -3,34 +3,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.MainEditor"
-    >
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".VideoTimelineController">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/timeline_recycler"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingLeft="206dp"
+        android:paddingRight="206dp"
+        android:scrollbarSize="4dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="24">
 
-    <include
-        android:id="@+id/timeline"
-        layout="@layout/timeline"
-        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    </androidx.recyclerview.widget.RecyclerView>
 
-    </include>
+    <ImageView
+        android:id="@+id/timelinePointer"
+        android:layout_width="14dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="200dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/indicatorTimeline"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_recycler"
+        app:layout_constraintStart_toStartOf="@+id/timeline_recycler"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_indicatoricon" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
         android:fillViewport="true"
         android:overScrollMode="always"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indicatorTimeline">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -62,8 +84,7 @@
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_extract_video_frame_18dp"
                 android:text="Извлечь кадр"
-                android:textSize="12sp"
-                android:onClick="ClickExtractOneFrame"/>
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/buttonEncodeSplit"
@@ -71,10 +92,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_encode_to_file_18dp"
+                android:tag="saveSplit"
                 android:text="Сохранить"
-                android:textSize="12sp"
-                android:onClick="ClickOpenSavePage"
-                android:tag="saveSplit"/>
+                android:textSize="12sp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -83,11 +103,21 @@
         android:id="@+id/dividerArea"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginBottom="8dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/indicatorTimeline"
+        android:layout_width="80dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeline_recycler" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

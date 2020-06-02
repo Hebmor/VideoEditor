@@ -17,9 +17,11 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
+import java.io.Serializable;
+
 import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 
-public class PlayerController {
+public class PlayerController implements Serializable {
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private PlayerControlView playerControlView;

@@ -36,7 +36,7 @@ public class FilterListFragment extends Fragment {
     private VideoInfo videoInfo;
     private Button saveFilterResult;
     private FilterExecutor filterExecutor;
-    private VideoTimeline currentTimeline;
+    private VideoTimelineController currentTimeline;
     private int lastSelectFilterIdx = 0;
     private int startMs = 0;
     private int endMs = 0;
@@ -94,8 +94,8 @@ public class FilterListFragment extends Fragment {
                     BaseFilter filterClone = (BaseFilter) filters.get(lastSelectFilterIdx).clone();
                     filterClone.setPlayerMod(false);
                     filterExecutor.setFilter(filterClone);
-                    filterExecutor.setStartMs((int) currentTimeline.getLeftValue());
-                    filterExecutor.setEndMs(((int) currentTimeline.getRightValue()));
+                    //filterExecutor.setStartMs((int) currentTimeline.getLeftValue());
+                    //filterExecutor.setEndMs(((int) currentTimeline.getRightValue()));
                     filterExecutor.start();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -146,7 +146,7 @@ public class FilterListFragment extends Fragment {
         this.endMs = endMs;
     }
 
-    public void setCurrentTimeline(VideoTimeline currentTimeline) {
+    public void setCurrentTimeline(VideoTimelineController currentTimeline) {
         this.currentTimeline = currentTimeline;
     }
 }

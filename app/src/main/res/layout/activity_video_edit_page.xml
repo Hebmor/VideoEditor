@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/fragment_Timeline"
-        android:name="com.project.videoeditor.VideoTimeline"
+        android:name="com.project.videoeditor.VideoTimelineController"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginStart="8dp"

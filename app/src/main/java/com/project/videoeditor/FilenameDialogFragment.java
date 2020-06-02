@@ -46,7 +46,7 @@ public class FilenameDialogFragment extends DialogFragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-            // Verify that the host activity implements the callback interface
+            // Verify that the host activity implements the playerControllerCallback interface
             try {
                 // Instantiate the NoticeDialogListener so we can send events to the host
                 mListener = (FilenameDialogFragmentListener) context;

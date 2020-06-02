@@ -88,7 +88,7 @@ public class VideoInfo implements Parcelable {
             this.format = mainVideoStream.getFormat();
             this.aspectRatio = mainVideoStream.getDisplayAspectRatio();
             //Приблизительное количество кадров
-            this.frameCount = (long) (((this.duration / 1000) % 60) * Float.parseFloat(frameRate));
+            this.frameCount = (long) (((float)this.duration / 1000f) * Float.parseFloat(frameRate));
         }
     }
     public VideoInfo(Parcel parcel) {

@@ -1,7 +1,7 @@
 package com.project.videoeditor.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.widget.FrameLayout;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
-import com.project.videoeditor.FilterListAdapter;
 import com.project.videoeditor.FilterListFragment;
 import com.project.videoeditor.FragmentPagerAdapter;
 import com.project.videoeditor.PlayerController;
@@ -22,11 +21,9 @@ import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoInfoFragment;
-import com.project.videoeditor.VideoTimeline;
-import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.VideoTimelineController;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
-import com.project.videoeditor.filters.FiltersVideoActivity;
 import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
@@ -35,8 +32,8 @@ import java.io.IOException;
 public class MainEditor extends AppCompatActivity {
     public static final String EDIT_VIDEO_ID = "EditVideoInfo";
     private VideoInfo editVideoInfo;
-    private VideoTimeline videoTimelineSplit;
-    private VideoTimeline videoTimelineCut;
+    private VideoTimelineController videoTimelineControllerSplit;
+    private VideoTimelineController videoTimelineControllerCut;
     private FrameLayout videoContainer;
     private VideoFilteredView videoFilteredView;
     private FilterExecutor filterExecutor;
@@ -46,6 +43,10 @@ public class MainEditor extends AppCompatActivity {
     private VideoInfoFragment videoInfoFragment;
     private FilterListFragment filterListFragment;
 
+//    public static MainEditor newInstance(VideoTimelineController videoTimelineControllerSplit,VideoTimelineController videoTimelineControllerCut)
+//    {
+//
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,16 +57,16 @@ public class MainEditor extends AppCompatActivity {
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
 
         playerController = new PlayerController(this,editVideoInfo.getPath());
-        videoTimelineSplit = new VideoTimeline(editVideoInfo,playerController);
-        videoTimelineCut = new VideoTimeline(editVideoInfo,playerController,true);
+        videoTimelineControllerSplit = VideoTimelineController.newInstance(editVideoInfo,playerController,false);
+        videoTimelineControllerCut = VideoTimelineController.newInstance(editVideoInfo,playerController,true);
         videoInfoFragment = new VideoInfoFragment(editVideoInfo);
         filterListFragment = new FilterListFragment(editVideoInfo);
-        filterListFragment.setCurrentTimeline(videoTimelineCut);
+        filterListFragment.setCurrentTimeline(videoTimelineControllerCut);
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
                 androidx.fragment.app.FragmentPagerAdapter.POSITION_NONE,this);
 
-        fragmentPagerAdapter.addItem(videoTimelineCut);
-        fragmentPagerAdapter.addItem(videoTimelineSplit);
+        fragmentPagerAdapter.addItem(videoTimelineControllerCut);
+        fragmentPagerAdapter.addItem(videoTimelineControllerSplit);
         fragmentPagerAdapter.addItem(filterListFragment);
         fragmentPagerAdapter.addItem(videoInfoFragment);
 
@@ -125,6 +126,12 @@ public class MainEditor extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("editVideoInfo",editVideoInfo);
+    }
+
     public void ClickOpenSavePage(View view) {
         if(view instanceof Button) {
 
@@ -132,11 +139,11 @@ public class MainEditor extends AppCompatActivity {
             intent.putExtra(VideoInfo.class.getCanonicalName(), editVideoInfo);
             if(view.getId() == R.id.buttonEncodeSplit) {
                 intent.putExtra("beginValue", 0);
-                intent.putExtra("endValue", videoTimelineSplit.getLeftValue());
+                //intent.putExtra("endValue", videoTimelineControllerSplit.getLeftValue());
             }
             else if(view.getId() == R.id.buttonEncodeCut) {
-                intent.putExtra("beginValue", videoTimelineCut.getLeftValue());
-                intent.putExtra("endValue",  videoTimelineCut.getRightValue());
+                //intent.putExtra("beginValue", videoTimelineControllerCut.getLeftValue());
+               // intent.putExtra("endValue",  videoTimelineControllerCut.getRightValue());
             }
             startActivity(intent);
         }
@@ -155,10 +162,13 @@ public class MainEditor extends AppCompatActivity {
     }
     public void ClickExtractOneFrame(View view) throws Exception {
         File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
-        ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineSplit.getLeftValue(),0,1);
+        //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerSplit.getLeftValue(),0,1);
     }
     public void ClickExtractFrameInSeekRange(View view) throws Exception {
         File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
-        ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineCut.getLeftValue(), (int)videoTimelineCut.getRightValue(),0);
+        //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerCut.getLeftValue(), (int)videoTimelineControllerCut.getRightValue(),0);
+    }
+    public void ClickAddVideo(View view) throws InterruptedException {
+        videoTimelineControllerSplit.addVideoToTimeline(editVideoInfo);
     }
 }

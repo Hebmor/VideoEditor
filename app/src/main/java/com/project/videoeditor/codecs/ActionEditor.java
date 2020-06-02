@@ -17,8 +17,6 @@ public class ActionEditor {
 
     private static VideoInfo videoInfo;
     public ActionEditor() {
-
-
     }
     public static void EncodeProcess(String codec,String filePath,String new_filePath) throws Exception {
         switch (codec)
@@ -78,12 +76,12 @@ public class ActionEditor {
         return framePreview;
 
     }
-    public static String GenFrameCollage(String filePath, Context context)
-    {
+    public static String GenFrameCollage(String filePath, Context context,int countFramesInCollage) throws InterruptedException {
         String tempCachePath = context.getCacheDir() + "/tempCollage.png";
-        String command = "-y -i \"" + filePath + "\" -frames:v 1 -q:v 1 -vsync vfr -vf \"select=not(mod(n\\,"+ (int)(videoInfo.getFrameCount() / 6)+")),scale=-280:280,tile=6x1\" "+tempCachePath;
-        FFmpeg.execute(command);
-        videoInfo.setPathFrameCollage(tempCachePath);
+        int gap = (int)(videoInfo.getFrameCount() / countFramesInCollage);
+        String command = String.format("-y -i \"%s\" -frames:v 1 -tune zerolatency -vsync vfr -vf \"select=not(mod(n\\,%d)),scale=-160:90,tile=%dx1\" \"%s\"",filePath,gap,countFramesInCollage,tempCachePath);
+        RunCommandExecuteFFMPEG(command,true);
+        //videoInfo.setPathFrameCollage(tempCachePath);
         return  tempCachePath;
     }
     public static String GetNamePresetEncodeByNumber(int presetNumber)

@@ -31,6 +31,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         this.namesCollage = namesCollage;
     }
 
+    public VideoAdapter() {
+        framesCollage = new ArrayList<>();
+        namesCollage = new ArrayList<>();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
