@@ -82,7 +82,7 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
     }
     @Override
     public void onStart() {
@@ -93,19 +93,15 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
 
 
             if (videoTimelineCutView != null) {
-
-                videoTimelineCutView.addItemInTimelineBody(getFrameCollageByCount(6), videoInfo.getFilename());
+                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),160,90,6);
+                videoTimelineCutView.addItemInTimelineBody(frameCollage, videoInfo.getFilename());
                 videoTimelineCutView.getSeekBarTimeline().setRange(0, videoInfo.getDuration(), 1000);
                 videoTimelineCutView.getSeekBarTimeline().setProgress(0, videoInfo.getDuration());
                 videoTimelineCutView.registerCallBack(this);
             }
             if (videoTimelineSplitView != null) {
-                try {
-                    pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(), getActivity(),10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                videoTimelineSplitView.addItemInTimelineBody(getFrameCollageByCount(12), videoInfo.getFilename());
+                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),160,90,12);
+                videoTimelineSplitView.addItemInTimelineBody(frameCollage, videoInfo.getFilename());
                 videoTimelineSplitView.registerCallBack(this);
                 videoTimelineSplitView.setRange(0, Math.toIntExact(videoInfo.getDuration()));
             }

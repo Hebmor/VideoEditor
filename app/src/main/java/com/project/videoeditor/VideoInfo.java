@@ -156,8 +156,8 @@ public class VideoInfo implements Parcelable {
         return aspectRatio;
     }
 
-    public Long getDuration() {
-        return duration;
+    public int getDuration() {
+        return Math.toIntExact(duration);
     }
 
     public Long getBitrate() {

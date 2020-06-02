@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.arthenica.mobileffmpeg.Config;
@@ -11,6 +14,7 @@ import com.arthenica.mobileffmpeg.FFmpeg;
 import com.project.videoeditor.VideoInfo;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class ActionEditor {
@@ -75,14 +79,6 @@ public class ActionEditor {
         framePreview = BitmapFactory.decodeFile(new File(tempCachePath + nameTempSettingsPreview).getAbsolutePath(),bmOptions);
         return framePreview;
 
-    }
-    public static String GenFrameCollage(String filePath, Context context,int countFramesInCollage) throws InterruptedException {
-        String tempCachePath = context.getCacheDir() + "/tempCollage.png";
-        int gap = (int)(videoInfo.getFrameCount() / countFramesInCollage);
-        String command = String.format("-y -i \"%s\" -frames:v 1 -tune zerolatency -vsync vfr -vf \"select=not(mod(n\\,%d)),scale=-160:90,tile=%dx1\" \"%s\"",filePath,gap,countFramesInCollage,tempCachePath);
-        RunCommandExecuteFFMPEG(command,true);
-        //videoInfo.setPathFrameCollage(tempCachePath);
-        return  tempCachePath;
     }
     public static String GetNamePresetEncodeByNumber(int presetNumber)
     {
@@ -185,6 +181,46 @@ public class ActionEditor {
                     currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
+    public static Bitmap getFrameFromVideo(String path, int frametimeMs)
+    {
+        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(path);
+        return mediaMetadataRetriever.getFrameAtTime(frametimeMs * 1000,MediaMetadataRetriever.OPTION_CLOSEST);
+    }
+    public static Bitmap getFrameCollage(String path,int durationVideoMs,int widthFrameInPx,int heightFrameInPx,int countFrame)
+    {
+        Bitmap frameCollage = null;
+        int timestep = durationVideoMs / countFrame;
+        for(int i = 0,frametimeMs = 0;i < countFrame && frametimeMs <= durationVideoMs;
+            i++,frametimeMs+=timestep)
+        {
+            Bitmap tempFrame = getFrameFromVideo(path,frametimeMs);
+            tempFrame = scaleBitmap(tempFrame,widthFrameInPx,heightFrameInPx);
+
+            if(frameCollage == null)
+                frameCollage = tempFrame;
+            else
+                frameCollage = stickBitmap(frameCollage,tempFrame);
+        }
+
+        return frameCollage;
+    }
+
+    private static Bitmap stickBitmap(Bitmap bmp1, Bitmap bmp2)
+    {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth() + bmp2.getWidth(),
+                bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawBitmap(bmp2, bmp1.getWidth(), 0, null);
+        return bmOverlay;
+    }
+
+    private static Bitmap scaleBitmap(Bitmap bmp, int scaleWidthInPx, int scaleHeightInPx)
+    {
+        return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
+    }
+
     public static void extractFrames(String videopath,String outfile,long fromTimeMS,long toTimeMS,int countFrame) throws InterruptedException {
         String command = "";
         long msFrom = fromTimeMS % 1000;
