@@ -19,7 +19,7 @@
 
 * Приложение в данный момент в разработке и может содержать лишний исходный код, нелогичности и плохой стиль кода. 
 * Что-то может не работать или просто отсутствовать!
-* По мере разработки все будет чиститься, к коду добавлены комментарии. 
+* По мере разработки все будет чиститься, к коду будут добавлены комментарии. 
 
 > Для взаимодествия из Java с FFmpeg использован (https://github.com/tanersener/mobile-ffmpeg).
 
@@ -41,6 +41,6 @@ Applications are used to store information [Android Room (SQLite)](https://codel
 
 * The application is currently under development and may contain redundant source code, inconsistencies and poor code style.
 * Something may not work or just be absent!
-* As you develop, everything will be cleaned, comments are added to the code.
+* As you develop, everything will be cleaned, comments will be added to the code.
 
 > To interact with Java using FFmpeg (https://github.com/tanersener/mobile-ffmpeg).
