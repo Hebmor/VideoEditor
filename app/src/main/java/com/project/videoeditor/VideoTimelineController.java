@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
 
@@ -90,20 +91,20 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
         if(videoInfo != null) {
             String pathCollage = null;
 
-
-
             if (videoTimelineCutView != null) {
-                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),160,90,6);
+                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),
+                        160,90,6);
                 videoTimelineCutView.addItemInTimelineBody(frameCollage, videoInfo.getFilename());
                 videoTimelineCutView.getSeekBarTimeline().setRange(0, videoInfo.getDuration(), 1000);
                 videoTimelineCutView.getSeekBarTimeline().setProgress(0, videoInfo.getDuration());
                 videoTimelineCutView.registerCallBack(this);
             }
             if (videoTimelineSplitView != null) {
-                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),160,90,12);
-                videoTimelineSplitView.addItemInTimelineBody(frameCollage, videoInfo.getFilename());
+                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),
+                        160,90,12);
+                videoTimelineSplitView.addItemInTimelineBody(frameCollage, videoInfo.getFilename(),
+                        160 * 12,106,0,videoInfo.getDuration(),TimelineEntity.Type.SCROLLABLE);
                 videoTimelineSplitView.registerCallBack(this);
-                videoTimelineSplitView.setRange(0, Math.toIntExact(videoInfo.getDuration()));
             }
         }
     }
@@ -138,8 +139,8 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
 
 
     public void addVideoToTimeline(VideoInfo newVideo) throws InterruptedException {
-        String pathCollage = ActionEditor.GenFrameCollage(newVideo.getPath(), getActivity(),6);
-        Bitmap bitmap = getBitmapByPath(pathCollage);
+
+        Bitmap bitmap = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),160,90,6);
         videoTimelineCutView.addItemInTimelineBody(bitmap,videoInfo.getFilename());
         //timelineAdapter.addItem(bitmap,newVideo.getFilename() + "1");
         //timelineAdapter.notifyDataSetChanged();
@@ -148,15 +149,5 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
     @Override
     public void callingUpdatePlayerControllerPosition(int positionMS) {
         playerController.getPlayer().seekTo((int)positionMS);
-    }
-    private Bitmap getFrameCollageByCount(int count)
-    {
-        try {
-            String pathCollage = ActionEditor.GenFrameCollage(videoInfo.getPath(), getActivity(),count);
-            return getBitmapByPath(pathCollage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

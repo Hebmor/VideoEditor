@@ -36,13 +36,6 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
         videoView = (VideoView) this.findViewById(R.id.videoView_EditVideo);
         videoTimelineController = (VideoTimelineController)getSupportFragmentManager().findFragmentById(R.id.fragment_Timeline);
 
-        videoTimelineController.setVideoInfo(videoInfo);
-        try {
-            videoTimelineController.setFramesFromVideo(ActionEditor.GenFrameCollage(videoInfo.getPath(), this,6));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         defaultSavePath = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath();
     }
 

@@ -2,6 +2,7 @@ package com.project.videoeditor.support;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -195,5 +196,11 @@ public class UtilUri {
         }
         return  total.toString();
     }
+    public static int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
 
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
 }

@@ -3,11 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center|center_horizontal|center_vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:layout_gravity="center|center_horizontal|center_vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -19,16 +15,20 @@
             android:layout_width="400dp"
             android:layout_height="40dp"
             android:layout_gravity="center|center_horizontal|center_vertical"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/videoPreview"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/sample" />
 
         <TextView
             android:id="@+id/nameVideo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_gravity="clip_horizontal|center"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxWidth="200dp"
+            android:maxLines="1"
             android:text="@string/nameVideo" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
