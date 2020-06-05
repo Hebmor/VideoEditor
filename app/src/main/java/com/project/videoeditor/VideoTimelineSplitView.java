@@ -42,23 +42,21 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
     private int prevMsValue = 0;
     private int scrollRange = 0;
     private int currentItemPosition = 0;
+    private int lastItemPosition = 0;
+
 
     private int countFrame = 0;
     private int frameWidth = 0;
     private int frameHeight = 0;
 
     private Bitmap delimiterBitmap;
-
-    private int mScreenWidth = 0;
-    private int mHeaderItemWidth = 0;
-    private int mCellWidth = 0;
-
     private final int MINIMAL_INTERVAL_MS = 1000;
     private int overallXScroll = 0;
+    private TimelineEntity currentTimelineEntity;
 
     @Override
     public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        Log.d("X P", String.valueOf(oldScrollX));
+        //Log.d("X P", String.valueOf(oldScrollX));
     }
 
     interface PlayerControllerCallback {
@@ -108,19 +106,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
         timelineBody.setLayoutManager(layoutManager);
         timelineBody.setAdapter(timelineAdapter);
         timelineBody.setOnScrollChangeListener(this);
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        this.mScreenWidth = displaymetrics.widthPixels;
 
-        //calculate value on current device
-        mCellWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources()
-                .getDisplayMetrics());
-
-        //get offset of list to the right (gap to the left of the screen from the left side of first item)
-        final int mOffset = (this.mScreenWidth / 2) - (mCellWidth / 2);
-
-        //HeaderItem width (blue rectangle in graphic)
-        mHeaderItemWidth = mOffset + mCellWidth;
         timelineBody.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -129,7 +115,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                 if (newState == RecyclerView.SCROLL_STATE_IDLE)
                 {
                     int tempPosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                    Log.d("ZONE Z", String.valueOf(tempPosition));
+                    //Log.d("ZONE Z", String.valueOf(tempPosition));
                 }
             }
 
@@ -137,94 +123,81 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int tempPosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                int tempPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+
                 Log.d("ZONE", String.valueOf(tempPosition));
                 overallXScroll = overallXScroll + dx;
-                if(tempPosition != -1) {
+                scrollPath += dx;
 
-//                    if(timelineAdapter.getTimelineEntityByItemIndex(tempPosition).getType()
-//                            == TimelineEntity.Type.EMPTY)
-//                        return;
+
+                if(tempPosition >= 0) {
                     if (tempPosition != currentItemPosition) {
-                        if (currentItemPosition >= 0) {
-                            Log.d("scrollPath 1", String.valueOf(scrollPath));
-//                            if (tempPosition > currentItemPosition)
-//                                scrollPath = 0;
-//                            else {
-//                                scrollPath = timelineAdapter
-//                                        .getTimelineEntityByItemIndex(tempPosition)
-//                                        .getWidth();
-//                            }
-                            Log.d("scrollPath 2", String.valueOf(scrollPath));
-                            Log.d("DX 1", String.valueOf(dx));
 
-                            currentItemPosition = tempPosition;
+
+                        if (currentTimelineEntity != null)
+                            if (tempPosition > currentItemPosition) {
+                                scrollPath -= currentTimelineEntity.getWidth();
+                                overallXScroll -= currentTimelineEntity.getWidth();
+                            }
+                            else if (tempPosition < currentItemPosition) {
+                                currentTimelineEntity = timelineAdapter.getTimelineEntityByItemIndex(tempPosition);
+                                scrollPath += currentTimelineEntity.getWidth();
+                                overallXScroll += currentTimelineEntity.getWidth();
+                            }
+
+                        if(timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getType() != TimelineEntity.Type.EMPTY &&
+                                timelineAdapter.getTimelineEntityByItemIndex(tempPosition).getType() != TimelineEntity.Type.EMPTY ) {
+                            scrollPath -= computeEmplyOffset(currentItemPosition, tempPosition);
+                            Log.d("OTN", String.valueOf(1));
                         }
-                    }
+
+                        currentTimelineEntity = timelineAdapter.getTimelineEntityByItemIndex(tempPosition);
+                        currentItemPosition = tempPosition;
+
+
+
+                    } else if (currentTimelineEntity == null)
+                        currentTimelineEntity = timelineAdapter.getTimelineEntityByItemIndex(tempPosition);
                 }
-                View firstVisibleItem = timelineBody.getLayoutManager().findViewByPosition(tempPosition);
-                DisplayMetrics displaymetrics = new DisplayMetrics();
-                ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-                mScreenWidth = displaymetrics.widthPixels;
-
-                //calculate value on current device
-                mCellWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources()
-                        .getDisplayMetrics());
-
-                //get offset of list to the right (gap to the left of the screen from the left side of first item)
-                final int mOffset = (mScreenWidth / 2) - (mCellWidth / 2);
-
-                //HeaderItem width (blue rectangle in graphic)
-                mHeaderItemWidth = mOffset + mCellWidth;
-                int leftScrollXCalculated = 0;
-                if (tempPosition == 0){
-                    //if first item, get width of headerview (getLeft() < 0, that's why I Use Math.abs())
-                    //leftScrollXCalculated = Math.abs(firstVisibleItem.getLeft());
-                }
-                else{
-
-                    //X-Position = Gap to the right + Number of cells * width - cell offset of current first visible item
-                    //(mHeaderItemWidth includes already width of one cell, that's why I have to subtract it again)
-                    if(firstVisibleItem != null)
-                        leftScrollXCalculated = (mHeaderItemWidth - mCellWidth) + tempPosition  * mCellWidth + firstVisibleItem.getLeft();
-                }
-
-                Log.i("asdf","calculated X to left = " + leftScrollXCalculated);
+                lastItemPosition = tempPosition;
                 int offset = recyclerView.computeHorizontalScrollOffset();
                 int extent = recyclerView.computeHorizontalScrollExtent();
                 int range = recyclerView.computeHorizontalScrollRange();
 
-                int percentage = (int)(100.0 * offset / (float)(range - extent));
+                int percentage = (int) (100.0 * offset / (float) (range - extent));
 
-                Log.d("dddde","RecyclerView, "+"percentage:"+ percentage + "%");
+               // Log.d("dddde", "RecyclerView, " + "percentage:" + percentage + "%");
 
 
+                if (currentTimelineEntity != null) {
+                    int value = 0;
+                    int minMs = 0;
+                    int maxMs = currentTimelineEntity.getDurationMs();
+                    scrollRange = currentTimelineEntity.getWidth();
 
-                int value = 0;
-                int minMs = 0;
-                int maxMs = timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getDurationMs();
-                scrollRange = timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getWidth();
-                scrollPath += dx;
+                    if (scrollRange > 0) {
 
-                if(scrollRange > 0) {
+                        if (overallXScroll == 0)
+                            updateTimeline(minMs);
+                        else {
 
-                    if(scrollPath == 0)
-                        updateTimeline(minMs);
-                    else {
+                            if (overallXScroll >= scrollRange)
+                                value = maxMs;
+                            else
+                                value = Math.round((float) Math.abs(overallXScroll) * (float) maxMs / (float) scrollRange);
+                            updateTimeline(value);
+                        }
 
-                        if(scrollPath >= scrollRange)
-                           value = maxMs;
-                        else
-                            value = Math.round((float)Math.abs(scrollPath) * (float) maxMs / (float) scrollRange);
-                        updateTimeline(value);
+
                     }
+
+  //                  Log.d("dx", String.valueOf(dx));
+                    Log.d("X", String.valueOf(overallXScroll));
+//                    Log.d("X 2", String.valueOf(overallXScroll - scrollPath));
+                    Log.d("scrollPath", String.valueOf(scrollPath));
 
 
                 }
-                Log.d("scrollPath", String.valueOf(scrollPath));
-                Log.d("timelineBody.computeHorizontalScrollOffset() 2", String.valueOf(timelineBody.computeHorizontalScrollOffset()));
-                Log.d("dx", String.valueOf(dx));
-
             }
         });
     }
@@ -288,7 +261,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
         int endMs = timelineEntity.getEndMs();
         int width = timelineEntity.getWidth();
         int height = timelineEntity.getHeight();
-
+        overallXScroll = 0;
         timelineAdapter.removeItemByIndex(currentItemPosition);
         timelineAdapter.notifyItemRangeRemoved(currentItemPosition,1);
 
@@ -300,6 +273,8 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                 width - splitPosition,
                 height,scrollPositionInMS,endMs,TimelineEntity.Type.SCROLLABLE );
         scrollPath = 0;
+        currentTimelineEntity = null;
+        currentItemPosition = 0;
     }
     private Bitmap[] splitBitmap(Bitmap bmp,int splitPosition)
     {
@@ -341,5 +316,27 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
             colors[i] = colorValue;
         }
         return Bitmap.createBitmap(colors,widthInPx,heightInPx, Bitmap.Config.ARGB_8888);
+    }
+    private int computeEmplyOffset(int idx1,int idx2)
+    {
+        int temp = 0;
+        int offset = 0;
+        if(idx1 > idx2)
+        {
+            temp = idx1;
+            idx1 = idx2;
+            idx2 = temp;
+        }
+        if(idx1 == idx2)
+            return 0;
+
+        for(int i = idx1;i < idx2;i++)
+        {
+            TimelineEntity entity  = this.timelineAdapter.getTimelineEntityByItemIndex(i);
+            if(entity.getType() == TimelineEntity.Type.EMPTY)
+                offset+=entity.getWidth();
+
+        }
+        return offset;
     }
 }
