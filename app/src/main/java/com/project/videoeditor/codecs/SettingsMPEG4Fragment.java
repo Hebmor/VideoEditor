@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.arthenica.mobileffmpeg.Config;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 
 import java.util.Locale;
@@ -128,7 +128,7 @@ public class SettingsMPEG4Fragment extends Fragment {
                     Uri uri = data.getData();
                     Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                             DocumentsContract.getTreeDocumentId(uri));
-                    String path2 = UtilUri.getPath(getContext(), docUri);
+                    String path2 = SupportUtil.getPath(getContext(), docUri);
                     ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path2);
                     break;
             }

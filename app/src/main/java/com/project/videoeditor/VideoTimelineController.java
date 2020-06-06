@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.project.videoeditor.codecs.ActionEditor;
-import com.project.videoeditor.support.UtilUri;
 
 import java.io.File;
 
@@ -103,7 +102,7 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
                 Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),
                         160,90,12);
                 videoTimelineSplitView.addItemInTimelineBody(frameCollage, videoInfo.getFilename(),
-                        160 * 12,106,0,videoInfo.getDuration(),TimelineEntity.Type.SCROLLABLE);
+                        160 * 12,106,0,videoInfo.getDuration(),0,160 * 12,TimelineEntity.Type.SCROLLABLE);
                 videoTimelineSplitView.registerCallBack(this);
             }
         }

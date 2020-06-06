@@ -1,7 +1,6 @@
 package com.project.videoeditor;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -11,21 +10,22 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
+
+import static com.project.videoeditor.support.SupportUtil.splitBitmap;
 
 public class VideoTimelineSplitView extends LinearLayout implements RecyclerView.OnScrollChangeListener{
 
@@ -35,19 +35,12 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
     private TextView indicatorTimeline;
     private TypedArray a;
 
-    private Button saveBitton;
     private Button splitButton;
 
     private int scrollPath = 0;
     private int prevMsValue = 0;
     private int scrollRange = 0;
     private int currentItemPosition = 0;
-    private int lastItemPosition = 0;
-
-
-    private int countFrame = 0;
-    private int frameWidth = 0;
-    private int frameHeight = 0;
 
     private Bitmap delimiterBitmap;
     private final int MINIMAL_INTERVAL_MS = 1000;
@@ -79,6 +72,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
         init(null);
         registerButtonListener();
     }
+
     public VideoTimelineSplitView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
          inflate(context,R.layout.timeline_split,this);
@@ -106,7 +100,6 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
         timelineBody.setLayoutManager(layoutManager);
         timelineBody.setAdapter(timelineAdapter);
         timelineBody.setOnScrollChangeListener(this);
-
         timelineBody.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -124,11 +117,10 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                 super.onScrolled(recyclerView, dx, dy);
 
                 int tempPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                int playerTimeValue = 0;
 
                 Log.d("ZONE", String.valueOf(tempPosition));
                 overallXScroll = overallXScroll + dx;
-                scrollPath += dx;
-
 
                 if(tempPosition >= 0) {
                     if (tempPosition != currentItemPosition) {
@@ -137,12 +129,12 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                         if (currentTimelineEntity != null)
                             if (tempPosition > currentItemPosition) {
                                 scrollPath -= currentTimelineEntity.getWidth();
-                                overallXScroll -= currentTimelineEntity.getWidth();
+                                //overallXScroll -= currentTimelineEntity.getWidth();
                             }
                             else if (tempPosition < currentItemPosition) {
                                 currentTimelineEntity = timelineAdapter.getTimelineEntityByItemIndex(tempPosition);
                                 scrollPath += currentTimelineEntity.getWidth();
-                                overallXScroll += currentTimelineEntity.getWidth();
+                                //overallXScroll += currentTimelineEntity.getWidth();
                             }
 
                         if(timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getType() != TimelineEntity.Type.EMPTY &&
@@ -159,7 +151,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                     } else if (currentTimelineEntity == null)
                         currentTimelineEntity = timelineAdapter.getTimelineEntityByItemIndex(tempPosition);
                 }
-                lastItemPosition = tempPosition;
+
                 int offset = recyclerView.computeHorizontalScrollOffset();
                 int extent = recyclerView.computeHorizontalScrollExtent();
                 int range = recyclerView.computeHorizontalScrollRange();
@@ -174,25 +166,33 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                     int minMs = 0;
                     int maxMs = currentTimelineEntity.getDurationMs();
                     scrollRange = currentTimelineEntity.getWidth();
-
+                    scrollPath = Math.abs( overallXScroll - currentTimelineEntity.getBeginDp());
                     if (scrollRange > 0) {
 
-                        if (overallXScroll == 0)
+                        if (scrollPath == 0) {
                             updateTimeline(minMs);
+                        }
                         else {
 
-                            if (overallXScroll >= scrollRange)
+                            if (scrollPath >= scrollRange)
                                 value = maxMs;
-                            else
-                                value = Math.round((float) Math.abs(overallXScroll) * (float) maxMs / (float) scrollRange);
+                            else {
+                                if (currentTimelineEntity != null)
+                                    value = Math.round((float) scrollPath * (float) maxMs / (float) scrollRange);
+                                else
+                                    value = 0;
+                            }
+
                             updateTimeline(value);
+                            playerTimeValue = Math.round((float) overallXScroll * (float) timelineAdapter.getCommonDurationMs()
+                                    / (float) timelineAdapter.getCommonWidthDp());
+                            updatePlayer(playerTimeValue);
                         }
-
-
                     }
 
   //                  Log.d("dx", String.valueOf(dx));
                     Log.d("X", String.valueOf(overallXScroll));
+                    Log.d("playerTimeValue", String.valueOf(playerTimeValue));
 //                    Log.d("X 2", String.valueOf(overallXScroll - scrollPath));
                     Log.d("scrollPath", String.valueOf(scrollPath));
 
@@ -201,16 +201,20 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
             }
         });
     }
-    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, int widthItem, int heightItem, int beginMs, int endMs, TimelineEntity.Type type)
+
+    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, int widthItem, int heightItem,
+                                      int beginMs, int endMs,int beginDp,int endDp, TimelineEntity.Type type)
     {
         int idx = timelineAdapter.getItemCount();
-        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,idx,beginMs,endMs,type);
+        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,idx,beginMs,endMs,beginDp,endDp,type);
         timelineAdapter.addItem(frameCollage,nameCollage,timelineEntity);
         timelineAdapter.notifyItemInserted(idx);
     }
-    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage,int pos,int widthItem,int heightItem,int beginMs,int endMs,TimelineEntity.Type type)
+
+    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage,int pos,int widthItem,int heightItem,
+                                      int beginMs,int endMs,int beginDp,int endDp, TimelineEntity.Type type)
     {
-        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,pos,beginMs,endMs,type);
+        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,pos,beginMs,endMs,beginDp,endDp,type);
         timelineAdapter.addItemInPos(frameCollage,nameCollage,timelineEntity,pos);
         timelineAdapter.notifyItemInserted(pos);
     }
@@ -230,8 +234,13 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
                 indicatorText = String.format("%02d:%02d.%d",minuteSBL, secondSBL, millisSBL);
 
             indicatorTimeline.setText(indicatorText);
-            playerControllerCallback.callingUpdatePlayerControllerPosition((int)value);
+
         }
+    }
+
+    private void updatePlayer(int timeStampInMs)
+    {
+        playerControllerCallback.callingUpdatePlayerControllerPosition(timeStampInMs);
     }
 
     private void registerButtonListener()
@@ -241,69 +250,56 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
 
     private void clickSplit(View view)
     {
-        int minMs = 0;
-        int maxMs = timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getDurationMs();
-        int scrollPositionInMS = Math.abs(scrollPath) * maxMs / scrollRange;
-        if(scrollPositionInMS <=  maxMs - MINIMAL_INTERVAL_MS && scrollPositionInMS >= MINIMAL_INTERVAL_MS)
-        {
-            this.splitCollage(Math.abs(scrollPath),scrollPositionInMS);
+        if(timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getType() != TimelineEntity.Type.EMPTY) {
+            int maxMs = timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getDurationMs();
+            int commonScrollPositionInMS = Math.abs(overallXScroll) * timelineAdapter.getCommonDurationMs() / timelineAdapter.getCommonWidthDp();
+            int localScrollPositionInMS = Math.abs(scrollPath) * maxMs / scrollRange;
+            int rangePathInMs = maxMs - localScrollPositionInMS;
+            if (localScrollPositionInMS <= timelineAdapter.getCommonDurationMs() - MINIMAL_INTERVAL_MS
+                    && localScrollPositionInMS >= MINIMAL_INTERVAL_MS
+                    && rangePathInMs >= MINIMAL_INTERVAL_MS) {
+                this.splitCollage(Math.abs(overallXScroll), commonScrollPositionInMS);
+            } else
+                Toast.makeText(getContext(), "Разделяймая часть должна быть больше 1 сек!", Toast.LENGTH_LONG).show();
         }
     }
+
     private void splitCollage(int splitPosition,int scrollPositionInMS)
     {
         Bitmap collage = timelineAdapter.getBitmapByItemIndex(currentItemPosition);
         String name = timelineAdapter.getNameByItemIndex(currentItemPosition);
         TimelineEntity timelineEntity = timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition);
-        int normalizePosition = splitPosition;
-        Bitmap[] splitPart = splitBitmap(collage,splitPosition);
+
+        Bitmap[] splitPart = splitBitmap(collage,scrollPath);
 
         int beginMs = timelineEntity.getBeginMs();
         int endMs = timelineEntity.getEndMs();
+        int beginDp = timelineEntity.getBeginDp();
+        int endDp = timelineEntity.getEndDp();
         int width = timelineEntity.getWidth();
         int height = timelineEntity.getHeight();
-        overallXScroll = 0;
+
         timelineAdapter.removeItemByIndex(currentItemPosition);
         timelineAdapter.notifyItemRangeRemoved(currentItemPosition,1);
 
-        this.addItemInTimelineBody(splitPart[0],name + "(1)",currentItemPosition,splitPosition,
-                height,beginMs,scrollPositionInMS ,TimelineEntity.Type.SCROLLABLE);
+        this.addItemInTimelineBody(splitPart[0],name + "(1)",currentItemPosition,scrollPath,
+                height,beginMs,scrollPositionInMS,beginDp,splitPosition,TimelineEntity.Type.SCROLLABLE);
         this.addItemInTimelineBody(delimiterBitmap,"",currentItemPosition + 1,5,
-               height,0,0 ,TimelineEntity.Type.EMPTY);
+               height,0,0,0,0,TimelineEntity.Type.EMPTY);
         this.addItemInTimelineBody(splitPart[1],name + "(2)",currentItemPosition + 2,
-                width - splitPosition,
-                height,scrollPositionInMS,endMs,TimelineEntity.Type.SCROLLABLE );
+                width - scrollPath,
+                height,scrollPositionInMS,endMs,splitPosition,endDp,TimelineEntity.Type.SCROLLABLE );
         scrollPath = 0;
         currentTimelineEntity = null;
-        currentItemPosition = 0;
-    }
-    private Bitmap[] splitBitmap(Bitmap bmp,int splitPosition)
-    {
-        Paint paint=new Paint();
-        Bitmap bitmaps[] = new Bitmap[2];
-        Rect splitBox1 = new Rect(0,0,splitPosition,bmp.getHeight());
-        Rect destBox1 = splitBox1;
-        Rect splitBox2 = new Rect(splitPosition,0,bmp.getWidth(),bmp.getHeight());
-        Rect destBox2 = new Rect(0,0,bmp.getWidth() - splitPosition,bmp.getHeight());
-
-        bitmaps[0] = Bitmap.createBitmap(splitPosition,bmp.getHeight(),bmp.getConfig());
-        bitmaps[1] = Bitmap.createBitmap(bmp.getWidth() - splitPosition,bmp.getHeight(),bmp.getConfig());
-        Canvas canvas = new Canvas(bitmaps[0]);
-        canvas.drawBitmap(bmp,splitBox1,destBox1,null);
-        Canvas canvas2 = new Canvas(bitmaps[1]);
-        canvas2.drawBitmap(bmp,splitBox2,destBox2,null);
-        return bitmaps;
+       // updateTimeline(0);
+        timelineBody.getLayoutManager().scrollToPosition(currentItemPosition + 2);
     }
 
-    public void setupCollageParam(int frameWidth,int frameHeight,int countFrame)
-    {
-       this.frameWidth = frameWidth;
-       this.frameHeight = frameHeight;
-       this.countFrame = countFrame;
-    }
+
     private Bitmap genDelimiterBitmap(int widthTimelineInDp, int heightTimelineInDp, String hexColor)
     {
-        int widthInPx = UtilUri.dpToPx(widthTimelineInDp);
-        int heightInPx = UtilUri.dpToPx(heightTimelineInDp);
+        int widthInPx = SupportUtil.dpToPx(widthTimelineInDp);
+        int heightInPx = SupportUtil.dpToPx(heightTimelineInDp);
         int color = Color.parseColor(hexColor);
         int red = Color.red(color);
         int green = Color.green(color);
@@ -317,6 +313,7 @@ public class VideoTimelineSplitView extends LinearLayout implements RecyclerView
         }
         return Bitmap.createBitmap(colors,widthInPx,heightInPx, Bitmap.Config.ARGB_8888);
     }
+
     private int computeEmplyOffset(int idx1,int idx2)
     {
         int temp = 0;

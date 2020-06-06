@@ -16,8 +16,7 @@ import com.project.videoeditor.FilenameDialogFragment;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoTimelineController;
-import com.project.videoeditor.codecs.ActionEditor;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 public class VideoEditPage extends AppCompatActivity implements FilenameDialogFragment.FilenameDialogFragmentListener {
 
@@ -68,7 +67,7 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
                     {
                         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                                 DocumentsContract.getTreeDocumentId(uri));
-                        textViewSelectPath.setText(UtilUri.getPath(this,docUri));
+                        textViewSelectPath.setText(SupportUtil.getPath(this,docUri));
 
                     }
                     break;

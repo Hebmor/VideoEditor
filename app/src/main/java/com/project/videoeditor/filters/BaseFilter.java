@@ -11,7 +11,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 
 import com.project.videoeditor.PlayerController;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -156,7 +156,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
 
     void loadFragmentShaderFromResource(int resourceId)
     {
-        FRAGMENT_SHADER = UtilUri.OpenRawResourcesAsString(context,resourceId);
+        FRAGMENT_SHADER = SupportUtil.OpenRawResourcesAsString(context,resourceId);
     }
 
     public void recreate(BaseFilter oldFilter) throws IOException {

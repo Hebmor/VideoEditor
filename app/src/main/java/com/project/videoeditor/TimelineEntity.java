@@ -9,6 +9,8 @@ public class TimelineEntity {
     private int beginMs = 0;
     private int endMs = 0;
     private int durationMs = 0;
+    private int beginDp = 0;
+    private int endDp = 0;
 
     public enum Type
     {
@@ -25,6 +27,19 @@ public class TimelineEntity {
         this.id = id;
         this.beginMs = beginMs;
         this.endMs = endMs;
+        this.durationMs = this.endMs - this.beginMs;
+        this.type = type;
+    }
+
+    public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs, int beginDp, int endDp, Type type) {
+        this.width = width;
+        this.height = height;
+        this.name = name;
+        this.id = id;
+        this.beginMs = beginMs;
+        this.endMs = endMs;
+        this.beginDp = beginDp;
+        this.endDp = endDp;
         this.durationMs = this.endMs - this.beginMs;
         this.type = type;
     }
@@ -93,4 +108,21 @@ public class TimelineEntity {
     public void setType(Type type) {
         this.type = type;
     }
+
+    public int getBeginDp() {
+        return beginDp;
+    }
+
+    public void setBeginDp(int beginDp) {
+        this.beginDp = beginDp;
+    }
+
+    public int getEndDp() {
+        return endDp;
+    }
+
+    public void setEndDp(int endDp) {
+        this.endDp = endDp;
+    }
+
 }

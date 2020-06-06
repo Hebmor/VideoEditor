@@ -24,7 +24,7 @@ import com.project.videoeditor.VideoInfoFragment;
 import com.project.videoeditor.VideoTimelineController;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -161,11 +161,11 @@ public class MainEditor extends AppCompatActivity {
         tabs.getTabAt(3).setIcon(R.drawable.ic_info_24dp);
     }
     public void ClickExtractOneFrame(View view) throws Exception {
-        File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
+        File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
         //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerSplit.getLeftValue(),0,1);
     }
     public void ClickExtractFrameInSeekRange(View view) throws Exception {
-        File framesFolder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
+        File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
         //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerCut.getLeftValue(), (int)videoTimelineControllerCut.getRightValue(),0);
     }
     public void ClickAddVideo(View view) throws InterruptedException {

@@ -1,19 +1,15 @@
 package com.project.videoeditor;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.provider.OpenableColumns;
 import android.view.View;
-
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,11 +18,9 @@ import androidx.core.content.ContextCompat;
 
 import com.project.videoeditor.activity.MainEditor;
 import com.project.videoeditor.codecs.ActionEditor;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
                     Uri selectedVideoUri = data.getData();
                     String ffmpegPath;
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                        ffmpegPath = UtilUri.safUriToFFmpegPath(this,selectedVideoUri);
+                        ffmpegPath = SupportUtil.safUriToFFmpegPath(this,selectedVideoUri);
                     else
-                        ffmpegPath = UtilUri.getPath(this,selectedVideoUri);
+                        ffmpegPath = SupportUtil.getPath(this,selectedVideoUri);
 
-                    String displayName = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.DISPLAY_NAME);
-                    String filesize = UtilUri.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);
+                    String displayName = SupportUtil.getInfoByUri(this,selectedVideoUri,OpenableColumns.DISPLAY_NAME);
+                    String filesize = SupportUtil.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);
 
                     info.setFilename(displayName);
                     info.setSizeInBytes(Long.parseLong(filesize));

@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.project.videoeditor.R;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class FilterExecutor extends Thread {
         MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.REGULAR_CODECS);
 
         String mime = null;
-        String fragmentShader = UtilUri.OpenRawResourcesAsString(context, R.raw.default_state);
+        String fragmentShader = SupportUtil.OpenRawResourcesAsString(context, R.raw.default_state);
 
         videoExtractor = new MediaExtractor();
         audioExtractor = new MediaExtractor();
@@ -122,8 +122,8 @@ public class FilterExecutor extends Thread {
         decoder = MediaCodec.createByCodecName(mediaCodecList.findDecoderForFormat(outputVideoFormat));
         decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
 
-        File folder = UtilUri.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
-        File newFiltredFile = UtilUri.CreateFileInFolder(folder.getCanonicalPath(), newFilename);
+        File folder = SupportUtil.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
+        File newFiltredFile = SupportUtil.CreateFileInFolder(folder.getCanonicalPath(), newFilename);
         this.pathOutVideoFile = newFiltredFile.getCanonicalPath();
         int outputFormat = getMediaMixerOutputFormatByMimeType(mime);
         mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), outputFormat);

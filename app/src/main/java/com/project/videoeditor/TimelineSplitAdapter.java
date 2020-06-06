@@ -19,6 +19,8 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
     private ArrayList<Bitmap> framesCollage;
     private ArrayList<String> namesCollage;
     private ArrayList<TimelineEntity> timelineEntities;
+    private int commonDurationMs = 0;
+    private int commonWidthDp = 0;
 
     public TimelineSplitAdapter(@NonNull Bitmap frameCollage, @NonNull String nameCollage,@NonNull TimelineEntity timelineEntity) {
         framesCollage = new ArrayList<>();
@@ -38,6 +40,13 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
         timelineEntities = new ArrayList<>();
     }
 
+    public int getCommonDurationMs() {
+        return commonDurationMs;
+    }
+
+    public int getCommonWidthDp() {
+        return commonWidthDp;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
@@ -85,13 +94,20 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
         this.framesCollage.add(frameCollage);
         this.namesCollage.add(nameCollage);
         this.timelineEntities.add(timelineEntity);
+
+        this.commonDurationMs+= timelineEntity.getDurationMs();
+        this.commonWidthDp+= timelineEntity.getWidth();
     }
     public void addItemInPos(@NonNull Bitmap frameCollage, @NonNull String nameCollage, @NonNull TimelineEntity timelineEntity, int pos)
     {
         this.framesCollage.add(pos,frameCollage);
         this.namesCollage.add(pos,nameCollage);
         this.timelineEntities.add(pos,timelineEntity);
+
+        this.commonDurationMs+= timelineEntity.getDurationMs();
+        this.commonWidthDp+= timelineEntity.getWidth();
     }
+
     public Bitmap getBitmapByItemIndex(int index)
     {
         return this.framesCollage.get(index);
@@ -101,14 +117,19 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
     {
         return this.namesCollage.get(index);
     }
+
     public TimelineEntity getTimelineEntityByItemIndex(int index)
     {
         return this.timelineEntities.get(index);
     }
+
     public void removeItemByIndex(int index)
     {
         this.framesCollage.remove(index);
         this.namesCollage.remove(index);
+
+        this.commonDurationMs+= this.timelineEntities.get(index).getDurationMs();
+        this.commonWidthDp+= this.timelineEntities.get(index).getWidth();
         this.timelineEntities.remove(index);
     }
 }

@@ -70,13 +70,13 @@ public class FiltersVideoActivity extends Activity {
         }*/
         try {
             videoFilteredView = new VideoFilteredView(this,playerController);
-         //   videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
+         //   videoFilteredView.changeFragmentShader(SupportUtil.OpenRawResourcesAsString(this,R.raw.black_and_white));
            // videoFilteredView.
         } catch (Exception e) {
             e.printStackTrace();
         }
         filteredVideoContainer.addView(videoFilteredView);
-        //videoFilteredView.changeFragmentShader(UtilUri.OpenRawResourcesAsString(this,R.raw.black_and_white));
+        //videoFilteredView.changeFragmentShader(SupportUtil.OpenRawResourcesAsString(this,R.raw.black_and_white));
         videoPath = path;
         videoView.start();
 
