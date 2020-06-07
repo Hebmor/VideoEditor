@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -16,7 +16,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 
-import com.project.videoeditor.activity.MainEditor;
+import com.project.videoeditor.R;
+import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.support.SupportUtil;
 
@@ -58,12 +59,14 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED;
     }
+
     public boolean isMICReadable(){
 
         return  ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED;
     }
+
     private void getPermission() {
         String[] params = null;
         String writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void UploadVideo()
+    private void uploadVideo()
     {
         try {
             Intent intent = new Intent();
@@ -135,11 +138,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     public void ClickUploadVideo(View view) {
         if (!checkPermissions())
                     getPermission();
         else
-            UploadVideo();
+            uploadVideo();
     }
 
     @Override
@@ -152,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     public static void trimCache(Context context) {
         try {
             File dir = context.getCacheDir();

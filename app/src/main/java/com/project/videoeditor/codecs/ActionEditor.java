@@ -219,7 +219,7 @@ public class ActionEditor {
         long durationMS = toTimeMS - fromTimeMS;
         if(durationMS < 0)
             durationMS = 0;
-        
+
         long msDuration = durationMS % 1000;
         long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;

@@ -1,6 +1,7 @@
 package com.project.videoeditor;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
     private ArrayList<TimelineEntity> timelineEntities;
     private int commonDurationMs = 0;
     private int commonWidthDp = 0;
+    private boolean isDebugMod = false;
 
     public TimelineSplitAdapter(@NonNull Bitmap frameCollage, @NonNull String nameCollage,@NonNull TimelineEntity timelineEntity) {
         framesCollage = new ArrayList<>();
@@ -28,6 +30,7 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
         timelineEntities = new ArrayList<>();
         addItem(frameCollage,nameCollage,timelineEntity);
     }
+
     public TimelineSplitAdapter(ArrayList<Bitmap> framesCollage, ArrayList<String> namesCollage,ArrayList<TimelineEntity> timelineEntities) {
         this.framesCollage = framesCollage;
         this.namesCollage = namesCollage;
@@ -46,6 +49,14 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
 
     public int getCommonWidthDp() {
         return commonWidthDp;
+    }
+
+    public boolean isDebugMod() {
+        return isDebugMod;
+    }
+
+    public void setDebugMod(boolean debugMod) {
+        isDebugMod = debugMod;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,7 +105,11 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
         this.framesCollage.add(frameCollage);
         this.namesCollage.add(nameCollage);
         this.timelineEntities.add(timelineEntity);
-
+        if(isDebugMod)
+        {
+            Log.d("addItem","Добавлен элемент!");
+            timelineEntity.printDebugInfo();
+        }
         this.commonDurationMs+= timelineEntity.getDurationMs();
         this.commonWidthDp+= timelineEntity.getWidth();
     }
@@ -103,7 +118,11 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
         this.framesCollage.add(pos,frameCollage);
         this.namesCollage.add(pos,nameCollage);
         this.timelineEntities.add(pos,timelineEntity);
-
+        if(isDebugMod)
+        {
+            Log.d("addItemInPos","Добавлен элемент!");
+            timelineEntity.printDebugInfo();
+        }
         this.commonDurationMs+= timelineEntity.getDurationMs();
         this.commonWidthDp+= timelineEntity.getWidth();
     }
@@ -127,9 +146,25 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
     {
         this.framesCollage.remove(index);
         this.namesCollage.remove(index);
-
+        if(isDebugMod)
+        {
+            Log.d("removeItemByIndex","Удален элемент!");
+            this.timelineEntities.get(index).printDebugInfo();
+        }
         this.commonDurationMs+= this.timelineEntities.get(index).getDurationMs();
         this.commonWidthDp+= this.timelineEntities.get(index).getWidth();
         this.timelineEntities.remove(index);
     }
+
+    public void printDebugInfo(int index)
+    {
+        this.timelineEntities.get(index).printDebugInfo();
+    }
+    public void printDebugInfo(int indexBegin,int indexEnd)
+    {
+        for(int i= indexBegin;i < indexEnd;i++)
+            this.timelineEntities.get(i).printDebugInfo();
+
+    }
+
 }

@@ -30,10 +30,6 @@ public class VideoTimelineCutView extends LinearLayout {
     private TimelineAdapter timelineAdapter;
     private TypedArray a;
 
-    interface PlayerControllerCallback {
-        void callingUpdatePlayerControllerPosition(int positionMS);
-    }
-
     PlayerControllerCallback playerControllerCallback;
 
     public void registerCallBack(PlayerControllerCallback playerControllerCallback){

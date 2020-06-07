@@ -1,13 +1,17 @@
 package com.project.videoeditor.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.media.MediaExtractor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,6 +26,7 @@ import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoInfoFragment;
 import com.project.videoeditor.VideoTimelineController;
+import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.support.SupportUtil;
@@ -31,6 +36,7 @@ import java.io.IOException;
 
 public class MainEditor extends AppCompatActivity {
     public static final String EDIT_VIDEO_ID = "EditVideoInfo";
+    public static final int REQUEST_TAKE_GALLERY_VIDEO = 1;
     private VideoInfo editVideoInfo;
     private VideoTimelineController videoTimelineControllerSplit;
     private VideoTimelineController videoTimelineControllerCut;
@@ -43,10 +49,17 @@ public class MainEditor extends AppCompatActivity {
     private VideoInfoFragment videoInfoFragment;
     private FilterListFragment filterListFragment;
 
-//    public static MainEditor newInstance(VideoTimelineController videoTimelineControllerSplit,VideoTimelineController videoTimelineControllerCut)
-//    {
-//
-//    }
+    public interface IResultCallbackTakeVideoInfo {
+        void call(VideoInfo data);
+    }
+
+    private static IResultCallbackTakeVideoInfo callbackTakeVideoInfo;
+
+    public static void registerResultCallbackTakeVideo(IResultCallbackTakeVideoInfo callback)
+    {
+        callbackTakeVideoInfo = callback;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +109,7 @@ public class MainEditor extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        videoFilteredView.onPause();
         if (Util.SDK_INT < 24) {
             playerController.releasePlayer();
         }
@@ -104,10 +118,12 @@ public class MainEditor extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        videoFilteredView.onResume();
         playerController.hideSystemUi();
         if ((Util.SDK_INT < 24 || playerController.getPlayer() == null)) {
             playerController.initializePlayer();
         }
+        videoFilteredView.updatePlayerController(playerController);
     }
 
     @Override
@@ -124,6 +140,11 @@ public class MainEditor extends AppCompatActivity {
         if (Util.SDK_INT >= 24) {
             playerController.releasePlayer();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -160,15 +181,48 @@ public class MainEditor extends AppCompatActivity {
         tabs.getTabAt(3).setText("Информация");
         tabs.getTabAt(3).setIcon(R.drawable.ic_info_24dp);
     }
+
     public void ClickExtractOneFrame(View view) throws Exception {
         File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
         //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerSplit.getLeftValue(),0,1);
     }
+
     public void ClickExtractFrameInSeekRange(View view) throws Exception {
         File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
         //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerCut.getLeftValue(), (int)videoTimelineControllerCut.getRightValue(),0);
     }
+
     public void ClickAddVideo(View view) throws InterruptedException {
         videoTimelineControllerSplit.addVideoToTimeline(editVideoInfo);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_TAKE_GALLERY_VIDEO:
+                    VideoInfo info = new VideoInfo();
+                    Uri selectedVideoUri = data.getData();
+                    String ffmpegPath;
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                        ffmpegPath = SupportUtil.safUriToFFmpegPath(this,selectedVideoUri);
+                    else
+                        ffmpegPath = SupportUtil.getPath(this,selectedVideoUri);
+
+                    String displayName = SupportUtil.getInfoByUri(this,selectedVideoUri, OpenableColumns.DISPLAY_NAME);
+                    String filesize = SupportUtil.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);
+
+                    info.setFilename(displayName);
+                    info.setSizeInBytes(Long.parseLong(filesize));
+                    info.parseInfoFromPath(ffmpegPath);
+                    ActionEditor.setVideoInfo(info);
+
+                    if(callbackTakeVideoInfo != null)
+                        callbackTakeVideoInfo.call(info);
+                    break;
+            }
+        }
     }
 }

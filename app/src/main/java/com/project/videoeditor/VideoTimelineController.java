@@ -18,7 +18,7 @@ import com.project.videoeditor.codecs.ActionEditor;
 import java.io.File;
 
 
-public class VideoTimelineController extends Fragment implements VideoTimelineCutView.PlayerControllerCallback {
+public class VideoTimelineController extends Fragment implements PlayerControllerCallback {
 
     private VideoInfo videoInfo;
     private PlayerController playerController;
@@ -38,6 +38,18 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
     public VideoTimelineController() {
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(viewModRange)
+            videoTimelineCutView = new VideoTimelineCutView(getActivity());
+        else
+            videoTimelineSplitView = new VideoTimelineSplitView(getActivity());
+
+        init();
+    }
+
 
     public static VideoTimelineController newInstance(VideoInfo videoInfo, PlayerController playerController)
     {
@@ -55,15 +67,9 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
             View view = inflater.inflate(R.layout.video_timeline, container, false);
             FrameLayout frameLayout = view.findViewById(R.id.timelineLayout);
             if(viewModRange)
-            {
-                videoTimelineCutView = new VideoTimelineCutView(getActivity());
                 frameLayout.addView(videoTimelineCutView);
-            }
             else
-            {
-                videoTimelineSplitView = new VideoTimelineSplitView(getActivity());
                 frameLayout.addView(videoTimelineSplitView);
-            }
 
             return view;
     }
@@ -79,16 +85,16 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
     public void setPlayerController(PlayerController playerController) {
         this.playerController = playerController;
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
     }
-    @Override
-    public void onStart() {
-        super.onStart();
+
+    private void init()
+    {
         if(videoInfo != null) {
-            String pathCollage = null;
 
             if (videoTimelineCutView != null) {
                 Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),
@@ -99,13 +105,16 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
                 videoTimelineCutView.registerCallBack(this);
             }
             if (videoTimelineSplitView != null) {
-                Bitmap frameCollage = ActionEditor.getFrameCollage(videoInfo.getPath(),videoInfo.getDuration(),
-                        160,90,12);
-                videoTimelineSplitView.addItemInTimelineBody(frameCollage, videoInfo.getFilename(),
-                        160 * 12,106,0,videoInfo.getDuration(),0,160 * 12,TimelineEntity.Type.SCROLLABLE);
+
+                videoTimelineSplitView.addVideoInTimeline(videoInfo);
                 videoTimelineSplitView.registerCallBack(this);
             }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -118,6 +127,7 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
     {
         this.videoInfo = videoInfo;
     }
+
     private Bitmap getBitmapByPath(String PathToFrameСollage)
     {
         File image = new File(PathToFrameСollage);
@@ -128,6 +138,7 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
         }
         return null;
     }
+
     public void setFramesFromVideo(String PathToFrameСollage)
     {
         File image = new File(PathToFrameСollage);
@@ -135,7 +146,6 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
         //videoFramesCollage.setImageBitmap(bitmap);
     }
-
 
     public void addVideoToTimeline(VideoInfo newVideo) throws InterruptedException {
 
@@ -147,6 +157,23 @@ public class VideoTimelineController extends Fragment implements VideoTimelineCu
 
     @Override
     public void callingUpdatePlayerControllerPosition(int positionMS) {
-        playerController.getPlayer().seekTo((int)positionMS);
+        playerController.seekTo(positionMS);
     }
+
+    @Override
+    public void callingAddVideoToPlaylistPlayer(String path) {
+        playerController.addPlaylistByPath(path);
+    }
+
+    @Override
+    public void callingMoveNextVideo(int beginPositionInMs) {
+        playerController.moveNextVideo(beginPositionInMs);
+    }
+
+    @Override
+    public void callingMovePrevVideo(int endPositionMs) {
+        playerController.movePrevVideo(endPositionMs);
+    }
+
+
 }

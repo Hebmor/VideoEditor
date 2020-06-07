@@ -1,6 +1,14 @@
 package com.project.videoeditor;
 
+import android.util.Log;
+
 public class TimelineEntity {
+
+    public enum Type
+    {
+        SCROLLABLE,
+        EMPTY
+    };
 
     private int width = 0;
     private int height = 0;
@@ -11,13 +19,7 @@ public class TimelineEntity {
     private int durationMs = 0;
     private int beginDp = 0;
     private int endDp = 0;
-
-    public enum Type
-    {
-        SCROLLABLE,
-        EMPTY
-    };
-
+    private int attachedTimelineIndex = -1;
     private Type type;
 
     public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs,Type type) {
@@ -125,4 +127,21 @@ public class TimelineEntity {
         this.endDp = endDp;
     }
 
+    public void printDebugInfo()
+    {
+        Log.d("printDebugInfo", "Элемент:   " + id );
+        Log.d("printDebugInfo", "Ширина:    " + (width));
+        Log.d("printDebugInfo", "Начало в MS:   " + beginMs);
+        Log.d("printDebugInfo", "Конец в MS:    " + endMs);
+        Log.d("printDebugInfo", "Начало в DP:   " + beginDp);
+        Log.d("printDebugInfo", "Конец в DP:    " + endDp);
+    }
+
+    public int getAttachedTimelineIndex() {
+        return attachedTimelineIndex;
+    }
+
+    public void setAttachedTimelineIndex(int attachedTimelineIndex) {
+        this.attachedTimelineIndex = attachedTimelineIndex;
+    }
 }
