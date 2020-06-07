@@ -20,6 +20,7 @@ public class TimelineEntity {
     private int beginDp = 0;
     private int endDp = 0;
     private int attachedTimelineIndex = -1;
+    private int videoIndex = 0;
     private Type type;
 
     public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs,Type type) {
@@ -43,6 +44,19 @@ public class TimelineEntity {
         this.beginDp = beginDp;
         this.endDp = endDp;
         this.durationMs = this.endMs - this.beginMs;
+        this.type = type;
+    }
+
+    public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs, int beginDp, int endDp, int videoIndex, Type type) {
+        this.width = width;
+        this.height = height;
+        this.name = name;
+        this.id = id;
+        this.beginMs = beginMs;
+        this.endMs = endMs;
+        this.beginDp = beginDp;
+        this.endDp = endDp;
+        this.videoIndex = videoIndex;
         this.type = type;
     }
 
@@ -143,5 +157,13 @@ public class TimelineEntity {
 
     public void setAttachedTimelineIndex(int attachedTimelineIndex) {
         this.attachedTimelineIndex = attachedTimelineIndex;
+    }
+
+    public int getVideoIndex() {
+        return videoIndex;
+    }
+
+    public void setVideoIndex(int videoIndex) {
+        this.videoIndex = videoIndex;
     }
 }

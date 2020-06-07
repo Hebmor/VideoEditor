@@ -95,7 +95,7 @@ public class PlayerController implements Serializable {
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
-    public void addPlaylistByPath(String path)
+    public int addPlaylistByPath(String path)
     {
         MediaSource mediaSource =
                 new ProgressiveMediaSource.Factory(new FileDataSourceFactory())
@@ -103,6 +103,7 @@ public class PlayerController implements Serializable {
                         .createMediaSource(Uri.parse(path));
         playlist.addMediaSource(mediaSource);
         videos.add(Uri.parse(path));
+        return playlist.getSize() - 1;
     }
 
     public void addPlaylistByPath(Uri path)

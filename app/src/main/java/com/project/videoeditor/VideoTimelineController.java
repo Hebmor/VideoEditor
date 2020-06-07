@@ -161,8 +161,8 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
     }
 
     @Override
-    public void callingAddVideoToPlaylistPlayer(String path) {
-        playerController.addPlaylistByPath(path);
+    public int callingAddVideoToPlaylistPlayer(String path) {
+        return playerController.addPlaylistByPath(path);
     }
 
     @Override

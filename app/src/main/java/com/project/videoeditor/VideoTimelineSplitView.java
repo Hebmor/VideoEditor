@@ -43,6 +43,8 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
     private int prevMsValue = 0;
     private int scrollRange = 0;
     private int currentItemPosition = 0;
+    private int currentVideoIndex = 0;
+
 
     private Bitmap delimiterBitmap;
     private final int MINIMAL_INTERVAL_MS = 1000;
@@ -55,7 +57,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
 
     @Override
     public void call(VideoInfo data) {
-        playerControllerCallback.callingAddVideoToPlaylistPlayer(data.getPath());
+        currentVideoIndex = playerControllerCallback.callingAddVideoToPlaylistPlayer(data.getPath());
         addProcess(data);
     }
     public void registerCallBack(PlayerControllerCallback playerControllerCallback){
@@ -161,8 +163,6 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                     int minMs = 0;
                     int maxMs = 0;
 
-
-
                     maxMs = currentTimelineEntity.getDurationMs();
                     scrollRange = currentTimelineEntity.getWidth();
                     scrollPath = Math.abs( overallXScroll - currentTimelineEntity.getBeginDp());
@@ -211,18 +211,18 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
     }
 
     public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, int widthItem, int heightItem,
-                                      int beginMs, int endMs,int beginDp,int endDp, TimelineEntity.Type type)
+                                      int beginMs, int endMs, int beginDp, int endDp, int videoIndex, TimelineEntity.Type type)
     {
         int idx = timelineAdapter.getItemCount();
-        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,idx,beginMs,endMs,beginDp,endDp,type);
+        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,idx,beginMs,endMs,beginDp,endDp,videoIndex,type);
         timelineAdapter.addItem(frameCollage,nameCollage,timelineEntity);
         timelineAdapter.notifyItemInserted(idx);
     }
 
-    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage,int pos,int widthItem,int heightItem,
-                                      int beginMs,int endMs,int beginDp,int endDp, TimelineEntity.Type type)
+    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, int pos,int widthItem, int heightItem,
+                                      int beginMs, int endMs, int beginDp, int endDp, int videoIndex, TimelineEntity.Type type)
     {
-        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,pos,beginMs,endMs,beginDp,endDp,type);
+        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,pos,beginMs,endMs,beginDp,endDp,videoIndex,type);
         timelineAdapter.addItemInPos(frameCollage,nameCollage,timelineEntity,pos);
         timelineAdapter.notifyItemInserted(pos);
     }
@@ -390,13 +390,15 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
             offsetMs = timelineAdapter.getCommonDurationMs();
         }
         this.addItemInTimelineBody(frameCollage, videoInfo.getFilename(),
-                160 * 12,106,offsetMs,videoInfo.getDuration() + offsetMs,offsetX,160 * 12 + offsetX,TimelineEntity.Type.SCROLLABLE);
+                160 * 12,106,offsetMs,videoInfo.getDuration() + offsetMs,
+                offsetX,160 * 12 + offsetX,currentVideoIndex,TimelineEntity.Type.SCROLLABLE);
     }
 
     public void setAttached(int indexTo,int indexFrom)
     {
         this.timelineAdapter.getTimelineEntityByItemIndex(indexFrom).setAttachedTimelineIndex(indexTo);
     }
+    
     public void addCollage(VideoInfo videoInfo,int splitPosition,int scrollPositionInMS)
     {
         Bitmap[] splitPart = null;
