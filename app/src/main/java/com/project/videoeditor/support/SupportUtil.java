@@ -2,7 +2,13 @@ package com.project.videoeditor.support;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -20,7 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
 
-public class UtilUri {
+public class SupportUtil {
     public static String getPath(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -195,5 +201,44 @@ public class UtilUri {
         }
         return  total.toString();
     }
+    public static int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
 
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static Bitmap[] splitBitmap(Bitmap bmp, int splitPosition)
+    {
+        Paint paint=new Paint();
+        Bitmap bitmaps[] = new Bitmap[2];
+        Rect splitBox1 = new Rect(0,0,splitPosition,bmp.getHeight());
+        Rect destBox1 = splitBox1;
+        Rect splitBox2 = new Rect(splitPosition,0,bmp.getWidth(),bmp.getHeight());
+        Rect destBox2 = new Rect(0,0,bmp.getWidth() - splitPosition,bmp.getHeight());
+
+        bitmaps[0] = Bitmap.createBitmap(splitPosition,bmp.getHeight(),bmp.getConfig());
+        bitmaps[1] = Bitmap.createBitmap(bmp.getWidth() - splitPosition,bmp.getHeight(),bmp.getConfig());
+        Canvas canvas = new Canvas(bitmaps[0]);
+        canvas.drawBitmap(bmp,splitBox1,destBox1,null);
+        Canvas canvas2 = new Canvas(bitmaps[1]);
+        canvas2.drawBitmap(bmp,splitBox2,destBox2,null);
+        return bitmaps;
+    }
+
+    public static Bitmap stickBitmap(Bitmap bmp1, Bitmap bmp2)
+    {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth() + bmp2.getWidth(),
+                bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawBitmap(bmp2, bmp1.getWidth(), 0, null);
+        return bmOverlay;
+    }
+
+    public static Bitmap scaleBitmap(Bitmap bmp, int scaleWidthInPx, int scaleHeightInPx)
+    {
+        return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
+    }
 }

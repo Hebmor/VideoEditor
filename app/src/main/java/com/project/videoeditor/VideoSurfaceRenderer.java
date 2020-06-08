@@ -115,5 +115,7 @@ public class VideoSurfaceRenderer
     }
 
     public void setPlayerController(PlayerController playerController) {
+        this.playerController = playerController;
+        currentFilter.setPlayerController(playerController);
     }
 }

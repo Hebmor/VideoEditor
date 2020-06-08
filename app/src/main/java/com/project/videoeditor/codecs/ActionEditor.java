@@ -17,6 +17,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static com.project.videoeditor.support.SupportUtil.scaleBitmap;
+import static com.project.videoeditor.support.SupportUtil.stickBitmap;
+
 public class ActionEditor {
 
     private static VideoInfo videoInfo;
@@ -206,21 +209,6 @@ public class ActionEditor {
         return frameCollage;
     }
 
-    private static Bitmap stickBitmap(Bitmap bmp1, Bitmap bmp2)
-    {
-        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth() + bmp2.getWidth(),
-                bmp1.getHeight(), bmp1.getConfig());
-        Canvas canvas = new Canvas(bmOverlay);
-        canvas.drawBitmap(bmp1, new Matrix(), null);
-        canvas.drawBitmap(bmp2, bmp1.getWidth(), 0, null);
-        return bmOverlay;
-    }
-
-    private static Bitmap scaleBitmap(Bitmap bmp, int scaleWidthInPx, int scaleHeightInPx)
-    {
-        return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
-    }
-
     public static void extractFrames(String videopath,String outfile,long fromTimeMS,long toTimeMS,int countFrame) throws InterruptedException {
         String command = "";
         long msFrom = fromTimeMS % 1000;
@@ -231,6 +219,7 @@ public class ActionEditor {
         long durationMS = toTimeMS - fromTimeMS;
         if(durationMS < 0)
             durationMS = 0;
+
         long msDuration = durationMS % 1000;
         long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
@@ -245,4 +234,5 @@ public class ActionEditor {
 
         RunCommandExecuteFFMPEG(command,false);
     }
+
 }

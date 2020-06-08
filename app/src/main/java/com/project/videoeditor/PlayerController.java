@@ -3,12 +3,11 @@ package com.project.videoeditor;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -16,21 +15,26 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.net.URI;
+import java.util.ArrayList;
 
 import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 
 public class PlayerController implements Serializable {
+
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private PlayerControlView playerControlView;
     private Context context;
-    private boolean playWhenReady = true;
+    private boolean playWhenReady = false;
     private int currentWindow = 0;
     private long playbackPosition = 0;
-    private Uri currentVideoUri;
-
+    private ArrayList<Uri> videos;
+    private ConcatenatingMediaSource playlist;
 
     public PlayerView getPlayerView() {
         return playerView;
@@ -51,7 +55,9 @@ public class PlayerController implements Serializable {
         this.context = context;
         this.playerView = new PlayerView(context);
         this.playerControlView = new PlayerControlView(context);
-        currentVideoUri = Uri.parse(path);
+        this.videos = new ArrayList<>();
+        this.playlist = new ConcatenatingMediaSource();
+        this.addPlaylistByPath(path);
     }
     public void initializePlayer() {
         this.player = ExoPlayerFactory.newSimpleInstance(context);
@@ -59,11 +65,9 @@ public class PlayerController implements Serializable {
         this.playerControlView.setPlayer(player);
         this.playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
         this.player.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-        MediaSource mediaSource = buildMediaSource(currentVideoUri);
-        
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
-        player.prepare(mediaSource, false, false);
+        player.prepare(playlist, true, false);
 
     }
     private MediaSource buildMediaSource(Uri uri) {
@@ -90,5 +94,58 @@ public class PlayerController implements Serializable {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
+
+    public int addPlaylistByPath(String path)
+    {
+        MediaSource mediaSource =
+                new ProgressiveMediaSource.Factory(new FileDataSourceFactory())
+                        .setTag(path)
+                        .createMediaSource(Uri.parse(path));
+        playlist.addMediaSource(mediaSource);
+        videos.add(Uri.parse(path));
+        return playlist.getSize() - 1;
+    }
+
+    public void addPlaylistByPath(Uri path)
+    {
+        MediaSource mediaSource =
+                new ProgressiveMediaSource.Factory(new FileDataSourceFactory())
+                        .setTag(path)
+                        .createMediaSource(path);
+        playlist.addMediaSource(mediaSource);
+        videos.add(path);
+    }
+
+    public void removePlaylistByIndex(int index)
+    {
+        playlist.removeMediaSource(index);
+    }
+
+    public void seekTo(int positionMs)
+    {
+        player.seekTo(positionMs);
+    }
+
+    public void moveNextVideo(int beginPositionInMs)
+    {
+        if(player.hasNext()) {
+            int nextIndex = player.getNextWindowIndex();
+            player.seekTo(nextIndex,beginPositionInMs);
+        }
+    }
+
+    public void movePrevVideo(int endPositionMs)
+    {
+        if(player.hasPrevious()) {
+            int nextIndex = player.getPreviousWindowIndex();
+            player.seekTo(nextIndex,endPositionMs);
+        }
+    }
+
+    public void moveByVideoIndex(int index)
+    {
+        player.seekTo(index,0);
+    }
+
 
 }

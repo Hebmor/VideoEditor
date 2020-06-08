@@ -26,12 +26,9 @@ public class VideoTimelineCutView extends LinearLayout {
     private SeekBar SBL;
     private ImageView videoFramesCollage;
     private Button saveButton;
-    private VideoAdapter timelineAdapter;
+    private Button cutButton;
+    private TimelineAdapter timelineAdapter;
     private TypedArray a;
-
-    interface PlayerControllerCallback {
-        void callingUpdatePlayerControllerPosition(int positionMS);
-    }
 
     PlayerControllerCallback playerControllerCallback;
 
@@ -75,7 +72,7 @@ public class VideoTimelineCutView extends LinearLayout {
         timelineBody.setLayoutManager(layoutManager);
         timelineBody.setAdapter(timelineAdapter);
 
-        timelineAdapter = new VideoAdapter();
+        timelineAdapter = new TimelineAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false);
         timelineBody.setLayoutManager(layoutManager);
@@ -163,4 +160,6 @@ public class VideoTimelineCutView extends LinearLayout {
     public RangeSeekBar getSeekBarTimeline() {
         return seekBarTimeline;
     }
+
+
 }

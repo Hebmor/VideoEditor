@@ -20,7 +20,7 @@
         <activity android:name=".activity.MainEditor" />
         <activity android:name=".activity.SaveVideoActivity" />
         <activity android:name=".VideoInfoFragment" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -11,7 +11,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 
 import com.project.videoeditor.PlayerController;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -156,7 +156,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
 
     void loadFragmentShaderFromResource(int resourceId)
     {
-        FRAGMENT_SHADER = UtilUri.OpenRawResourcesAsString(context,resourceId);
+        FRAGMENT_SHADER = SupportUtil.OpenRawResourcesAsString(context,resourceId);
     }
 
     public void recreate(BaseFilter oldFilter) throws IOException {
@@ -209,6 +209,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+
         mProgram = createProgram(VERTEX_SHADER, FRAGMENT_SHADER);
         if (mProgram == 0) {
             return;
@@ -262,7 +263,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-
+        gl.glViewport(0, 0, width, height);
     }
 
     @Override
@@ -411,6 +412,9 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     public  void setPlayerController(PlayerController playerController)
     {
         this.playerController = playerController;
+        if(playerController != null && isPlayerMod)
+            playerController.getPlayer().setVideoSurface(surface);
+
     }
     public boolean isPlayerMod() {
         return isPlayerMod;

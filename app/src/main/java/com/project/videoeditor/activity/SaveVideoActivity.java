@@ -26,7 +26,7 @@ import com.project.videoeditor.codecs.Codecs;
 import com.project.videoeditor.database.PresetCollection;
 import com.project.videoeditor.database.PresetEntity;
 import com.project.videoeditor.database.PresetEntityViewModel;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
@@ -132,7 +132,7 @@ public class SaveVideoActivity extends AppCompatActivity {
     public void clickSaveVideo(View view) throws Exception {
 
         String inputVideoPath = editVideoInfo.getPath();
-        File folder = UtilUri.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "EncodeVideo");
+        File folder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "EncodeVideo");
         String outputVideoPath = folder.getAbsolutePath() + "/" + editVideoInfo.getFilename();
         float bitrateInMbit = bitrateIndicator.getProgressFloat();
         String framerate = (String) framerateInfoSpinner.getSelectedItem();

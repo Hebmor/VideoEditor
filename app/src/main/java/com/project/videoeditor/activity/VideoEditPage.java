@@ -16,8 +16,7 @@ import com.project.videoeditor.FilenameDialogFragment;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.VideoTimelineController;
-import com.project.videoeditor.codecs.ActionEditor;
-import com.project.videoeditor.support.UtilUri;
+import com.project.videoeditor.support.SupportUtil;
 
 public class VideoEditPage extends AppCompatActivity implements FilenameDialogFragment.FilenameDialogFragmentListener {
 
@@ -35,13 +34,6 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
         videoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
         videoView = (VideoView) this.findViewById(R.id.videoView_EditVideo);
         videoTimelineController = (VideoTimelineController)getSupportFragmentManager().findFragmentById(R.id.fragment_Timeline);
-
-        videoTimelineController.setVideoInfo(videoInfo);
-        try {
-            videoTimelineController.setFramesFromVideo(ActionEditor.GenFrameCollage(videoInfo.getPath(), this,6));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         defaultSavePath = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath();
     }
@@ -75,7 +67,7 @@ public class VideoEditPage extends AppCompatActivity implements FilenameDialogFr
                     {
                         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                                 DocumentsContract.getTreeDocumentId(uri));
-                        textViewSelectPath.setText(UtilUri.getPath(this,docUri));
+                        textViewSelectPath.setText(SupportUtil.getPath(this,docUri));
 
                     }
                     break;

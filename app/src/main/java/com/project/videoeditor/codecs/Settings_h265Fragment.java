@@ -26,8 +26,7 @@ import android.widget.TextView;
 
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
-import com.project.videoeditor.support.UtilUri;
-import com.warkiz.widget.IndicatorSeekBar;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.util.ArrayList;
 
@@ -147,7 +146,7 @@ public class Settings_h265Fragment extends Fragment {
                     Uri uri = data.getData();
                     Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                             DocumentsContract.getTreeDocumentId(uri));
-                    String path = UtilUri.getPath(getContext(),docUri);
+                    String path = SupportUtil.getPath(getContext(),docUri);
                     ((EditText)viewPointer.findViewById(R.id.editText_FolderPath)).setText(path);
                     break;
             }
