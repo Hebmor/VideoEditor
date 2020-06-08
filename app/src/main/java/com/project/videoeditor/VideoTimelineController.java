@@ -166,14 +166,11 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
     }
 
     @Override
-    public void callingMoveNextVideo(int beginPositionInMs) {
-        playerController.moveNextVideo(beginPositionInMs);
+    public void moveVideoByVideoIndex(int index) {
+        playerController.moveByVideoIndex(index);
     }
 
-    @Override
-    public void callingMovePrevVideo(int endPositionMs) {
-        playerController.movePrevVideo(endPositionMs);
-    }
+
 
 
 }

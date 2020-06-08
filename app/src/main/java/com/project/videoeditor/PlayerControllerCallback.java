@@ -3,6 +3,5 @@ package com.project.videoeditor;
 interface PlayerControllerCallback {
     void callingUpdatePlayerControllerPosition(int positionMS);
     int callingAddVideoToPlaylistPlayer(String path);
-    void callingMoveNextVideo(int beginPositionInMs);
-    void callingMovePrevVideo(int endPositionMs);
+    void moveVideoByVideoIndex(int index);
 }

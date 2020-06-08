@@ -151,8 +151,8 @@ public class TimelineSplitAdapter extends RecyclerView.Adapter<TimelineSplitAdap
             Log.d("removeItemByIndex","Удален элемент!");
             this.timelineEntities.get(index).printDebugInfo();
         }
-        this.commonDurationMs+= this.timelineEntities.get(index).getDurationMs();
-        this.commonWidthDp+= this.timelineEntities.get(index).getWidth();
+        this.commonDurationMs-= this.timelineEntities.get(index).getDurationMs();
+        this.commonWidthDp-= this.timelineEntities.get(index).getWidth();
         this.timelineEntities.remove(index);
     }
 

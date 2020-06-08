@@ -13,51 +13,56 @@ public class TimelineEntity {
     private int width = 0;
     private int height = 0;
     private String name = "";
-    private int id = 0;
-    private int beginMs = 0;
-    private int endMs = 0;
+    private int globalBeginMs = 0;
+    private int globalEndMs = 0;
     private int durationMs = 0;
     private int beginDp = 0;
     private int endDp = 0;
     private int attachedTimelineIndex = -1;
     private int videoIndex = 0;
+
+    private int localBeginMs = 0;
+    private int localEndMs = 0;
     private Type type;
 
-    public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs,Type type) {
+    public TimelineEntity(int width, int height, String name, int globalBeginMs, int globalEndMs,
+                          Type type) {
         this.width = width;
         this.height = height;
         this.name = name;
-        this.id = id;
-        this.beginMs = beginMs;
-        this.endMs = endMs;
-        this.durationMs = this.endMs - this.beginMs;
+        this.globalBeginMs = globalBeginMs;
+        this.globalEndMs = globalEndMs;
+        this.durationMs = this.globalEndMs - this.globalBeginMs;
         this.type = type;
     }
 
-    public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs, int beginDp, int endDp, Type type) {
+    public TimelineEntity(int width, int height, String name, int globalBeginMs, int globalEndMs,
+                          int beginDp, int endDp, Type type) {
         this.width = width;
         this.height = height;
         this.name = name;
-        this.id = id;
-        this.beginMs = beginMs;
-        this.endMs = endMs;
+        this.globalBeginMs = globalBeginMs;
+        this.globalEndMs = globalEndMs;
         this.beginDp = beginDp;
         this.endDp = endDp;
-        this.durationMs = this.endMs - this.beginMs;
+        this.durationMs = this.globalEndMs - this.globalBeginMs;
         this.type = type;
     }
 
-    public TimelineEntity(int width, int height, String name, int id, int beginMs, int endMs, int beginDp, int endDp, int videoIndex, Type type) {
+    public TimelineEntity(int width, int height, String name, int globalBeginMs, int globalEndMs,
+                          int localBeginMs, int localEndMs, int beginDp, int endDp, int videoIndex, Type type) {
         this.width = width;
         this.height = height;
         this.name = name;
-        this.id = id;
-        this.beginMs = beginMs;
-        this.endMs = endMs;
+        this.globalBeginMs = globalBeginMs;
+        this.globalEndMs = globalEndMs;
+        this.localBeginMs = localBeginMs;
+        this.localEndMs = localEndMs;
         this.beginDp = beginDp;
         this.endDp = endDp;
         this.videoIndex = videoIndex;
         this.type = type;
+        this.durationMs = this.globalEndMs - this.globalBeginMs;
     }
 
     public int getWidth() {
@@ -84,28 +89,20 @@ public class TimelineEntity {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public int getGlobalBeginMs() {
+        return globalBeginMs;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setGlobalBeginMs(int globalBeginMs) {
+        this.globalBeginMs = globalBeginMs;
     }
 
-    public int getBeginMs() {
-        return beginMs;
+    public int getGlobalEndMs() {
+        return globalEndMs;
     }
 
-    public void setBeginMs(int beginMs) {
-        this.beginMs = beginMs;
-    }
-
-    public int getEndMs() {
-        return endMs;
-    }
-
-    public void setEndMs(int endMs) {
-        this.endMs = endMs;
+    public void setGlobalEndMs(int globalEndMs) {
+        this.globalEndMs = globalEndMs;
     }
 
 
@@ -143,10 +140,10 @@ public class TimelineEntity {
 
     public void printDebugInfo()
     {
-        Log.d("printDebugInfo", "Элемент:   " + id );
+        Log.d("printDebugInfo", "Элемент:   ");
         Log.d("printDebugInfo", "Ширина:    " + (width));
-        Log.d("printDebugInfo", "Начало в MS:   " + beginMs);
-        Log.d("printDebugInfo", "Конец в MS:    " + endMs);
+        Log.d("printDebugInfo", "Начало в MS:   " + globalBeginMs);
+        Log.d("printDebugInfo", "Конец в MS:    " + globalEndMs);
         Log.d("printDebugInfo", "Начало в DP:   " + beginDp);
         Log.d("printDebugInfo", "Конец в DP:    " + endDp);
     }
@@ -165,5 +162,27 @@ public class TimelineEntity {
 
     public void setVideoIndex(int videoIndex) {
         this.videoIndex = videoIndex;
+    }
+
+    public void setLocalTime(int localBeginMs,int localEndMs)
+    {
+        this.localBeginMs = localBeginMs;
+        this.localEndMs = localEndMs;
+    }
+
+    public int getLocalBeginMs() {
+        return localBeginMs;
+    }
+
+    public void setLocalBeginMs(int localBeginMs) {
+        this.localBeginMs = localBeginMs;
+    }
+
+    public int getLocalEndMs() {
+        return localEndMs;
+    }
+
+    public void setLocalEndMs(int localEndMs) {
+        this.localEndMs = localEndMs;
     }
 }

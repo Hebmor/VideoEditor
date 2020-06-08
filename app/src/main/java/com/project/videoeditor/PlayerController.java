@@ -133,6 +133,7 @@ public class PlayerController implements Serializable {
             player.seekTo(nextIndex,beginPositionInMs);
         }
     }
+
     public void movePrevVideo(int endPositionMs)
     {
         if(player.hasPrevious()) {
@@ -140,4 +141,11 @@ public class PlayerController implements Serializable {
             player.seekTo(nextIndex,endPositionMs);
         }
     }
+
+    public void moveByVideoIndex(int index)
+    {
+        player.seekTo(index,0);
+    }
+
+
 }
