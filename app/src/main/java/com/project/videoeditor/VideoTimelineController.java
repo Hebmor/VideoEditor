@@ -66,10 +66,18 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
                              @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.video_timeline, container, false);
             FrameLayout frameLayout = view.findViewById(R.id.timelineLayout);
-            if(viewModRange)
-                frameLayout.addView(videoTimelineCutView);
-            else
-                frameLayout.addView(videoTimelineSplitView);
+
+                if (viewModRange) {
+                    if ((videoTimelineCutView.getParent() != null))
+                        ((ViewGroup)videoTimelineCutView.getParent()).removeView(videoTimelineCutView);
+                    frameLayout.addView(videoTimelineCutView);
+                }
+                else {
+                    if ((videoTimelineSplitView.getParent() != null))
+                        ((ViewGroup)videoTimelineSplitView.getParent()).removeView(videoTimelineSplitView);
+                        frameLayout.addView(videoTimelineSplitView);
+                }
+
 
             return view;
     }
