@@ -27,6 +27,8 @@ import com.project.videoeditor.database.PresetCollection;
 import com.project.videoeditor.database.PresetEntity;
 import com.project.videoeditor.database.PresetEntityViewModel;
 import com.project.videoeditor.filters.BaseFilter;
+import com.project.videoeditor.filters.FilterExecutor;
+import com.project.videoeditor.filters.FiltersFactory;
 import com.project.videoeditor.support.SupportUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
@@ -51,8 +53,8 @@ public class SaveVideoActivity extends AppCompatActivity {
     private float beginValue = 0;
     private float endValue = 0;
     private LoadingEncodeDialog loadingEncodeDialog;
-
-    private BaseFilter currentFilter;
+    private FilterExecutor filterExecutor;
+    private FiltersFactory.NameFilters nameFilter = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,8 +72,13 @@ public class SaveVideoActivity extends AppCompatActivity {
         loadingEncodeDialog = new LoadingEncodeDialog(this);
 
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
+
         beginValue = getIntent().getFloatExtra("beginValue",0f);
         endValue = getIntent().getFloatExtra("endValue",0f);
+        nameFilter = (FiltersFactory.NameFilters)getIntent().getSerializableExtra("filterName");
+
+        filterExecutor = new FilterExecutor(this);
+
         //currentFilter = getIntent().get
 
         if(beginValue >= endValue)
@@ -144,33 +151,42 @@ public class SaveVideoActivity extends AppCompatActivity {
         long toTimeMS = (long) endValue;
         Codecs.CodecsName codec = Codecs.fromString(getSelectedTextFromRadioGroup());
         String scaleResolution = ((String) videoResolutionSpinner.getSelectedItem()).replace("×","x");
-        ActionEditor.executeCommand(inputVideoPath,outputVideoPath,bitrateInMbit,framerate,fromTimeMS,toTimeMS,codec,scaleResolution);
-        Handler handler = new Handler();
-        loadingEncodeDialog.startLoadingDialog();
 
-        handler.post(new Runnable() {
-            long durationChunk = toTimeMS - fromTimeMS;
-            @Override
-            public void run() {
-                if(durationChunk == 0)
-                    durationChunk = editVideoInfo.getDuration();
-                double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+        if(nameFilter != null)
+        {
+            BaseFilter filter = FiltersFactory.getFiltersByName(nameFilter,this);
+            filterExecutor.setupSettings((long) (bitrateInMbit * 1000),inputVideoPath, Integer.parseInt(framerate), filter);
+            filterExecutor.startFiltered((int)fromTimeMS,(int)toTimeMS);
+        }
+        else {
+            ActionEditor.executeCommand(inputVideoPath, outputVideoPath, bitrateInMbit, framerate, fromTimeMS, toTimeMS, codec, scaleResolution);
+            Handler handler = new Handler();
+            loadingEncodeDialog.startLoadingDialog();
 
-                long ms = (long)((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
-                long secs = TimeUnit.MILLISECONDS.toSeconds(ms)  % 60;
-                long hours = TimeUnit.MILLISECONDS.toHours(ms)  % 24;
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)  % 60;
+            handler.post(new Runnable() {
+                long durationChunk = toTimeMS - fromTimeMS;
 
-                loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
-                        "%d:%02d:%02d", hours, minutes, secs));
-                if(secs > 0) {
-                    handler.postDelayed(this, 1000);
+                @Override
+                public void run() {
+                    if (durationChunk == 0)
+                        durationChunk = editVideoInfo.getDuration();
+                    double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+
+                    long ms = (long) ((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                    long secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
+                    long hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
+                    long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
+
+                    loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
+                            "%d:%02d:%02d", hours, minutes, secs));
+                    if (secs > 0) {
+                        handler.postDelayed(this, 1000);
+                    } else {
+                        loadingEncodeDialog.dismissDialog();
+                    }
                 }
-                else {
-                    loadingEncodeDialog.dismissDialog();
-                }
-            }
-        });
+            });
+        }
     }
     public String getSelectedTextFromRadioGroup()
     {

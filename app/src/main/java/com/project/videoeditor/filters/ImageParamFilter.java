@@ -9,11 +9,13 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class ImageParamFilter extends BaseFilter{
+
     private boolean isGetLocation = false;
     private int mBrightnessHandler;
     private int mContrastHandler;
     private float mBrightness = 0f;
     private float mContrast = 1f;
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.IMAGE_PARAM;
 
     public ImageParamFilter(Context context) {
         super(context);
@@ -28,8 +30,8 @@ public class ImageParamFilter extends BaseFilter{
     }
 
     @Override
-    public String getFilterName() {
-        return "ImageParamFilter";
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

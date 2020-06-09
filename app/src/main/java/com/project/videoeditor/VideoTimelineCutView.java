@@ -69,6 +69,7 @@ public class VideoTimelineCutView extends LinearLayout{
         init(null);
         registerButton();
     }
+
     public VideoTimelineCutView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         inflate(context, R.layout.timeline_cut,this);
@@ -82,6 +83,7 @@ public class VideoTimelineCutView extends LinearLayout{
         init(attrs);
         registerButton();
     }
+
     private void init(AttributeSet attrs) {
 
         if(attrs != null) {

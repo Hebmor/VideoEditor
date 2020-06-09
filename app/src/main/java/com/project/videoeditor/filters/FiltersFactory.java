@@ -4,12 +4,17 @@ import android.content.Context;
 
 import com.project.videoeditor.R;
 
-public class FiltersHandler {
+public class FiltersFactory {
 
-    public enum nameFilters
+    public enum NameFilters
     {
         DEFAULT,
-        BLACK_AND_WHITE
+        BLACK_AND_WHITE,
+        CEL_SHADING,
+        IMAGE_KERNEL,
+        IMAGE_PARAM,
+        PIXELATION
+
     }
 
     private final String NameFrameBuffer = "filteredBuffer.png";
@@ -22,7 +27,7 @@ public class FiltersHandler {
     {
         return R.raw.black_and_white;
     }
-    public static BaseFilter getFiltersByName(nameFilters name, Context context)
+    public static BaseFilter getFiltersByName(NameFilters name, Context context)
     {
         switch (name)
         {

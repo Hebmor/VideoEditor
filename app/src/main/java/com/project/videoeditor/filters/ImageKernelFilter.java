@@ -16,14 +16,15 @@ public class ImageKernelFilter extends BaseFilter {
     private float [] kernelMatrix = new float[9];
     private boolean isGetLocation = false;
     private float [] currentKernelMatrix = ImageKernelMatrix.edge_kernel;
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.DEFAULT;
 
     public void setCurrentKernelMatrix(float[] currentKernelMatrix) {
         this.currentKernelMatrix = currentKernelMatrix;
     }
 
     @Override
-    public String getFilterName() {
-        return "ImageKernel";
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
 
     public ImageKernelFilter(Context context) {

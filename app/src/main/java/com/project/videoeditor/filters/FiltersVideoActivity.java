@@ -1,27 +1,19 @@
 package com.project.videoeditor.filters;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.media.MediaExtractor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.VideoView;
 
 import com.project.videoeditor.PlayerController;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoFilteredView;
 import com.project.videoeditor.VideoInfo;
 
-import java.io.IOException;
-
 public class FiltersVideoActivity extends Activity {
 
     public static final String EDIT_VIDEO_ID = "6001";
     private FrameLayout filteredVideoContainer;
-    private FiltersHandler filtersHandler;
+    private FiltersFactory filtersFactory;
     private String videoPath;
     private VideoFilteredView videoFilteredView;
     private boolean isRecording = false;

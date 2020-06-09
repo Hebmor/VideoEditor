@@ -19,6 +19,7 @@ public class VideoSurfaceRenderer
     private static String TAG = "VideoRender";
 
     private PlayerController playerController;
+
     private BaseFilter currentFilter;
     private BaseFilter newFilter;
     private boolean isChangeFilter = false;
@@ -117,5 +118,13 @@ public class VideoSurfaceRenderer
     public void setPlayerController(PlayerController playerController) {
         this.playerController = playerController;
         currentFilter.setPlayerController(playerController);
+    }
+
+    public BaseFilter getCurrentFilter() {
+        return currentFilter;
+    }
+
+    public void setCurrentFilter(BaseFilter currentFilter) {
+        this.currentFilter = currentFilter;
     }
 }

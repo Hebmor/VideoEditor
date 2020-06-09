@@ -8,31 +8,32 @@ import com.project.videoeditor.R;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class PixellationFilter extends BaseFilter {
+public class PixelationFilter extends BaseFilter {
 
     private boolean isGetLocation = false;
     private int resolutionVideoHandle;
     private int pixelSizeHandle;
     private float[] resolutionVideo = new float[2];
     private float pixelSize = 0;
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.PIXELATION;
 
     @Override
-    public String getFilterName() {
-        return "PixellationFilter";
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
 
-    public PixellationFilter(Context context) {
+    public PixelationFilter(Context context) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.pixellation);
     }
 
-    public PixellationFilter(Context context,float heightVideo,float widthVideo) {
+    public PixelationFilter(Context context, float heightVideo, float widthVideo) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.pixellation);
         this.setResolutionVideo(heightVideo,widthVideo);
     }
 
-    public PixellationFilter(Context context,float heightVideo,float widthVideo,float pixelSize) {
+    public PixelationFilter(Context context, float heightVideo, float widthVideo, float pixelSize) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.pixellation);
         this.setResolutionVideo(heightVideo,widthVideo);

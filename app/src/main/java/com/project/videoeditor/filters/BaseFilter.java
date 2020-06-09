@@ -25,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener,Cloneable{
 
-    protected static final String TAG = "BaseFilters";
+    private final String TAG = "BaseFilter";
 
     protected static final int FLOAT_SIZE_BYTES = 4;
     protected static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
@@ -112,7 +112,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
         return super.clone();
     }
 
-    abstract public String getFilterName();
+    abstract public FiltersFactory.NameFilters getFilterName();
 
     public boolean isInvert() {
         return isInvert;
@@ -146,6 +146,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     public void setContext(Context context) {
         this.context = context;
     }
+
     public int getTextureID() {
         return mTextureID;
     }
@@ -389,11 +390,13 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
             throw new RuntimeException(op + ": glError " + error);
         }
     }
+
     public void changeFragmentShaderInRealTime(String fragmentShader)
     {
         this.FRAGMENT_SHADER = fragmentShader;
         changeShaderFlag = true;
     }
+
     protected void changeFragmentShader(String fragmentShader) {
         GLES20.glDeleteProgram(mProgram);
         mProgram = createProgram(VERTEX_SHADER, fragmentShader);

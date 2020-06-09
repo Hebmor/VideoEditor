@@ -9,9 +9,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class CelShadingFilter extends BaseFilter {
+
     private boolean isGetLocation = false;
     private int colorCountHandler;
     private float colorsCount = 1f;
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.CEL_SHADING;
 
     public CelShadingFilter(Context context) {
         super(context);
@@ -25,8 +27,8 @@ public class CelShadingFilter extends BaseFilter {
     }
 
     @Override
-    public String getFilterName() {
-        return "CelShadingFilter";
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

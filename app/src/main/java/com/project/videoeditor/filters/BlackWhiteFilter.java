@@ -6,10 +6,11 @@ import com.project.videoeditor.R;
 
 public class BlackWhiteFilter extends BaseFilter {
 
-    private final String filterName = "BlackWhiteFilter";
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.BLACK_AND_WHITE;
+
     @Override
-    public String getFilterName() {
-        return filterName;
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
 
     public BlackWhiteFilter(Context context) {

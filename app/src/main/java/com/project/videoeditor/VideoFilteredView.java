@@ -2,17 +2,13 @@ package com.project.videoeditor;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-
 import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.DefaultFilter;
-import com.project.videoeditor.filters.FiltersHandler;
+import com.project.videoeditor.filters.FiltersFactory;
 
 import java.io.IOException;
 
@@ -20,8 +16,6 @@ import java.io.IOException;
 public class VideoFilteredView extends GLSurfaceView {
 
     private VideoSurfaceRenderer videoSurfaceRenderer;
-    private PlayerController playerController;
-    private Handler handler = new Handler();
     private static boolean  saveFlag = false;
 
     public VideoFilteredView(Context context, PlayerController playerController) throws Exception {
@@ -29,7 +23,6 @@ public class VideoFilteredView extends GLSurfaceView {
         this.setEGLContextClientVersion(2);
         this.setDebugFlags(DEBUG_CHECK_GL_ERROR);
         this. setPreserveEGLContextOnPause(true);
-        this.playerController  = playerController;
         videoSurfaceRenderer = new VideoSurfaceRenderer(context,playerController,new DefaultFilter());
 
 
@@ -61,8 +54,8 @@ public class VideoFilteredView extends GLSurfaceView {
         super.onResume();
     }
 
-    public void changeFragmentShader(FiltersHandler.nameFilters filter) throws IOException {
-        videoSurfaceRenderer.changeFilter(FiltersHandler.getFiltersByName(filter,getContext()));
+    public void changeFragmentShader(FiltersFactory.NameFilters filter) throws IOException {
+        videoSurfaceRenderer.changeFilter(FiltersFactory.getFiltersByName(filter,getContext()));
 
     }
     public void changeFilter(BaseFilter filter)
@@ -72,7 +65,11 @@ public class VideoFilteredView extends GLSurfaceView {
 
     public void updatePlayerController(PlayerController playerController)
     {
-        this.playerController = playerController;
         videoSurfaceRenderer.setPlayerController(playerController);
+    }
+
+    public BaseFilter getCurrentFilter()
+    {
+        return videoSurfaceRenderer.getCurrentFilter();
     }
 }

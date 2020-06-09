@@ -21,7 +21,7 @@ import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
 import com.project.videoeditor.filters.ImageParamFilter;
-import com.project.videoeditor.filters.PixellationFilter;
+import com.project.videoeditor.filters.PixelationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ public class FilterListFragment extends Fragment {
     private VideoInfo videoInfo;
     private Button saveFilterResult;
     private FilterExecutor filterExecutor;
-    private VideoTimelineController currentTimeline;
     private int lastSelectFilterIdx = 0;
     private int startMs = 0;
     private int endMs = 0;
@@ -128,7 +127,7 @@ public class FilterListFragment extends Fragment {
         filters.add(new ImageParamFilter(getContext(),0.2f,-2f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Pixellation");
-        filters.add(new PixellationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),20f));
+        filters.add(new PixelationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),20f));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"CellShading");
         filters.add(new CelShadingFilter(getContext(),4f));
@@ -146,7 +145,4 @@ public class FilterListFragment extends Fragment {
         this.endMs = endMs;
     }
 
-    public void setCurrentTimeline(VideoTimelineController currentTimeline) {
-        this.currentTimeline = currentTimeline;
-    }
 }

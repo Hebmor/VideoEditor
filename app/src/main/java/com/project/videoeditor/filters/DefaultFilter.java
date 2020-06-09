@@ -6,15 +6,19 @@ import com.project.videoeditor.PlayerController;
 
 public class DefaultFilter extends BaseFilter {
 
-    private final String filterName = "DefaultFilter";
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.DEFAULT;
+
     @Override
-    public String getFilterName() {
-        return filterName;
+    public FiltersFactory.NameFilters getFilterName() {
+        return name;
     }
+
     public DefaultFilter() { }
+
     public DefaultFilter(Context context) {
         super(context);
     }
+
     public DefaultFilter(Context context, PlayerController playerController) {
         super(context, playerController);
     }
