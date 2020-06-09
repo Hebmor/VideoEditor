@@ -182,17 +182,18 @@ public class FilterExecutor extends Thread {
         else
             throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
     }
+
     public void launchApplyFilterToVideo(int startMs, int endMs) throws Exception {
 
         if(isSetup) {
             this.setup();
             this.startFiltered(startMs,endMs);
             this.release();
-            //ActionEditor.addAudioFromVideoToVideo(pathFromVideo,pathToVideo);
         }
         else
             throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
     }
+
     private int selectTrack(MediaExtractor extractor,String trackPrefix) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();

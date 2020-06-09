@@ -241,4 +241,10 @@ public class SupportUtil {
     {
         return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
     }
+
+    public static String changeFormatFilename(String filename,String newFormat)
+    {
+        int index = filename.lastIndexOf('.');
+        return filename.substring(0,index) + "."+newFormat;
+    }
 }

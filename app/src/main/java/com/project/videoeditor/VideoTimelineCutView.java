@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,7 +18,7 @@ import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.jaygoo.widget.SeekBar;
 
-public class VideoTimelineCutView extends LinearLayout {
+public class VideoTimelineCutView extends LinearLayout{
 
     private RangeSeekBar seekBarTimeline;
     private RecyclerView timelineBody;
@@ -25,19 +26,40 @@ public class VideoTimelineCutView extends LinearLayout {
     private SeekBar SBR;
     private SeekBar SBL;
     private ImageView videoFramesCollage;
+
     private Button saveButton;
-    private Button cutButton;
+    private Button speedButton;
+    private Button extractFrames;
+    private Button extractAudio;
+
     private TimelineAdapter timelineAdapter;
     private TypedArray a;
 
     PlayerControllerCallback playerControllerCallback;
 
+    public interface IClickСutEdit
+    {
+        void clickOpenSavePage(View view, float beginMs, float endMs);
+        void clickExtractFrames(View view, float beginMs, float endMs);
+        void clickExtractAudio(View view, float beginMs, float endMs);
+        void clickChangeSpeed(View view, float beginMs, float endMs, float speed);
+    }
+
+    private IClickСutEdit callbackClickEdit;
+
+
+
+    public void registerIClickCutEditCallback(IClickСutEdit callback)
+    {
+        this.callbackClickEdit = callback;
+    }
     public void registerCallBack(PlayerControllerCallback playerControllerCallback){
         this.playerControllerCallback = playerControllerCallback;
     }
 
-    private float tempLeftValue = 0;
-    private float tempRightValue = 0;
+    private float prevLeftValue = 0;
+    private float prevRightValue = 0;
+
     public VideoTimelineCutView(Context context) {
         super(context);
         inflate(context, R.layout.timeline_cut,this);
@@ -45,6 +67,7 @@ public class VideoTimelineCutView extends LinearLayout {
         seekBarTimeline = findViewById(R.id.seekBarTimeline);
         timelineBody = findViewById(R.id.timeline_recycler);
         init(null);
+        registerButton();
     }
     public VideoTimelineCutView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -57,6 +80,7 @@ public class VideoTimelineCutView extends LinearLayout {
                 40);
         videoFramesCollage.setLayoutParams(lp);
         init(attrs);
+        registerButton();
     }
     private void init(AttributeSet attrs) {
 
@@ -114,6 +138,19 @@ public class VideoTimelineCutView extends LinearLayout {
             }
         });
     }
+
+    private void registerButton()
+    {
+        saveButton = findViewById(R.id.buttonEncodeCut);
+        extractFrames = findViewById(R.id.buttonExtractFrames);
+        extractAudio = findViewById(R.id.buttonExtractAudio);
+        speedButton = findViewById(R.id.buttonSpeed);
+
+        saveButton.setOnClickListener(this::clickSave);
+        extractFrames.setOnClickListener(this::clickExtractFrames);
+        extractAudio.setOnClickListener(this::clickExtractAudio);
+    }
+
     public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage)
     {
         timelineAdapter.addItem(frameCollage,nameCollage);
@@ -122,12 +159,12 @@ public class VideoTimelineCutView extends LinearLayout {
 
     private void updateTimeline(float leftValue, float rightValue)
     {
-        if(tempLeftValue != leftValue) {
+        if(prevLeftValue != leftValue) {
             long millisSBL = (long) SBL.getProgress() % 1000;
             long secondSBL = ((long) SBL.getProgress() / 1000) % 60;
             long minuteSBL = ((long) SBL.getProgress() / (1000 * 60)) % 60;
             long hourSBL = ((long)SBL.getProgress() / (1000 * 60 * 60)) % 24;
-            tempLeftValue = leftValue;
+            prevLeftValue = leftValue;
             if(hourSBL > 0)
                 SBL.setIndicatorText(String.format("%02d:%02d:%02d.%d",hourSBL,minuteSBL, secondSBL, millisSBL));
             else
@@ -135,12 +172,12 @@ public class VideoTimelineCutView extends LinearLayout {
 
             playerControllerCallback.callingUpdatePlayerControllerPosition((int)leftValue);
         }
-        if(tempRightValue != rightValue) {
+        if(prevRightValue != rightValue) {
             long millisSBR = (long) SBR.getProgress() % 1000;
             long secondSBR = ((long) SBR.getProgress() / 1000) % 60;
             long minuteSBR = ((long) SBR.getProgress() / (1000 * 60)) % 60;
             long hourSBR = ((long)SBR.getProgress() / (1000 * 60 * 60)) % 24;
-            tempRightValue = rightValue;
+            prevRightValue = rightValue;
             if(hourSBR > 0)
                 SBR.setIndicatorText(String.format("%02d:%02d:%02d.%d",hourSBR,minuteSBR, secondSBR, millisSBR));
             else
@@ -150,16 +187,37 @@ public class VideoTimelineCutView extends LinearLayout {
 
         }
     }
+
     public float getLeftValue() {
-        return tempLeftValue;
+        return prevLeftValue;
     }
 
     public float getRightValue() {
-        return tempRightValue;
+        return prevRightValue;
     }
+
     public RangeSeekBar getSeekBarTimeline() {
         return seekBarTimeline;
     }
 
+    public void clickSave(View view)
+    {
+        callbackClickEdit.clickOpenSavePage(view,getLeftValue(),getRightValue());
+    }
+
+    public void clickExtractFrames(View view)
+    {
+        callbackClickEdit.clickExtractFrames(view,getLeftValue(),getRightValue());
+    }
+
+    public void clickExtractAudio(View view)
+    {
+        callbackClickEdit.clickExtractAudio(view,getLeftValue(),getRightValue());
+    }
+
+    public void clickChangeSpeed(View view)
+    {
+        callbackClickEdit.clickChangeSpeed(view,getLeftValue(),getRightValue(),0);
+    }
 
 }

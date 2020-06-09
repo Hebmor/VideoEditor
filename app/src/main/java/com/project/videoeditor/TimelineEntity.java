@@ -23,6 +23,8 @@ public class TimelineEntity {
 
     private int localBeginMs = 0;
     private int localEndMs = 0;
+
+    private String pathAttachedVideo = "";
     private Type type;
 
     public TimelineEntity(int width, int height, String name, int globalBeginMs, int globalEndMs,
@@ -184,5 +186,13 @@ public class TimelineEntity {
 
     public void setLocalEndMs(int localEndMs) {
         this.localEndMs = localEndMs;
+    }
+
+    public String getPathAttachedVideo() {
+        return pathAttachedVideo;
+    }
+
+    public void setPathAttachedVideo(String pathAttachedVideo) {
+        this.pathAttachedVideo = pathAttachedVideo;
     }
 }

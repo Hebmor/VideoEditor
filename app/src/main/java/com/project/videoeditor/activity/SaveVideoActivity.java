@@ -26,6 +26,7 @@ import com.project.videoeditor.codecs.Codecs;
 import com.project.videoeditor.database.PresetCollection;
 import com.project.videoeditor.database.PresetEntity;
 import com.project.videoeditor.database.PresetEntityViewModel;
+import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.support.SupportUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
@@ -51,6 +52,8 @@ public class SaveVideoActivity extends AppCompatActivity {
     private float endValue = 0;
     private LoadingEncodeDialog loadingEncodeDialog;
 
+    private BaseFilter currentFilter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +72,7 @@ public class SaveVideoActivity extends AppCompatActivity {
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
         beginValue = getIntent().getFloatExtra("beginValue",0f);
         endValue = getIntent().getFloatExtra("endValue",0f);
+        //currentFilter = getIntent().get
 
         if(beginValue >= endValue)
             endValue = beginValue = 0;

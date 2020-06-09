@@ -63,6 +63,7 @@ public class MainEditor extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_editor);
         videoContainer = findViewById(R.id.videoContainer);
         viewPager = (ViewPager)findViewById(R.id.viewPager_editor);
@@ -153,23 +154,6 @@ public class MainEditor extends AppCompatActivity {
         outState.putParcelable("editVideoInfo",editVideoInfo);
     }
 
-    public void ClickOpenSavePage(View view) {
-        if(view instanceof Button) {
-
-            Intent intent = new Intent(this, SaveVideoActivity.class);
-            intent.putExtra(VideoInfo.class.getCanonicalName(), editVideoInfo);
-            if(view.getId() == R.id.buttonEncodeSplit) {
-                intent.putExtra("beginValue", 0);
-                //intent.putExtra("endValue", videoTimelineControllerSplit.getLeftValue());
-            }
-            else if(view.getId() == R.id.buttonEncodeCut) {
-                //intent.putExtra("beginValue", videoTimelineControllerCut.getLeftValue());
-               // intent.putExtra("endValue",  videoTimelineControllerCut.getRightValue());
-            }
-            startActivity(intent);
-        }
-    }
-
     private void initTabs(TabLayout tabs)
     {
         tabs.getTabAt(0).setText("Выделить");
@@ -180,16 +164,6 @@ public class MainEditor extends AppCompatActivity {
         tabs.getTabAt(2).setIcon(R.drawable.ic_filter_24dp);
         tabs.getTabAt(3).setText("Информация");
         tabs.getTabAt(3).setIcon(R.drawable.ic_info_24dp);
-    }
-
-    public void ClickExtractOneFrame(View view) throws Exception {
-        File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
-        //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerSplit.getLeftValue(),0,1);
-    }
-
-    public void ClickExtractFrameInSeekRange(View view) throws Exception {
-        File framesFolder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames");
-        //ActionEditor.extractFrames(editVideoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",(int)videoTimelineControllerCut.getLeftValue(), (int)videoTimelineControllerCut.getRightValue(),0);
     }
 
     public void ClickAddVideo(View view) throws InterruptedException {

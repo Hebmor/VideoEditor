@@ -38,6 +38,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
 
     private Button splitButton;
     private Button addVideoToTimelineButton;
+    private Button extractFrameButton;
 
     private int scrollPath = 0;
     private int localScrollPath = 0;
@@ -46,16 +47,30 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
     private int currentItemPosition = 0;
     private int currentVideoIndex = 0;
 
+    private int localMsPath = 0;
+
 
     private Bitmap delimiterBitmap;
     private final int MINIMAL_INTERVAL_MS = 1000;
     private int overallXScroll = 0;
     private TimelineEntity currentTimelineEntity;
+    private static boolean isDebugMod = true;
 
     PlayerControllerCallback playerControllerCallback;
 
-    private static boolean isDebugMod = true;
+    public interface IClickSplitEdit
+    {
+        void clickExtractFrame(View view, String path, String filename, float frametimeInMs);
+        void clickSplit(View view);
+        void clickSave(View view);
+    }
 
+    private IClickSplitEdit callbackClickEdit;
+
+    public void registerIClickSplitEditCallback(IClickSplitEdit callback)
+    {
+        this.callbackClickEdit = callback;
+    }
     @Override
     public void call(VideoInfo data) {
         currentVideoIndex = playerControllerCallback.callingAddVideoToPlaylistPlayer(data.getPath());
@@ -73,10 +88,9 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         timelinePointer = findViewById(R.id.timelinePointer);
         timelineBody = findViewById(R.id.timeline_recycler);
         indicatorTimeline = findViewById(R.id.indicatorTimeline);
-        splitButton = findViewById(R.id.buttonSplit);
-        addVideoToTimelineButton = findViewById(R.id.buttonAdd);
+
         init(null);
-        registerButtonListener();
+        registerButton();
     }
 
     public VideoTimelineSplitView(Context context, @Nullable AttributeSet attrs) {
@@ -87,7 +101,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         timelineBody = findViewById(R.id.timeline_recycler);
         indicatorTimeline = findViewById(R.id.indicatorTimeline);
         init(attrs);
-        registerButtonListener();
+        registerButton();
     }
     @SuppressLint("ResourceType")
     private void init(AttributeSet attrs) {
@@ -200,9 +214,9 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                             }
 
                             updateTimeline(value);
-
-
                             updatePlayer(playerTimeValue);
+
+                            localMsPath = playerTimeValue;
                         }
                     }
 
@@ -219,12 +233,13 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         });
     }
 
-    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, int widthItem, int heightItem,
+    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, String videoPath, int widthItem, int heightItem,
                                        int globalBeginMs, int globalEndMs, int localBeginMs, int localEndMs, int beginDp, int endDp, int videoIndex, TimelineEntity.Type type)
     {
         int idx = timelineAdapter.getItemCount();
         TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,globalBeginMs,
                 globalEndMs,localBeginMs,localEndMs,beginDp,endDp,videoIndex,type);
+        timelineEntity.setPathAttachedVideo(videoPath);
         timelineAdapter.addItem(frameCollage,nameCollage,timelineEntity);
         timelineAdapter.notifyItemInserted(idx);
     }
@@ -233,6 +248,15 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                                       int globalBeginMs, int globalEndMs,int localBeginMs, int localEndMs,int beginDp, int endDp, int videoIndex, TimelineEntity.Type type)
     {
         TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,globalBeginMs,globalEndMs,localBeginMs,localEndMs,beginDp,endDp,videoIndex,type);
+        timelineAdapter.addItemInPos(frameCollage,nameCollage,timelineEntity,pos);
+        timelineAdapter.notifyItemInserted(pos);
+    }
+
+    public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, String pathVideo, int pos,int widthItem, int heightItem,
+                                      int globalBeginMs, int globalEndMs,int localBeginMs, int localEndMs,int beginDp, int endDp, int videoIndex, TimelineEntity.Type type)
+    {
+        TimelineEntity timelineEntity = new TimelineEntity(widthItem,heightItem,nameCollage,globalBeginMs,globalEndMs,localBeginMs,localEndMs,beginDp,endDp,videoIndex,type);
+        timelineEntity.setPathAttachedVideo(pathVideo);
         timelineAdapter.addItemInPos(frameCollage,nameCollage,timelineEntity,pos);
         timelineAdapter.notifyItemInserted(pos);
     }
@@ -267,10 +291,15 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         currentVideoIndex = videoIndex;
     }
 
-    private void registerButtonListener()
+    private void registerButton()
     {
+        splitButton = findViewById(R.id.buttonSplit);
+        addVideoToTimelineButton = findViewById(R.id.buttonAdd);
+        extractFrameButton = findViewById(R.id.buttonExtractFrame);
+
         splitButton.setOnClickListener(this::clickSplit);
         addVideoToTimelineButton.setOnClickListener(this::clickAddVideo);
+        extractFrameButton.setOnClickListener(this::clickExtractFrame);
     }
 
     private void splitProcess()
@@ -288,13 +317,16 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                 Toast.makeText(getContext(), "Разделяймая часть должна быть больше 1 сек!", Toast.LENGTH_LONG).show();
         }
     }
+
     private void addProcess(VideoInfo info)
     {
         if(timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).getType() != TimelineEntity.Type.EMPTY) {
+
             int commonScrollPositionInMS = Math.abs(overallXScroll) * timelineAdapter.getCommonDurationMs() / timelineAdapter.getCommonWidthDp();
             addCollage(info,Math.abs(overallXScroll),commonScrollPositionInMS);
         }
     }
+
     private void clickSplit(View view)
     {
         splitProcess();
@@ -311,6 +343,11 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
 
             e.printStackTrace();
         }
+    }
+
+    public void clickExtractFrame(View view)
+    {
+        callbackClickEdit.clickExtractFrame(view,currentTimelineEntity.getPathAttachedVideo(),currentTimelineEntity.getName(),localMsPath);
     }
 
     private void splitCollage(int globalSplitPosition,int globalSplitPositionInMs,int localSplitPosition,int localSplitPositionInMS)
@@ -330,19 +367,21 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         int width = timelineEntity.getWidth();
         int height = timelineEntity.getHeight();
         int link = timelineEntity.getAttachedTimelineIndex();
+        String attachedPath = timelineEntity.getPathAttachedVideo();
 
 
         timelineAdapter.removeItemByIndex(currentItemPosition);
         timelineAdapter.notifyItemRangeRemoved(currentItemPosition,1);
 
 
-        this.addItemInTimelineBody(splitPart[0],name + "(1)", currentItemPosition, localSplitPosition, height, globalBeginMs,
+        this.addItemInTimelineBody(splitPart[0],name,attachedPath, currentItemPosition, localSplitPosition, height, globalBeginMs,
                 globalSplitPositionInMs, localBeginMs, localSplitPositionInMS, beginDp, globalSplitPosition, currentVideoIndex,TimelineEntity.Type.SCROLLABLE);
         this.timelineAdapter.getTimelineEntityByItemIndex(currentItemPosition).setAttachedTimelineIndex(link);
+
         this.addItemInTimelineBody(delimiterBitmap,"",currentItemPosition + 1,5,height,0,
                 0,0,0,0,0,-1,TimelineEntity.Type.EMPTY);
 
-        this.addItemInTimelineBody(splitPart[1],name + "(2)", currentItemPosition + 2, width - localSplitPosition, height, globalSplitPositionInMs,
+        this.addItemInTimelineBody(splitPart[1],name,attachedPath, currentItemPosition + 2, width - localSplitPosition, height, globalSplitPositionInMs,
                 globalEndMs, localSplitPositionInMS, localEndMs, globalSplitPosition, endDp, currentVideoIndex, TimelineEntity.Type.SCROLLABLE);
 
         scrollPath = 0;
@@ -403,7 +442,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
             offsetX = timelineAdapter.getCommonWidthDp();
             offsetMs = timelineAdapter.getCommonDurationMs();
         }
-        this.addItemInTimelineBody(frameCollage, videoInfo.getFilename(),
+        this.addItemInTimelineBody(frameCollage, videoInfo.getFilename(), videoInfo.getPath(),
                 160 * 12,106,offsetMs,videoInfo.getDuration() + offsetMs,0,videoInfo.getDuration(),
                 offsetX,160 * 12 + offsetX,currentVideoIndex,TimelineEntity.Type.SCROLLABLE);
     }
@@ -445,17 +484,18 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
         int localEndMs = timelineEntity.getLocalEndMs();
         int addPosition = currentItemPosition;
         int oldCommonWidth = timelineAdapter.getCommonWidthDp();
+        String attachedPath = timelineEntity.getPathAttachedVideo();
 
         timelineAdapter.removeItemByIndex(currentItemPosition);
         timelineAdapter.notifyItemRangeRemoved(currentItemPosition,1);
 
         if(!(normalizeSplitPos <= 0 && localScrollPath <= 0)) {
-            this.addItemInTimelineBody(splitPart[0], name + "(1)", addPosition++, normalizeSplitPos,
+            this.addItemInTimelineBody(splitPart[0], name, attachedPath, addPosition++, normalizeSplitPos,
                     height, globalBeginMs, scrollPositionInMS, localBeginMs, scrollPositionInMS, beginDp, splitPosition,
                     videoIndex, TimelineEntity.Type.SCROLLABLE);
         }
 
-        this.addItemInTimelineBody(newCollage, videoInfo.getFilename(), addPosition,
+        this.addItemInTimelineBody(newCollage, videoInfo.getFilename(), videoInfo.getPath(), addPosition,
                 160 * 12,106, scrollPositionInMS, videoInfo.getDuration() + scrollPositionInMS,0,videoInfo.getDuration(),splitPosition,
                 160 * 12 + splitPosition, currentVideoIndex, TimelineEntity.Type.SCROLLABLE);
 
@@ -465,7 +505,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
             setAttached(currentItemPosition ,addPosition);
 
         if(!(normalizeSplitPos == localScrollPath && localScrollPath >= oldCommonWidth)) {
-            this.addItemInTimelineBody(splitPart[1], name + "(2)", addPosition++ + 1,
+            this.addItemInTimelineBody(splitPart[1], name, attachedPath, addPosition++ + 1,
                     width - normalizeSplitPos, height, videoInfo.getDuration()
                             + scrollPositionInMS, globalEndMs + videoInfo.getDuration() + scrollPositionInMS,
                     scrollPositionInMS,localEndMs, 160 * 12 + splitPosition, endDp  + 160 * 12  + splitPosition,
@@ -517,11 +557,13 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
 //        }
         return attachedOffset;
     }
+
     public TimelineEntity getLastAddElemTimeline()
     {
         int lastIndex = this.timelineAdapter.getItemCount() - 1;
         return this.timelineAdapter.getTimelineEntityByItemIndex(lastIndex);
     }
+
     public int getLastEndDp()
     {
         return getLastAddElemTimeline().getEndDp();

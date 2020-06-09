@@ -24,6 +24,7 @@ public class FiltersView extends TextureView implements TextureView.SurfaceTextu
     private String videoPath;
     private GPUImage filters;
     private float framerate;
+
     public FiltersView(Context context,String path,float framerate) {
         super(context);
         this.videoPath = path;
@@ -31,9 +32,11 @@ public class FiltersView extends TextureView implements TextureView.SurfaceTextu
         this.setSurfaceTextureListener(this);
         filters = new GPUImage(context);
     }
+
     private void updateTextureViewSize(int viewWidth, int viewHeight) {
         this.setLayoutParams(new RelativeLayout.LayoutParams(viewWidth, viewHeight));
     }
+
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         Surface surface = new Surface(surfaceTexture);

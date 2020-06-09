@@ -1,5 +1,7 @@
 package com.project.videoeditor;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,22 +10,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.project.videoeditor.activity.SaveVideoActivity;
 import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.support.SupportUtil;
 
 import java.io.File;
 
 
-public class VideoTimelineController extends Fragment implements PlayerControllerCallback {
+public class VideoTimelineController extends Fragment implements PlayerControllerCallback, VideoTimelineCutView.IClickСutEdit,VideoTimelineSplitView.IClickSplitEdit {
 
     private VideoInfo videoInfo;
     private PlayerController playerController;
     private VideoTimelineCutView videoTimelineCutView;
     private VideoTimelineSplitView videoTimelineSplitView;
+
+
     private boolean viewModRange = true;
 
     public VideoTimelineController(VideoInfo videoInfo, PlayerController playerController) {
@@ -61,6 +69,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
         VideoTimelineController videoTimelineController = new VideoTimelineController(videoInfo,playerController,viewModRange);
         return videoTimelineController;
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -75,9 +84,8 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
                 else {
                     if ((videoTimelineSplitView.getParent() != null))
                         ((ViewGroup)videoTimelineSplitView.getParent()).removeView(videoTimelineSplitView);
-                        frameLayout.addView(videoTimelineSplitView);
+                    frameLayout.addView(videoTimelineSplitView);
                 }
-
 
             return view;
     }
@@ -111,11 +119,13 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
                 videoTimelineCutView.getSeekBarTimeline().setRange(0, videoInfo.getDuration(), 1000);
                 videoTimelineCutView.getSeekBarTimeline().setProgress(0, videoInfo.getDuration());
                 videoTimelineCutView.registerCallBack(this);
+                videoTimelineCutView.registerIClickCutEditCallback(this);
             }
             if (videoTimelineSplitView != null) {
 
                 videoTimelineSplitView.addVideoInTimeline(videoInfo);
                 videoTimelineSplitView.registerCallBack(this);
+                videoTimelineSplitView.registerIClickSplitEditCallback(this);
             }
         }
     }
@@ -178,7 +188,77 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
         playerController.moveByVideoIndex(index);
     }
 
+    @Override
+    public void clickOpenSavePage(View view, float beginMs, float endMs) {
+        if(view instanceof Button) {
 
+            Intent intent = new Intent(getContext(), SaveVideoActivity.class);
+            intent.putExtra(VideoInfo.class.getCanonicalName(), videoInfo);
 
+            intent.putExtra("beginValue", beginMs);
+            intent.putExtra("endValue",endMs);
 
+            ((Activity)getContext()).startActivity(intent);
+        }
+    }
+
+    @Override
+    public void clickExtractFrames(View view, float beginMs, float endMs) {
+        try {
+            runExtractFrames(beginMs,endMs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clickExtractAudio(View view, float beginMs, float endMs) {
+
+        try {
+            runExtractAudio(beginMs, endMs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void clickChangeSpeed(View view, float beginMs, float endMs, float speed) {
+
+    }
+
+    public void runExtractFrames(float beginMs, float endMs) throws Exception {
+        File framesFolder = SupportUtil.CreateFolder(getContext()
+                .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames" + "/" + videoInfo.getFilename());
+        ActionEditor.extractFrames(videoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",
+                (int)beginMs, (int)endMs,0);
+    }
+
+    public void runExtractAudio(float beginMs, float endMs) throws Exception {
+        String outFilename = SupportUtil.changeFormatFilename(videoInfo.getFilename(),"mp3");
+        File framesFolder = SupportUtil.CreateFolder(getContext()
+                .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractAudio");
+        ActionEditor.extractAudio(videoInfo.getPath(),framesFolder.getCanonicalPath()  + "/" + outFilename,(long)beginMs,(long)endMs);
+    }
+
+    @Override
+    public void clickExtractFrame(View view, String path, String filename, float frametimeInMs) {
+        try {
+            File framesFolder = SupportUtil.CreateFolder(getContext()
+                    .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames" + "/" + filename);
+            ActionEditor.extractFrames(path,framesFolder.getCanonicalPath() + "/frame%0d.png",(long) frametimeInMs,0,1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clickSplit(View view) {
+
+    }
+
+    @Override
+    public void clickSave(View view) {
+
+    }
 }

@@ -12,8 +12,11 @@ import android.util.Log;
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
 import com.project.videoeditor.VideoInfo;
+import com.project.videoeditor.filters.BaseFilter;
+import com.project.videoeditor.filters.FilterExecutor;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +26,8 @@ import static com.project.videoeditor.support.SupportUtil.stickBitmap;
 public class ActionEditor {
 
     private static VideoInfo videoInfo;
+    private static FilterExecutor filterExecutor;
+
     public ActionEditor() {
     }
     public static void EncodeProcess(String codec,String filePath,String new_filePath) throws Exception {
@@ -151,15 +156,16 @@ public class ActionEditor {
         long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
         long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
-        @SuppressLint("DefaultLocale") String command = String.format("-y -i \"%s\" -ss %d:%d:%d -t %d:%d:%d -vcodec copy -acodec copy \"%s\"",inputVideoPath,hoursFrom,minutesFrom,secsFrom
-                ,hoursDuration,minutesDuration,secsDuration,outputVideoPath);
+        @SuppressLint("DefaultLocale") String command = String.format("-y -i \"%s\" -ss %d:%d:%d.%d -t %d:%d:%d.%d -vcodec copy -acodec copy \"%s\"",
+                inputVideoPath, hoursFrom, minutesFrom, secsFrom, msFrom, hoursDuration, minutesDuration, secsDuration, msDuration, outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
     public static void addAudioFromVideoToVideo(String fromAudioVideo,String toAudioVideo,String pathResultVideo) throws InterruptedException {
         String command = String.format("-y -i  \"%s\" -i  \"%s\" -c copy -map 0:1 -map 1:0 -shortest  \"%s\"",fromAudioVideo,toAudioVideo,toAudioVideo);
         RunCommandExecuteFFMPEG(command,false);
     }
-    public static void executeCommand(String inputVideoPath,String outputVideoPath,float bitrateInMbit,String framerate,long fromTimeMS,long toTimeMS,Codecs.CodecsName codec,String scaleResolution) throws Exception {
+    public static void executeCommand(String inputVideoPath,String outputVideoPath,float bitrateInMbit,
+                                      String framerate,long fromTimeMS,long toTimeMS,Codecs.CodecsName codec,String scaleResolution) throws Exception {
 
         String command = "";
         long msFrom = fromTimeMS % 1000;
@@ -225,14 +231,39 @@ public class ActionEditor {
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
         long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
         if(countFrame > 0)
-            command = String.format("-ss %d:%d:%d -t %d:%d:%d -i \"%s\" -frames:v %d \"%s\"",hoursFrom,
-                minutesFrom,secsFrom, hoursDuration,minutesDuration,secsDuration,videopath,countFrame,outfile);
+            command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\" -frames:v %d \"%s\"",hoursFrom,
+                minutesFrom, secsFrom,msFrom, hoursDuration, minutesDuration, secsDuration,msDuration, videopath, countFrame, outfile);
         else
-            command = String.format("-ss %d:%d:%d -t %d:%d:%d -i \"%s\" \"%s\"",hoursFrom,
+            command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\" \"%s\"",hoursFrom,
                     minutesFrom,secsFrom, hoursDuration,minutesDuration,secsDuration,videopath,outfile);
-
-
         RunCommandExecuteFFMPEG(command,false);
     }
 
+    public static void extractAudio(String videopath,String outfile,long fromTimeMS,long toTimeMS) throws InterruptedException {
+        String command = "";
+
+        long msFrom = fromTimeMS % 1000;
+        long secsFrom = TimeUnit.MILLISECONDS.toSeconds(fromTimeMS)  % 60;
+        long hoursFrom = TimeUnit.MILLISECONDS.toHours(fromTimeMS)  % 24;
+        long minutesFrom = TimeUnit.MILLISECONDS.toMinutes(fromTimeMS)  % 60;
+
+        long durationMS = toTimeMS - fromTimeMS;
+        if(durationMS < 0)
+            durationMS = 0;
+
+        long msDuration = durationMS % 1000;
+        long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
+        long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
+        long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+
+        command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\" \"%s\"",hoursFrom,
+                minutesFrom, secsFrom, msFrom, hoursDuration, minutesDuration, secsDuration, msDuration, videopath,outfile);
+        RunCommandExecuteFFMPEG(command,false);
+    }
+
+    public static void performFiltering(Context context, int startMs, int endMs, long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws Exception {
+        filterExecutor = new FilterExecutor(context);
+        filterExecutor.setupSettings(bitrateBitPerSeconds,pathFromVideo,framerate,filter);
+        filterExecutor.launchApplyFilterToVideo(startMs,endMs);
+    }
 }

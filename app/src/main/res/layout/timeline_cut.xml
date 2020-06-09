@@ -76,7 +76,7 @@
                 android:textSize="12sp" />
 
             <Button
-                android:id="@+id/buttonSplit"
+                android:id="@+id/buttonExtractAudio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -86,7 +86,7 @@
                 android:tag="saveCut"/>
 
             <Button
-                android:id="@+id/buttonExtractFrame"
+                android:id="@+id/buttonExtractFrames"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

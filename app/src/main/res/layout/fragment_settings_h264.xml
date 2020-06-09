@@ -143,7 +143,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonSelectFolderPath"
-            android:onClick="ClickOpenSavePage"
+            android:onClick="clickOpenSavePage"
             tools:ignore="OnClick" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
