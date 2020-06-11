@@ -239,7 +239,10 @@ public class SupportUtil {
 
     public static Bitmap scaleBitmap(Bitmap bmp, int scaleWidthInPx, int scaleHeightInPx)
     {
-        return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
+        if(bmp != null)
+            return Bitmap.createScaledBitmap(bmp, scaleWidthInPx, scaleHeightInPx, false);
+        else
+            throw new RuntimeException("SCALE BITMAP");
     }
 
     public static String changeFormatFilename(String filename,String newFormat)

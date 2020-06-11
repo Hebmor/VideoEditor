@@ -112,15 +112,26 @@ public class FilterExecutor extends Thread {
         outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
         outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
 
-        encoder = MediaCodec.createByCodecName(mediaCodecList.findEncoderForFormat(inputVideoFormat));
+        String nameEncode = mediaCodecList.findEncoderForFormat(inputVideoFormat);
+        if(nameEncode == null)
+            throw new RuntimeException("Фильтрация для данного формата видео не поддерживается этим устройством!");
+
+        encoder = MediaCodec.createByCodecName(nameEncode);
         encoder.configure(outputVideoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
         inputSurface = new InputSurface(encoder.createInputSurface());
         inputSurface.makeCurrent();
         outputSurface = new OutputSurface(filter);
 
-        decoder = MediaCodec.createByCodecName(mediaCodecList.findDecoderForFormat(outputVideoFormat));
+        String nameDecoder = mediaCodecList.findDecoderForFormat(outputVideoFormat);
+
+        if(nameDecoder == null)
+            throw new RuntimeException("Фильтрация для данного формата видео не поддерживается этим устройством!");
+
+        decoder = MediaCodec.createByCodecName(nameDecoder);
         decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
+
+
 
         File folder = SupportUtil.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
         File newFiltredFile = SupportUtil.CreateFileInFolder(folder.getCanonicalPath(), newFilename);
@@ -145,7 +156,7 @@ public class FilterExecutor extends Thread {
         doFilterProcess(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface,0,0);
 
     }
-    public void startFiltered(int startMs, int endMs) throws Exception {
+    private void startFiltered(int startMs, int endMs) throws Exception {
         encoder.start();
         decoder.start();
         doFilterProcess(videoExtractor,audioExtractor, trackIndexVideo, trackIndexAudio,decoder, encoder, outputSurface, inputSurface,startMs,endMs);
@@ -399,7 +410,6 @@ public class FilterExecutor extends Thread {
         this.isSetup = true;
         this.framerate = framerate;
     }
-
 
     @Override
     public void run() {

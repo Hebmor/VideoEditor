@@ -27,6 +27,7 @@ public class FiltersFactory {
     {
         return R.raw.black_and_white;
     }
+
     public static BaseFilter getFiltersByName(NameFilters name, Context context)
     {
         switch (name)
@@ -35,10 +36,16 @@ public class FiltersFactory {
                 return new DefaultFilter(context);
             case BLACK_AND_WHITE:
                 return new BlackWhiteFilter(context);
-
+            case CEL_SHADING:
+                return new CelShadingFilter(context);
+            case IMAGE_PARAM:
+                return new ImageParamFilter(context);
+            case PIXELATION:
+                return new PixelationFilter(context);
+            case IMAGE_KERNEL:
+                return new ImageKernelFilter(context);
             default:
                 throw new IllegalArgumentException("Неизвестный фильтр!");
         }
     }
-
 }

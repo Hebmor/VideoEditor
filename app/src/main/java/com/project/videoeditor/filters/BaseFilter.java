@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Surface;
 
@@ -23,7 +24,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
-public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener,Cloneable{
+public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTexture.OnFrameAvailableListener,Cloneable, Parcelable {
 
     private final String TAG = "BaseFilter";
 
@@ -89,21 +90,8 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     private Context context;
     private PlayerController playerController;
 
-
-    public int get_updateTexImageCounter() {
-        return _updateTexImageCounter;
-    }
-
-    public int get_updateTexImageCompare() {
-        return _updateTexImageCompare;
-    }
-
     public BaseFilter() {
-        mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
-        Matrix.setIdentityM(mSTMatrix, 0);
+        initTriangleVertices();
     }
 
     @NonNull
@@ -426,7 +414,9 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     public void setPlayerMod(boolean playerMod) {
         isPlayerMod = playerMod;
     }
+
     public PlayerController getPlayerController() {
         return playerController;
     }
+
 }

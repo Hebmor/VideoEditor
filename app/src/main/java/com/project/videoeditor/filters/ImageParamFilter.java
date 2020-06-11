@@ -1,13 +1,17 @@
 package com.project.videoeditor.filters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLES20;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.project.videoeditor.R;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+@SuppressLint("ParcelCreator")
 public class ImageParamFilter extends BaseFilter{
 
     private boolean isGetLocation = false;
@@ -27,6 +31,13 @@ public class ImageParamFilter extends BaseFilter{
         this.loadFragmentShaderFromResource(R.raw.image_param);
         this.mBrightness = mBrightness;
         this.mContrast = mContrast;
+    }
+
+    public ImageParamFilter(Parcel parcel)
+    {
+        super();
+        this.mBrightness = parcel.readFloat();
+        this.mContrast = parcel.readFloat();
     }
 
     @Override
@@ -83,4 +94,28 @@ public class ImageParamFilter extends BaseFilter{
     public void setContrast(float mContrast) {
         this.mContrast = mContrast;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeFloat(mBrightness);
+        dest.writeFloat(mContrast);
+    }
+
+    public static final Parcelable.Creator<ImageParamFilter> CREATOR = new Parcelable.Creator<ImageParamFilter>() {
+
+        @Override
+        public ImageParamFilter createFromParcel(Parcel source) {
+            return new ImageParamFilter(source);
+        }
+
+        @Override
+        public ImageParamFilter[] newArray(int size) {
+            return new ImageParamFilter[size];
+        }
+    };
 }

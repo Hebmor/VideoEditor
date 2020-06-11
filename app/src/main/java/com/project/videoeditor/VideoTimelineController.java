@@ -23,6 +23,7 @@ import com.project.videoeditor.activity.SaveVideoActivity;
 import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.FiltersFactory;
+import com.project.videoeditor.filters.ImageKernelFilter;
 import com.project.videoeditor.support.SupportUtil;
 
 import java.io.File;
@@ -198,11 +199,11 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
 
             Intent intent = new Intent(getContext(), SaveVideoActivity.class);
             intent.putExtra(VideoInfo.class.getCanonicalName(), videoInfo);
-            FiltersFactory.NameFilters filterName = ((MainEditor)getContext()).getCurrentFilter().getFilterName();
+            BaseFilter filter = ((MainEditor)getContext()).getCurrentFilter();
 
             intent.putExtra("beginValue", beginMs);
             intent.putExtra("endValue",endMs);
-            intent.putExtra("filterName",filterName);
+            intent.putExtra("filter",filter);
 
             ((Activity)getContext()).startActivity(intent);
         }

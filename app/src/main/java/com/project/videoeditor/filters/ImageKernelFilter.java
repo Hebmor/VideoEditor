@@ -2,6 +2,8 @@ package com.project.videoeditor.filters;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.project.videoeditor.R;
 
@@ -12,11 +14,20 @@ public class ImageKernelFilter extends BaseFilter {
 
     private int mImageResolutionHandle;
     private int mKernelHandle;
+
     private float [] resolutionVideo = new float[2];
-    private float [] kernelMatrix = new float[9];
     private boolean isGetLocation = false;
     private float [] currentKernelMatrix = ImageKernelMatrix.edge_kernel;
-    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.DEFAULT;
+    private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.IMAGE_KERNEL;
+
+
+    public float[] getResolutionVideo() {
+        return resolutionVideo;
+    }
+
+    public float[] getCurrentKernelMatrix() {
+        return currentKernelMatrix;
+    }
 
     public void setCurrentKernelMatrix(float[] currentKernelMatrix) {
         this.currentKernelMatrix = currentKernelMatrix;
@@ -32,6 +43,12 @@ public class ImageKernelFilter extends BaseFilter {
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
     }
 
+    public ImageKernelFilter(Parcel parcel)
+    {
+        super();
+        parcel.readFloatArray( this.resolutionVideo);
+        parcel.readFloatArray( this.currentKernelMatrix);
+    }
     public ImageKernelFilter(Context context,float heightVideo,float widthVideo) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.image_kernel);
@@ -83,4 +100,28 @@ public class ImageKernelFilter extends BaseFilter {
         GLES20.glUniformMatrix3fv(mKernelHandle, 1,false, currentKernelMatrix,0);
         super.draw();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeFloatArray(resolutionVideo);
+        dest.writeFloatArray(currentKernelMatrix);
+    }
+
+    public static final Parcelable.Creator<ImageKernelFilter> CREATOR = new Parcelable.Creator<ImageKernelFilter>() {
+
+        @Override
+        public ImageKernelFilter createFromParcel(Parcel source) {
+            return new ImageKernelFilter(source);
+        }
+
+        @Override
+        public ImageKernelFilter[] newArray(int size) {
+            return new ImageKernelFilter[size];
+        }
+    };
 }

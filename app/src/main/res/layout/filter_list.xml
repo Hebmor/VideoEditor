@@ -8,18 +8,8 @@
     <include
         android:id="@+id/include"
         layout="@layout/recycler"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSaveFilterResult"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></include>
-
-    <Button
-        android:id="@+id/buttonSaveFilterResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Сохранить"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

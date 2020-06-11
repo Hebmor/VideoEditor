@@ -54,7 +54,7 @@ public class SaveVideoActivity extends AppCompatActivity {
     private float endValue = 0;
     private LoadingEncodeDialog loadingEncodeDialog;
     private FilterExecutor filterExecutor;
-    private FiltersFactory.NameFilters nameFilter = null;
+    private BaseFilter currentFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class SaveVideoActivity extends AppCompatActivity {
 
         beginValue = getIntent().getFloatExtra("beginValue",0f);
         endValue = getIntent().getFloatExtra("endValue",0f);
-        nameFilter = (FiltersFactory.NameFilters)getIntent().getSerializableExtra("filterName");
+        currentFilter = getIntent().getParcelableExtra("filter");
 
         filterExecutor = new FilterExecutor(this);
 
@@ -151,12 +151,16 @@ public class SaveVideoActivity extends AppCompatActivity {
         long toTimeMS = (long) endValue;
         Codecs.CodecsName codec = Codecs.fromString(getSelectedTextFromRadioGroup());
         String scaleResolution = ((String) videoResolutionSpinner.getSelectedItem()).replace("×","x");
+        FiltersFactory.NameFilters nameFilter = currentFilter.getFilterName();
 
-        if(nameFilter != null)
+        if(nameFilter != FiltersFactory.NameFilters.DEFAULT)
         {
+            currentFilter.setContext(this);
+
             BaseFilter filter = FiltersFactory.getFiltersByName(nameFilter,this);
-            filterExecutor.setupSettings((long) (bitrateInMbit * 1000),inputVideoPath, Integer.parseInt(framerate), filter);
-            filterExecutor.startFiltered((int)fromTimeMS,(int)toTimeMS);
+
+            filterExecutor.setupSettings((long) (bitrateInMbit * 1024),inputVideoPath, Integer.parseInt(framerate), filter);
+            filterExecutor.launchApplyFilterToVideo((int)fromTimeMS,(int)toTimeMS);
         }
         else {
             ActionEditor.executeCommand(inputVideoPath, outputVideoPath, bitrateInMbit, framerate, fromTimeMS, toTimeMS, codec, scaleResolution);
