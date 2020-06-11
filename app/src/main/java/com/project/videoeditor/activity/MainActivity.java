@@ -16,6 +16,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.codecs.ActionEditor;
@@ -30,11 +34,29 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 100;
+    private FilePickerDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = new String[] {"mp4","avi","webm","ogg"};
+
+        dialog = new FilePickerDialog(this,properties);
+        dialog.setTitle("Выберете видео");
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                String filePath = files[0];
+                intentMainEditor(filePath);
+            }
+        });
     }
 
     private boolean checkPermissions(){
@@ -95,6 +117,18 @@ public class MainActivity extends AppCompatActivity {
                     100);
         }
     }
+
+    private void intentMainEditor(String path)
+    {
+        VideoInfo info = new VideoInfo();
+        info.parseInfoFromPath(path);
+        info.setFilename(SupportUtil.getFilenameByPath(path));
+        ActionEditor.setVideoInfo(info);
+        Intent intent = new Intent(this, MainEditor.class);
+        intent.putExtra(MainEditor.EDIT_VIDEO_ID,info);
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -139,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void ClickUploadVideo(View view) {
+    public void clickUploadVideo(View view) {
         if (!checkPermissions())
                     getPermission();
         else
-            uploadVideo();
+            dialog.show();
     }
 
     @Override

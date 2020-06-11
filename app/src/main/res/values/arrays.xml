@@ -33,6 +33,7 @@
         <item>"59,94"</item>
         <item>"60"</item>
     </array>
+
     <string-array name="formats">
         <item>"mp4"</item>
         <item>"avi"</item>
@@ -41,6 +42,22 @@
         <item>"flv"</item>
         <item>"gif"</item>
         <item>"ogg"</item>
+    </string-array>
+
+    <string-array name="codec_ffmpeg">
+        <item>"H264"</item>
+        <item>"VP9"</item>
+        <item>"AV1"</item>
+    </string-array>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
     </string-array>
 </resources>
 

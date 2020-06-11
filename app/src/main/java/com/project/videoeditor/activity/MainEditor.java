@@ -1,7 +1,6 @@
 package com.project.videoeditor.activity;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -10,11 +9,12 @@ import android.media.MediaExtractor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.tabs.TabLayout;
@@ -32,7 +32,6 @@ import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.support.SupportUtil;
 
-import java.io.File;
 import java.io.IOException;
 
 public class MainEditor extends AppCompatActivity {
@@ -49,6 +48,7 @@ public class MainEditor extends AppCompatActivity {
     private ViewPager viewPager;
     private VideoInfoFragment videoInfoFragment;
     private FilterListFragment filterListFragment;
+    private Toolbar toolbar;
 
     public interface IResultCallbackTakeVideoInfo {
         void call(VideoInfo data);
@@ -70,6 +70,8 @@ public class MainEditor extends AppCompatActivity {
         viewPager = (ViewPager)findViewById(R.id.viewPager_editor);
         TabLayout tabs = (TabLayout) findViewById(R.id.tabsEditor);
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(EDIT_VIDEO_ID);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         playerController = new PlayerController(this,editVideoInfo.getPath());
         videoTimelineControllerSplit = VideoTimelineController.newInstance(editVideoInfo,playerController,false);
@@ -203,5 +205,20 @@ public class MainEditor extends AppCompatActivity {
     public BaseFilter getCurrentFilter()
     {
         return videoFilteredView.getCurrentFilter();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
+        return true;
     }
 }

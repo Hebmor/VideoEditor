@@ -28,7 +28,7 @@
         android:layout_marginEnd="160dp"
         android:layout_marginBottom="342dp"
         android:drawableLeft="@drawable/ic_video_call_black_24dp"
-        android:onClick="ClickUploadVideo"
+        android:onClick="clickUploadVideo"
         android:pointerIcon="arrow"
         android:text="@string/select_video"
         app:layout_constraintBottom_toBottomOf="parent"

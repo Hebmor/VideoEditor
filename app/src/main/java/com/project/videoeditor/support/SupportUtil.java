@@ -250,4 +250,9 @@ public class SupportUtil {
         int index = filename.lastIndexOf('.');
         return filename.substring(0,index) + "."+newFormat;
     }
+
+    public static String getFilenameByPath(String path)
+    {
+        return path.substring(path.lastIndexOf("/")+1);
+    }
 }
