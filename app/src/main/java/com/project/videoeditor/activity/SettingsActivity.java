@@ -1,6 +1,9 @@
 package com.project.videoeditor.activity;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.os.Bundle;
+import android.os.Environment;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat implements PreferenceManager.OnPreferenceTreeClickListener {
 
         private FilePickerDialog dialog;
+        private String lastKeyPreferenceClick;
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
@@ -44,7 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
             properties.selection_type = DialogConfigs.DIR_SELECT;
             properties.root = new File(DialogConfigs.DEFAULT_DIR);
             properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
-            properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+            properties.offset = null;
             properties.extensions = null;
 
             dialog = new FilePickerDialog(getContext(),properties);
@@ -52,9 +56,19 @@ public class SettingsActivity extends AppCompatActivity {
             dialog.setDialogSelectionListener(new DialogSelectionListener() {
                 @Override
                 public void onSelectedFilePaths(String[] files) {
-                    String test = files[0];
+                    if(files.length == 1) {
+                        String dirPath = files[0];
+                        findPreference(lastKeyPreferenceClick).setSummary(dirPath);
+                    }
                 }
             });
+
+            findPreference("dir_encode_preference").setSummary( this.getAbsoluteFile("EncodeVideo",getContext()).getAbsolutePath());
+            findPreference("dir_filter_preference").setSummary( this.getAbsoluteFile("FilteredVideo",getContext()).getAbsolutePath());
+            findPreference("dir_frames_extract_preference").setSummary( this.getAbsoluteFile("ExtractFrames",getContext()).getAbsolutePath());
+            findPreference("dir_audio_extract_preference").setSummary( this.getAbsoluteFile("ExtractAudio",getContext()).getAbsolutePath());
+
+
         }
 
         @Override
@@ -63,10 +77,25 @@ public class SettingsActivity extends AppCompatActivity {
             switch (key)
             {
                 case "dir_encode_preference":
+                case "dir_audio_extract_preference":
+                case "dir_frames_extract_preference":
+                case "dir_filter_preference":
                     dialog.show();
-                    return true;
+                    break;
+                default:
+                    return false;
+
             }
-            return false;
+            lastKeyPreferenceClick = key;
+            return true;
+        }
+
+        private File getAbsoluteFile(String relativePath, Context context) {
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                return new File(context.getExternalFilesDir(null), relativePath);
+            } else {
+                return new File(context.getFilesDir(), relativePath);
+            }
         }
     }
 }

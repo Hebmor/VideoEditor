@@ -2,12 +2,14 @@ package com.project.videoeditor.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.view.View;
 
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 100;
     private FilePickerDialog dialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +56,22 @@ public class MainActivity extends AppCompatActivity {
         dialog.setDialogSelectionListener(new DialogSelectionListener() {
             @Override
             public void onSelectedFilePaths(String[] files) {
-                String filePath = files[0];
-                intentMainEditor(filePath);
+                if(files.length == 1) {
+                    String filePath = files[0];
+                    intentMainEditor(filePath);
+                }
             }
         });
+        try {
+
+            SupportUtil.CreateFolder(getExternalFilesDir(null)+ "/" +"ExtractFrames");
+            SupportUtil.CreateFolder(getExternalFilesDir(null)+ "/" +"ExtractAudio");
+            SupportUtil.CreateFolder(getExternalFilesDir(null)+ "/" +"EncodeVideo");
+            SupportUtil.CreateFolder(getExternalFilesDir(null)+ "/" +"FilteredVideo");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean checkPermissions(){

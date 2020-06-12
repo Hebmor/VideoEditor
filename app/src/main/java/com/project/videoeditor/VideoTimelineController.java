@@ -236,7 +236,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
 
     public void runExtractFrames(float beginMs, float endMs) throws Exception {
         File framesFolder = SupportUtil.CreateFolder(getContext()
-                .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames" + "/" + videoInfo.getFilename());
+                .getExternalFilesDir(null).getPath() + "/" +"ExtractFrames" + "/" + videoInfo.getFilename());
         ActionEditor.extractFrames(videoInfo.getPath(),framesFolder.getCanonicalPath() + "/frame%0d.png",
                 (int)beginMs, (int)endMs,0);
     }
@@ -244,7 +244,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
     public void runExtractAudio(float beginMs, float endMs) throws Exception {
         String outFilename = SupportUtil.changeFormatFilename(videoInfo.getFilename(),"mp3");
         File framesFolder = SupportUtil.CreateFolder(getContext()
-                .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractAudio");
+                .getExternalFilesDir(null).getPath() + "/" +"ExtractAudio");
         ActionEditor.extractAudio(videoInfo.getPath(),framesFolder.getCanonicalPath()  + "/" + outFilename,(long)beginMs,(long)endMs);
     }
 
