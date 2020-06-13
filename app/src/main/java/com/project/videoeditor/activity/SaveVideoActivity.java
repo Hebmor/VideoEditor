@@ -4,21 +4,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.arthenica.mobileffmpeg.Config;
-import com.project.videoeditor.LoadingEncodeDialog;
+import com.project.videoeditor.dialogs.LoadingEncodeDialog;
 import com.project.videoeditor.R;
 import com.project.videoeditor.VideoInfo;
 import com.project.videoeditor.codecs.ActionEditor;
@@ -49,7 +48,6 @@ public class SaveVideoActivity extends AppCompatActivity {
     private IndicatorSeekBar  bitrateIndicator;
     private TextView computeOutputFileSize;
     private VideoInfo editVideoInfo;
-    private RadioGroup radioGroupCodecs;
     private float beginValue = 0;
     private float endValue = 0;
     private LoadingEncodeDialog loadingEncodeDialog;
@@ -67,7 +65,6 @@ public class SaveVideoActivity extends AppCompatActivity {
         bitrateIndicator = findViewById(R.id.bitrateIndicator);
         computeOutputFileSize = findViewById(R.id.textView_computeSizeValue);
         framerateInfoSpinner = findViewById(R.id.spinner_framerate);
-        radioGroupCodecs = findViewById(R.id.radioGroupCodecs);
 
         loadingEncodeDialog = new LoadingEncodeDialog(this);
 
@@ -143,32 +140,40 @@ public class SaveVideoActivity extends AppCompatActivity {
     public void clickSaveVideo(View view) throws Exception {
 
         String inputVideoPath = editVideoInfo.getPath();
-        File folder = SupportUtil.CreateFolder(this.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "EncodeVideo");
+        File folder = SupportUtil.CreateFolder(this.getExternalFilesDir(null).getPath() + "/" + "EncodeVideo");
         String outputVideoPath = folder.getAbsolutePath() + "/" + editVideoInfo.getFilename();
         float bitrateInMbit = bitrateIndicator.getProgressFloat();
         String framerate = (String) framerateInfoSpinner.getSelectedItem();
         long fromTimeMS = (long) beginValue;
         long toTimeMS = (long) endValue;
-        Codecs.CodecsName codec = Codecs.fromString(getSelectedTextFromRadioGroup());
+        String[] resolution = ((String)videoResolutionSpinner.getSelectedItem()).split("[×]");
+        int width = Integer.parseInt(resolution[0]);
+        int height = Integer.parseInt(resolution[1]);
+
         String scaleResolution = ((String) videoResolutionSpinner.getSelectedItem()).replace("×","x");
         FiltersFactory.NameFilters nameFilter = currentFilter.getFilterName();
 
         if(nameFilter != FiltersFactory.NameFilters.DEFAULT)
         {
             currentFilter.setContext(this);
-
-            BaseFilter filter = FiltersFactory.getFiltersByName(nameFilter,this);
-
-            filterExecutor.setupSettings((long) (bitrateInMbit * 1024),inputVideoPath, Integer.parseInt(framerate), filter);
+            filterExecutor.setupSettings(width, height, (long) (bitrateInMbit * 1000 * 1000), inputVideoPath, Integer.parseInt(framerate), currentFilter);
             filterExecutor.launchApplyFilterToVideo((int)fromTimeMS,(int)toTimeMS);
         }
         else {
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String imgSett = prefs.getString("list_preference_ffmpeg_encode", "");
+            Codecs.CodecsName codec = Codecs.fromString(imgSett);
             ActionEditor.executeCommand(inputVideoPath, outputVideoPath, bitrateInMbit, framerate, fromTimeMS, toTimeMS, codec, scaleResolution);
             Handler handler = new Handler();
             loadingEncodeDialog.startLoadingDialog();
 
             handler.post(new Runnable() {
                 long durationChunk = toTimeMS - fromTimeMS;
+                long ms = 0;
+                long secs = 0;
+                long hours = 0;
+                long minutes = 0;
 
                 @Override
                 public void run() {
@@ -176,15 +181,18 @@ public class SaveVideoActivity extends AppCompatActivity {
                         durationChunk = editVideoInfo.getDuration();
                     double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
 
-                    long ms = (long) ((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
-                    long secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
-                    long hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
-                    long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
+                     ms = (long) ((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                     secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
+                     hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
+                     minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
 
-                    loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
+                     if(ms == 0)
+                         loadingEncodeDialog.updateCountdown("Ожидание данных...");
+                     else
+                         loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
                             "%d:%02d:%02d", hours, minutes, secs));
-                    if (secs > 0) {
-                        handler.postDelayed(this, 1000);
+                    if (ms > 0) {
+                        handler.postDelayed(this, 10);
                     } else {
                         loadingEncodeDialog.dismissDialog();
                     }
@@ -192,14 +200,7 @@ public class SaveVideoActivity extends AppCompatActivity {
             });
         }
     }
-    public String getSelectedTextFromRadioGroup()
-    {
-        int radioButtonID = radioGroupCodecs.getCheckedRadioButtonId();
-        View radioButton = radioGroupCodecs.findViewById(radioButtonID);
-        int idx = radioGroupCodecs.indexOfChild(radioButton);
-        RadioButton r = (RadioButton) radioGroupCodecs.getChildAt(idx);
-        return r.getText().toString();
-    }
+
     @Override
     protected void onStart() {
         super.onStart();

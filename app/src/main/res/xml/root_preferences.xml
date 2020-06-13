@@ -38,10 +38,10 @@
     <PreferenceCategory android:title="Настройки кодеков">
 
         <ListPreference
+            android:key="list_preference_ffmpeg_encode"
             android:defaultValue="1"
             android:entries="@array/codec_ffmpeg"
             android:entryValues="@array/codec_ffmpeg"
-            android:key="list_preference_ffmpeg_encode"
             android:summary="Установить кодек для кодирования видео"
             android:title="Кодек для кодирования видео" />
         <ListPreference

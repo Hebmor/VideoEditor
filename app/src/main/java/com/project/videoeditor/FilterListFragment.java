@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,18 +12,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.videoeditor.dialogs.CelShadingShaderDialog;
+import com.project.videoeditor.dialogs.ImageParamShaderDialog;
+import com.project.videoeditor.dialogs.PixelationShaderDialog;
 import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.BlackWhiteFilter;
 import com.project.videoeditor.filters.CelShadingFilter;
 import com.project.videoeditor.filters.DefaultFilter;
-import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.ImageKernelMatrix;
 import com.project.videoeditor.filters.ImageKernelFilter;
 import com.project.videoeditor.filters.ImageParamFilter;
 import com.project.videoeditor.filters.PixelationFilter;
 
-import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.project.videoeditor.filters.CelShadingFilter.DEFAULT_COLOR_COUNT;
+import static com.project.videoeditor.filters.PixelationFilter.DEFAULT_PIXEL_SIZE;
 
 public class FilterListFragment extends Fragment {
 
@@ -34,7 +37,6 @@ public class FilterListFragment extends Fragment {
     private ArrayList<BaseFilter> filters;
     private VideoFilteredView videoFilteredView;
     private VideoInfo videoInfo;
-    private FilterExecutor filterExecutor;
     private int lastSelectFilterIdx = 0;
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -44,6 +46,8 @@ public class FilterListFragment extends Fragment {
             if(itemPosition < filters.size()) {
                 lastSelectFilterIdx = itemPosition;
                 videoFilteredView.changeFilter(filters.get(itemPosition));
+                showDialogByFilter(filters.get(itemPosition));
+
             }
         }
     };
@@ -77,12 +81,6 @@ public class FilterListFragment extends Fragment {
         filterListAdapter = createAdapter();
         recyclerVideoInfo.setLayoutManager(layoutManager);
         recyclerVideoInfo.setAdapter(filterListAdapter);
-        filterExecutor = new FilterExecutor(getActivity());
-        try {
-            filterExecutor.setupSettings(videoInfo.getBitrate() * 1024,videoInfo.getPath(),30,filters.get(lastSelectFilterIdx));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     private FilterListAdapter createAdapter()
     {
@@ -106,16 +104,36 @@ public class FilterListFragment extends Fragment {
         filters.add(new ImageKernelFilter(getContext(),200,200, ImageKernelMatrix.sharp_kernel));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"C and B");
-        filters.add(new ImageParamFilter(getContext(),0.2f,-2f));
+        filters.add(new ImageParamFilter(getContext(),ImageParamFilter.DEFAULT_BRIGHTNESS,ImageParamFilter.DEFAULT_CONTRAST));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"Pixellation");
-        filters.add(new PixelationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),20f));
+        filters.add(new PixelationFilter(getContext(),videoInfo.getHeight(),videoInfo.getWidth(),DEFAULT_PIXEL_SIZE));
         filterListAdapter.addItem(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.black_filter,null),"CellShading");
-        filters.add(new CelShadingFilter(getContext(),4f));
+        filters.add(new CelShadingFilter(getContext(),DEFAULT_COLOR_COUNT));
 
         filterListAdapter.setOnClickListener(onClickListener);
         return  filterListAdapter;
 
+    }
+
+    public void showDialogByFilter(BaseFilter filter)
+    {
+        switch (filter.getFilterName())
+        {
+            case IMAGE_PARAM:
+                ImageParamShaderDialog imageParamShaderDialog = new ImageParamShaderDialog(getActivity());
+                imageParamShaderDialog.startLoadingDialog((ImageParamFilter) filter);
+                break;
+            case PIXELATION:
+                PixelationShaderDialog pixelationShaderDialog = new PixelationShaderDialog(getActivity());
+                pixelationShaderDialog.startLoadingDialog((PixelationFilter) filter);
+                break;
+            case CEL_SHADING:
+                CelShadingShaderDialog celShadingShaderDialog = new CelShadingShaderDialog(getActivity());
+                celShadingShaderDialog.startLoadingDialog((CelShadingFilter) filter);
+            default:
+                return;
+        }
     }
 }

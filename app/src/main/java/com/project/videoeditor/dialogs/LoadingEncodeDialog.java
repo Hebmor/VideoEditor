@@ -1,4 +1,4 @@
-package com.project.videoeditor;
+package com.project.videoeditor.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;

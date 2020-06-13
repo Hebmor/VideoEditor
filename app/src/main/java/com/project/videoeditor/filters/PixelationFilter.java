@@ -12,6 +12,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class PixelationFilter extends BaseFilter {
 
+    public static float DEFAULT_PIXEL_SIZE = 1f;
+
     private boolean isGetLocation = false;
     private int resolutionVideoHandle;
     private int pixelSizeHandle;
@@ -49,6 +51,7 @@ public class PixelationFilter extends BaseFilter {
         super();
         parcel.readFloatArray(this.resolutionVideo);
         this.pixelSize = parcel.readFloat();
+        this.FRAGMENT_SHADER = parcel.readString();
     }
 
     @Override
@@ -117,6 +120,7 @@ public class PixelationFilter extends BaseFilter {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeFloatArray(resolutionVideo);
         dest.writeFloat(pixelSize);
+        dest.writeString(this.FRAGMENT_SHADER);
     }
 
     public static final Parcelable.Creator<PixelationFilter> CREATOR = new Parcelable.Creator<PixelationFilter>() {

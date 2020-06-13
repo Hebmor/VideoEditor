@@ -48,6 +48,7 @@ public class ImageKernelFilter extends BaseFilter {
         super();
         parcel.readFloatArray( this.resolutionVideo);
         parcel.readFloatArray( this.currentKernelMatrix);
+        this.FRAGMENT_SHADER = parcel.readString();
     }
     public ImageKernelFilter(Context context,float heightVideo,float widthVideo) {
         super(context);
@@ -110,6 +111,7 @@ public class ImageKernelFilter extends BaseFilter {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeFloatArray(resolutionVideo);
         dest.writeFloatArray(currentKernelMatrix);
+        dest.writeString(this.FRAGMENT_SHADER);
     }
 
     public static final Parcelable.Creator<ImageKernelFilter> CREATOR = new Parcelable.Creator<ImageKernelFilter>() {

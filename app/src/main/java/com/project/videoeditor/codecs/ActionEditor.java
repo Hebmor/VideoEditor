@@ -178,6 +178,7 @@ public class ActionEditor {
         long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
         long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+
         String currentCodec = Codecs.toStringFFMPEGName(codec);
         String framerateNorm = framerate.replace(",",".");
 
@@ -185,8 +186,8 @@ public class ActionEditor {
             command = String.format("-y -i \"%s\" -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
                     inputVideoPath,currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         else
-            command = String.format("-y -i \"%s\" -ss %d:%d:%d -t %d:%d:%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
-                    inputVideoPath,hoursFrom,minutesFrom,secsFrom,hoursDuration,minutesDuration,secsDuration,
+            command = String.format("-y -i \"%s\" -ss %d:%d:%d.%d -t %d:%d:%d.%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
+                    inputVideoPath,hoursFrom,minutesFrom,secsFrom,msFrom,hoursDuration,minutesDuration,secsDuration,msDuration,
                     currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
@@ -261,9 +262,4 @@ public class ActionEditor {
         RunCommandExecuteFFMPEG(command,false);
     }
 
-    public static void performFiltering(Context context, int startMs, int endMs, long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws Exception {
-        filterExecutor = new FilterExecutor(context);
-        filterExecutor.setupSettings(bitrateBitPerSeconds,pathFromVideo,framerate,filter);
-        filterExecutor.launchApplyFilterToVideo(startMs,endMs);
-    }
 }

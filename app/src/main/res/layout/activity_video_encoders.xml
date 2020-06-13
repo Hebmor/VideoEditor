@@ -30,47 +30,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                android:id="@+id/textView_codecs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/codec" />
 
-            <RadioGroup
-                android:id="@+id/radioGroupCodecs"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/radioButton_h264"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="clip_horizontal|center|center_vertical"
-                    android:text="@string/h264"
-                    android:textColorHighlight="@color/harmonies"
-                    android:textColorLink="@color/orange"
-                    android:checked="true" />
-
-                <RadioButton
-                    android:id="@+id/radioButton_vp9"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="clip_horizontal|center|center_vertical"
-                    android:text="@string/vp9"
-                    android:textColorHighlight="@color/harmonies"
-                    android:textColorLink="@color/orange"/>
-
-                <RadioButton
-                    android:id="@+id/radioButton_av1"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="clip_horizontal|center|center_vertical"
-                    android:text="@string/av1"
-                    android:textColorHighlight="@color/harmonies"
-                    android:textColorLink="@color/orange"/>
-            </RadioGroup>
             <TextView
                 android:id="@+id/textView_format"
                 android:layout_width="match_parent"

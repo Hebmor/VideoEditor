@@ -252,7 +252,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
     public void clickExtractFrame(View view, String path, String filename, float frametimeInMs) {
         try {
             File framesFolder = SupportUtil.CreateFolder(getContext()
-                    .getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" +"ExtractFrames" + "/" + filename);
+                    .getExternalFilesDir(null).getPath() + "/" +"ExtractFrames" + "/" + filename);
             ActionEditor.extractFrames(path,framesFolder.getCanonicalPath() + "/frame%0d.png",(long) frametimeInMs,0,1);
         } catch (Exception e) {
             e.printStackTrace();

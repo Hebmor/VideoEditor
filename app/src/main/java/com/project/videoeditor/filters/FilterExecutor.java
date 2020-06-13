@@ -12,10 +12,12 @@ import android.util.Log;
 
 import com.project.videoeditor.R;
 import com.project.videoeditor.support.SupportUtil;
+import com.project.videoeditor.support.TimeUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 
 import static java.lang.Thread.sleep;
 
@@ -31,8 +33,6 @@ public class FilterExecutor extends Thread {
     private Long bitrateBitPerSeconds;
     private int startMs = 0;
     private int endMs = 0;
-
-
     private boolean isLogDebug = true;
     private int trackIndexVideo;
     private int trackIndexAudio;
@@ -48,8 +48,11 @@ public class FilterExecutor extends Thread {
     String pathInVideoFile;
     MediaFormat inputAudioFormat = null;
     private BaseFilter filter;
-    private String newFilename;
     private int framerate;
+    private int width = 0;
+    private int height = 0;
+
+    private boolean isVariableBitrateMod = false;
 
     private Thread extractorThread;
 
@@ -75,13 +78,13 @@ public class FilterExecutor extends Thread {
         MediaFormat inputVideoFormat = null;
         MediaFormat outputVideoFormat = null;
         MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.REGULAR_CODECS);
+        pathOutVideoFile = genResultPathFromFilePath(pathInVideoFile);
 
         String mime = null;
         String fragmentShader = SupportUtil.OpenRawResourcesAsString(context, R.raw.default_state);
 
         videoExtractor = new MediaExtractor();
         audioExtractor = new MediaExtractor();
-        newFilename = "output.mp4";
         videoExtractor.setDataSource(pathInVideoFile);
         audioExtractor.setDataSource(pathInVideoFile);
 
@@ -110,7 +113,18 @@ public class FilterExecutor extends Thread {
         outputVideoFormat.setInteger(MediaFormat.KEY_BIT_RATE, Math.toIntExact(bitrateBitPerSeconds));
         outputVideoFormat.setInteger(MediaFormat.KEY_FRAME_RATE,framerate);
         outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
-        outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
+
+        if(width > 0 && height > 0)
+        {
+            outputVideoFormat.setInteger(MediaFormat.KEY_WIDTH,width);
+            outputVideoFormat.setInteger(MediaFormat.KEY_HEIGHT,height);
+        }
+        outputVideoFormat.setInteger(MediaFormat.KEY_WIDTH,width);
+
+        if(isVariableBitrateMod)
+            outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR);
+        else
+            outputVideoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
 
         String nameEncode = mediaCodecList.findEncoderForFormat(inputVideoFormat);
         if(nameEncode == null)
@@ -133,8 +147,8 @@ public class FilterExecutor extends Thread {
 
 
 
-        File folder = SupportUtil.CreateFolder(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath() + "/" + "FilteredVideo");
-        File newFiltredFile = SupportUtil.CreateFileInFolder(folder.getCanonicalPath(), newFilename);
+        File folder = SupportUtil.CreateFolder(context.getExternalFilesDir(null).getPath() + "/" + "FilteredVideo");
+        File newFiltredFile = SupportUtil.CreateFileInFolder(folder.getCanonicalPath(), pathOutVideoFile);
         this.pathOutVideoFile = newFiltredFile.getCanonicalPath();
         int outputFormat = getMediaMixerOutputFormatByMimeType(mime);
         mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), outputFormat);
@@ -188,7 +202,6 @@ public class FilterExecutor extends Thread {
             this.setup();
             this.startFiltered();
             this.release();
-            //ActionEditor.addAudioFromVideoToVideo(pathFromVideo,pathToVideo);
         }
         else
             throw new RuntimeException("Наложение фильтра не возможно! Вызовите метод - setupSettings(...)");
@@ -330,8 +343,6 @@ public class FilterExecutor extends Thread {
                     int decoderStatus = decoder.dequeueOutputBuffer(infoVideo, TIMEOUT_USEC);
                     if (decoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                         decoderOutputAvailable = false;
-                        if (isLogDebug)
-                            Log.d(TAG, "no output from decoder available");
                     } else if (decoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
 
                         MediaFormat newFormat = decoder.getOutputFormat();
@@ -400,17 +411,22 @@ public class FilterExecutor extends Thread {
 
         Log.d("Время выполнения фильтрации: ",(System.currentTimeMillis() - beginTime) + " MS");
     }
-    public void setupSettings(Long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws IOException {
+    public void setupSettings(int width, int height, Long bitrateBitPerSeconds, String pathFromVideo, int framerate, BaseFilter filter) throws IOException {
         this.pathInVideoFile = pathFromVideo;
         this.bitrateBitPerSeconds = bitrateBitPerSeconds;
-        String filename = new File(pathFromVideo).getName();
-        int idx = filename.lastIndexOf(".");
-        this.newFilename = filename.substring(0,idx) + "_" + filter.getFilterName()+filename.substring(idx);
         this.filter = filter;
         this.isSetup = true;
         this.framerate = framerate;
+        this.width = width;
+        this.height = height;
     }
 
+    private String genResultPathFromFilePath(String path)
+    {
+        String filename = new File(path).getName();
+        int idx = filename.lastIndexOf(".");
+        return filename.substring(0,idx) + "_" + filter.getFilterName() + "_"+ TimeUtil.getTimeInString()+filename.substring(idx);
+    }
     @Override
     public void run() {
         super.run();
@@ -427,5 +443,13 @@ public class FilterExecutor extends Thread {
 
     public void setEndMs(int endMs) {
         this.endMs = endMs;
+    }
+
+    public boolean isVariableBitrateMod() {
+        return isVariableBitrateMod;
+    }
+
+    public void setVariableBitrateMod(boolean variableBitrateMod) {
+        isVariableBitrateMod = variableBitrateMod;
     }
 }

@@ -42,7 +42,6 @@ public class MainEditor extends AppCompatActivity {
     private VideoTimelineController videoTimelineControllerCut;
     private FrameLayout videoContainer;
     private VideoFilteredView videoFilteredView;
-    private FilterExecutor filterExecutor;
     private MediaExtractor mediaExtractor;
     private PlayerController playerController;
     private ViewPager viewPager;
@@ -87,16 +86,14 @@ public class MainEditor extends AppCompatActivity {
         fragmentPagerAdapter.addItem(videoInfoFragment);
 
         viewPager.setAdapter(fragmentPagerAdapter);
-
         mediaExtractor = new MediaExtractor();
-        filterExecutor = new FilterExecutor(this);
+
         tabs.setupWithViewPager(viewPager);
 
         initTabs(tabs);
 
         try {
             mediaExtractor.setDataSource(editVideoInfo.getPath());
-            filterExecutor.setupSettings(editVideoInfo.getBitrate() * 1024,editVideoInfo.getPath(),(int)Float.parseFloat(editVideoInfo.getFrameRate()),new BlackWhiteFilter(this));
             videoFilteredView = new VideoFilteredView(this,playerController);
         } catch (IOException e) {
             e.printStackTrace();

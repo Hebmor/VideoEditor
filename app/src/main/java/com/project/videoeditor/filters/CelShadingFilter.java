@@ -14,10 +14,11 @@ import javax.microedition.khronos.opengles.GL10;
 @SuppressLint("ParcelCreator")
 public class CelShadingFilter extends BaseFilter {
 
+    public static int DEFAULT_COLOR_COUNT = 256;
+
     private boolean isGetLocation = false;
     private int colorCountHandler;
-
-    private float colorsCount = 1f;
+    private int colorsCount = 1;
     private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.CEL_SHADING;
 
     public CelShadingFilter(Context context) {
@@ -25,7 +26,7 @@ public class CelShadingFilter extends BaseFilter {
         this.loadFragmentShaderFromResource(R.raw.cel_shading);
     }
 
-    public CelShadingFilter(Context context, float colorsCount) {
+    public CelShadingFilter(Context context, int colorsCount) {
         super(context);
         this.loadFragmentShaderFromResource(R.raw.cel_shading);
         this.colorsCount = colorsCount;
@@ -34,7 +35,8 @@ public class CelShadingFilter extends BaseFilter {
     public CelShadingFilter(Parcel parcel)
     {
         super();
-        colorsCount = parcel.readFloat();
+        colorsCount = parcel.readInt();
+        this.FRAGMENT_SHADER = parcel.readString();
     }
 
     @Override
@@ -76,7 +78,8 @@ public class CelShadingFilter extends BaseFilter {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeFloat(colorsCount);
+        dest.writeInt(colorsCount);
+        dest.writeString(this.FRAGMENT_SHADER);
     }
 
     public static final Parcelable.Creator<CelShadingFilter> CREATOR = new Parcelable.Creator<CelShadingFilter>() {
@@ -92,7 +95,12 @@ public class CelShadingFilter extends BaseFilter {
         }
     };
 
-    public float getColorsCount() {
+    public int getColorsCount() {
         return colorsCount;
     }
+
+    public void setColorsCount(int colorsCount) {
+        this.colorsCount = colorsCount;
+    }
+
 }

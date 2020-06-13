@@ -63,7 +63,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer,SurfaceTextur
     protected int _updateTexImageCounter = 0;
     private int _updateTexImageCompare = 0;
 
-    protected final String VERTEX_SHADER =
+    protected String VERTEX_SHADER =
             "uniform mat4 uMVPMatrix;\n" +
                     "uniform mat4 uSTMatrix;\n" +
                     "attribute vec4 aPosition;\n" +

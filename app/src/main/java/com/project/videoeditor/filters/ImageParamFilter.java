@@ -17,8 +17,11 @@ public class ImageParamFilter extends BaseFilter{
     private boolean isGetLocation = false;
     private int mBrightnessHandler;
     private int mContrastHandler;
-    private float mBrightness = 0f;
-    private float mContrast = 1f;
+    public static final float DEFAULT_BRIGHTNESS = 0f;
+    public static final float DEFAULT_CONTRAST = 1f;
+
+    private float mContrast = DEFAULT_CONTRAST;
+    private float mBrightness = DEFAULT_BRIGHTNESS;
     private static final FiltersFactory.NameFilters name = FiltersFactory.NameFilters.IMAGE_PARAM;
 
     public ImageParamFilter(Context context) {
@@ -38,6 +41,7 @@ public class ImageParamFilter extends BaseFilter{
         super();
         this.mBrightness = parcel.readFloat();
         this.mContrast = parcel.readFloat();
+        this.FRAGMENT_SHADER = parcel.readString();
     }
 
     @Override
@@ -104,6 +108,7 @@ public class ImageParamFilter extends BaseFilter{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeFloat(mBrightness);
         dest.writeFloat(mContrast);
+        dest.writeString(this.FRAGMENT_SHADER);
     }
 
     public static final Parcelable.Creator<ImageParamFilter> CREATOR = new Parcelable.Creator<ImageParamFilter>() {
