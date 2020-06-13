@@ -195,7 +195,7 @@ public class ActionEditor {
     {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(path);
-        return mediaMetadataRetriever.getFrameAtTime(frametimeMs * 1000,MediaMetadataRetriever.OPTION_CLOSEST);
+        return mediaMetadataRetriever.getFrameAtTime(frametimeMs * 1000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
     }
     public static Bitmap getFrameCollage(String path,int durationVideoMs,int widthFrameInPx,int heightFrameInPx,int countFrame)
     {
