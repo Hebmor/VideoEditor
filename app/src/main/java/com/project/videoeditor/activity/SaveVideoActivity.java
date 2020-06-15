@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +30,7 @@ import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.FilterExecutor;
 import com.project.videoeditor.filters.FiltersFactory;
 import com.project.videoeditor.support.SupportUtil;
+import com.project.videoeditor.support.TimeUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
@@ -45,6 +47,7 @@ public class SaveVideoActivity extends AppCompatActivity {
     private Spinner videoResolutionSpinner;
     private Spinner formatValueSpinner;
     private Spinner framerateInfoSpinner;
+    private Spinner expansionSpinner;
     private IndicatorSeekBar  bitrateIndicator;
     private TextView computeOutputFileSize;
     private VideoInfo editVideoInfo;
@@ -53,6 +56,7 @@ public class SaveVideoActivity extends AppCompatActivity {
     private LoadingEncodeDialog loadingEncodeDialog;
     private FilterExecutor filterExecutor;
     private BaseFilter currentFilter;
+    private float videoSpeed = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,14 +69,16 @@ public class SaveVideoActivity extends AppCompatActivity {
         bitrateIndicator = findViewById(R.id.bitrateIndicator);
         computeOutputFileSize = findViewById(R.id.textView_computeSizeValue);
         framerateInfoSpinner = findViewById(R.id.spinner_framerate);
+        expansionSpinner = findViewById(R.id.spinner_expansion);
 
-        loadingEncodeDialog = new LoadingEncodeDialog(this);
+
 
         editVideoInfo = (VideoInfo) getIntent().getParcelableExtra(VideoInfo.class.getCanonicalName());
 
         beginValue = getIntent().getFloatExtra("beginValue",0f);
         endValue = getIntent().getFloatExtra("endValue",0f);
         currentFilter = getIntent().getParcelableExtra("filter");
+        videoSpeed = getIntent().getFloatExtra("videoSpeed",1f);
 
         filterExecutor = new FilterExecutor(this);
 
@@ -140,8 +146,11 @@ public class SaveVideoActivity extends AppCompatActivity {
     public void clickSaveVideo(View view) throws Exception {
 
         String inputVideoPath = editVideoInfo.getPath();
-        File folder = SupportUtil.CreateFolder(this.getExternalFilesDir(null).getPath() + "/" + "EncodeVideo");
-        String outputVideoPath = folder.getAbsolutePath() + "/" + editVideoInfo.getFilename();
+        String filename = editVideoInfo.getFilename();
+        int idx = filename.indexOf(".");
+        String name = filename.substring(0,idx);
+        String extension = (String) expansionSpinner.getSelectedItem();
+        String outputVideoPath = SupportUtil.getSettingEncodeVideoPath(this) + "/" + name + "_" +  TimeUtil.getTimeInString() + "." + extension;
         float bitrateInMbit = bitrateIndicator.getProgressFloat();
         String framerate = (String) framerateInfoSpinner.getSelectedItem();
         long fromTimeMS = (long) beginValue;
@@ -161,15 +170,15 @@ public class SaveVideoActivity extends AppCompatActivity {
         }
         else {
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String imgSett = prefs.getString("list_preference_ffmpeg_encode", "");
-            Codecs.CodecsName codec = Codecs.fromString(imgSett);
-            ActionEditor.executeCommand(inputVideoPath, outputVideoPath, bitrateInMbit, framerate, fromTimeMS, toTimeMS, codec, scaleResolution);
+
+            Codecs.CodecsName codec = Codecs.fromString(SupportUtil.getSettingCodecEncode(this));
+            ActionEditor.executeCommand(inputVideoPath, outputVideoPath , bitrateInMbit, framerate, fromTimeMS, toTimeMS, codec, scaleResolution,videoSpeed);
             Handler handler = new Handler();
+            loadingEncodeDialog = new LoadingEncodeDialog(this);
             loadingEncodeDialog.startLoadingDialog();
 
             handler.post(new Runnable() {
-                long durationChunk = toTimeMS - fromTimeMS;
+                long durationChunk = toTimeMS - fromTimeMS - 30;
                 long ms = 0;
                 long secs = 0;
                 long hours = 0;
@@ -180,8 +189,9 @@ public class SaveVideoActivity extends AppCompatActivity {
                     if (durationChunk == 0)
                         durationChunk = editVideoInfo.getDuration();
                     double encodeSpeed = Config.getLastReceivedStatistics().getSpeed();
+                   // Log.d("ERROR", String.valueOf(Config.getLastReceivedStatistics().));
 
-                     ms = (long) ((durationChunk - Config.getLastReceivedStatistics().getTime()) / encodeSpeed);
+                     ms = (long) ((durationChunk - Config.getLastReceivedStatistics().getTime()));
                      secs = TimeUnit.MILLISECONDS.toSeconds(ms) % 60;
                      hours = TimeUnit.MILLISECONDS.toHours(ms) % 24;
                      minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
@@ -191,7 +201,7 @@ public class SaveVideoActivity extends AppCompatActivity {
                      else
                          loadingEncodeDialog.updateCountdown(String.format(Locale.getDefault(),
                             "%d:%02d:%02d", hours, minutes, secs));
-                    if (ms > 0) {
+                    if (ms > 0 && Config.getLastReturnCode() == 0) {
                         handler.postDelayed(this, 10);
                     } else {
                         loadingEncodeDialog.dismissDialog();

@@ -145,10 +145,7 @@ public class FilterExecutor extends Thread {
         decoder = MediaCodec.createByCodecName(nameDecoder);
         decoder.configure(inputVideoFormat, outputSurface.getSurface(), null, 0);
 
-
-
-        File folder = SupportUtil.CreateFolder(context.getExternalFilesDir(null).getPath() + "/" + "FilteredVideo");
-        File newFiltredFile = SupportUtil.CreateFileInFolder(folder.getCanonicalPath(), pathOutVideoFile);
+        File newFiltredFile = SupportUtil.CreateFileInFolder(SupportUtil.getSettingFilteredVideoPath(context), pathOutVideoFile);
         this.pathOutVideoFile = newFiltredFile.getCanonicalPath();
         int outputFormat = getMediaMixerOutputFormatByMimeType(mime);
         mediaMuxer = new MediaMuxer(newFiltredFile.getCanonicalPath(), outputFormat);

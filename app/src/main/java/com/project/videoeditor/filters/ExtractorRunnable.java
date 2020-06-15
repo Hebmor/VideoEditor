@@ -13,15 +13,15 @@ public class ExtractorRunnable implements Runnable {
     private boolean isLogDebug;
     boolean inputVideoDone = false;
     int trackIndexVideo = 0;
-    private long TIMEOUT_USEC = 0;
+    private long timeoutUsec = 0;
     private int extractChunkCount = 0;
 
-    public ExtractorRunnable(MediaCodec decoder, MediaExtractor videoExtractor, boolean isLogDebug, int trackIndexVideo, long TIMEOUT_USEC) {
+    public ExtractorRunnable(MediaCodec decoder, MediaExtractor videoExtractor, boolean isLogDebug, int trackIndexVideo, long timeoutUsec) {
         this.decoder = decoder;
         this.videoExtractor = videoExtractor;
         this.isLogDebug = isLogDebug;
         this.trackIndexVideo = trackIndexVideo;
-        this.TIMEOUT_USEC = TIMEOUT_USEC;
+        this.timeoutUsec = timeoutUsec;
     }
 
 
@@ -60,7 +60,7 @@ public class ExtractorRunnable implements Runnable {
     public void run() {
         int inputBufIndex = 0;
         while (!inputVideoDone && !Thread.currentThread().isInterrupted()) {
-            inputBufIndex = decoder.dequeueInputBuffer(TIMEOUT_USEC);
+            inputBufIndex = decoder.dequeueInputBuffer(timeoutUsec);
             inputVideoDone = extractChunksToDecoder(inputBufIndex);
         }
     }

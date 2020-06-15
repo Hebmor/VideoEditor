@@ -2,6 +2,7 @@ package com.project.videoeditor.support;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +18,8 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+
+import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -254,5 +257,34 @@ public class SupportUtil {
     public static String getFilenameByPath(String path)
     {
         return path.substring(path.lastIndexOf("/")+1);
+    }
+
+    public static String getSettingCodecEncode(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("list_preference_ffmpeg_encode", "");
+    }
+    public static String getSettingEncodeVideoPath(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("dir_encode_preference", "");
+    }
+
+    public static String getSettingFilteredVideoPath(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("dir_filter_preference", "");
+    }
+
+    public static String getSettingExtractFramePath(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("dir_frames_extract_preference", "");
+    }
+
+    public static String getSettingExtractAudioPath(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("dir_audio_extract_preference", "");
     }
 }

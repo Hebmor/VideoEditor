@@ -17,9 +17,6 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
-        <activity android:name=".activity.CropVideoActivity" />
-        <activity android:name=".filters.FiltersVideoActivity" />
-        <activity android:name=".activity.VideoEditPage" />
         <activity android:name=".activity.MainEditor" />
         <activity android:name=".activity.SaveVideoActivity" />
         <activity android:name=".VideoInfoFragment" />

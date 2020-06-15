@@ -17,10 +17,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.gson.Gson;
 import com.project.videoeditor.activity.MainEditor;
 import com.project.videoeditor.activity.SaveVideoActivity;
 import com.project.videoeditor.codecs.ActionEditor;
+import com.project.videoeditor.dialogs.SpeedDialog;
 import com.project.videoeditor.filters.BaseFilter;
 import com.project.videoeditor.filters.FiltersFactory;
 import com.project.videoeditor.filters.ImageKernelFilter;
@@ -35,6 +37,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
     private PlayerController playerController;
     private VideoTimelineCutView videoTimelineCutView;
     private VideoTimelineSplitView videoTimelineSplitView;
+    private SpeedDialog speedDialog;
 
 
     private boolean viewModRange = true;
@@ -132,6 +135,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
                 videoTimelineSplitView.registerCallBack(this);
                 videoTimelineSplitView.registerIClickSplitEditCallback(this);
             }
+            speedDialog = new SpeedDialog(getActivity());
         }
     }
 
@@ -193,6 +197,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
         playerController.moveByVideoIndex(index);
     }
 
+
     @Override
     public void clickOpenSavePage(View view, float beginMs, float endMs) {
         if(view instanceof Button) {
@@ -204,6 +209,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
             intent.putExtra("beginValue", beginMs);
             intent.putExtra("endValue",endMs);
             intent.putExtra("filter",filter);
+            intent.putExtra("videoSpeed",speedDialog.getSpeedValue());
 
             ((Activity)getContext()).startActivity(intent);
         }
@@ -231,6 +237,7 @@ public class VideoTimelineController extends Fragment implements PlayerControlle
 
     @Override
     public void clickChangeSpeed(View view, float beginMs, float endMs, float speed) {
+        speedDialog.startLoadingDialog(playerController);
 
     }
 

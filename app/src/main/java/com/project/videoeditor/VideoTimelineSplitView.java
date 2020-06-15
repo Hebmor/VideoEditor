@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +23,15 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.project.videoeditor.activity.MainEditor;
 import com.project.videoeditor.codecs.ActionEditor;
 import com.project.videoeditor.support.SupportUtil;
+
+import java.io.File;
 
 import static com.project.videoeditor.support.SupportUtil.splitBitmap;
 
@@ -55,6 +62,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
     private int overallXScroll = 0;
     private TimelineEntity currentTimelineEntity;
     private static boolean isDebugMod = true;
+    private FilePickerDialog dialog;
 
     PlayerControllerCallback playerControllerCallback;
 
@@ -120,8 +128,6 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                 LinearLayoutManager.HORIZONTAL, false);
         timelineBody.setLayoutManager(layoutManager);
         timelineBody.setAdapter(timelineAdapter);
-
-        MainEditor.registerResultCallbackTakeVideo(this);
 
         timelineBody.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -231,6 +237,28 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
                 }
             }
         });
+
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = new String[] {"mp4","avi","webm","ogg"};
+
+        dialog = new FilePickerDialog(getContext(),properties);
+        dialog.setTitle("Выберете видео");
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                if(files.length == 1) {
+                    String filePath = files[0];
+                    VideoInfo videoInfo = new VideoInfo();
+                    videoInfo.parseInfoFromPath(filePath);
+                    addVideoInTimeline(videoInfo);
+                }
+            }
+        });
     }
 
     public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage, String videoPath, int widthItem, int heightItem,
@@ -334,15 +362,7 @@ public class VideoTimelineSplitView extends LinearLayout implements MainEditor.I
 
     public void clickAddVideo(View view)
     {
-        try {
-            Intent intent = new Intent();
-            intent.setType("video/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            ((Activity)getContext()).startActivityForResult(Intent.createChooser(intent, "Select Video"), MainEditor.REQUEST_TAKE_GALLERY_VIDEO);
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
+        dialog.show();
     }
 
     public void clickExtractFrame(View view)

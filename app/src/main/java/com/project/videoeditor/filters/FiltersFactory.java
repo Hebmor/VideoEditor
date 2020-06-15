@@ -17,17 +17,6 @@ public class FiltersFactory {
 
     }
 
-    private final String NameFrameBuffer = "filteredBuffer.png";
-
-    public static int getDefault()
-    {
-        return R.raw.default_state;
-    }
-    public static int getBlackAndWhite()
-    {
-        return R.raw.black_and_white;
-    }
-
     public static BaseFilter getFiltersByName(NameFilters name, Context context)
     {
         switch (name)

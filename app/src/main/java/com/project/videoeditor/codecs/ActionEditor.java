@@ -165,7 +165,7 @@ public class ActionEditor {
         RunCommandExecuteFFMPEG(command,false);
     }
     public static void executeCommand(String inputVideoPath,String outputVideoPath,float bitrateInMbit,
-                                      String framerate,long fromTimeMS,long toTimeMS,Codecs.CodecsName codec,String scaleResolution) throws Exception {
+                                      String framerate,long fromTimeMS,long toTimeMS,Codecs.CodecsName codec,String scaleResolution, float speed) throws Exception {
 
         String command = "";
         long msFrom = fromTimeMS % 1000;
@@ -183,25 +183,48 @@ public class ActionEditor {
         String framerateNorm = framerate.replace(",",".");
 
         if(fromTimeMS == toTimeMS || fromTimeMS < 0 || fromTimeMS < 0)
-            command = String.format("-y -i \"%s\" -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
-                    inputVideoPath,currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
+            command = String.format("-y -i \"%s\" -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2",
+                    inputVideoPath,currentCodec,"copy",bitrateInMbit,scaleResolution,framerateNorm);
         else
-            command = String.format("-y -i \"%s\" -ss %d:%d:%d.%d -t %d:%d:%d.%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2 \"%s\"",
-                    inputVideoPath,hoursFrom,minutesFrom,secsFrom,msFrom,hoursDuration,minutesDuration,secsDuration,msDuration,
-                    currentCodec,"libopus",bitrateInMbit,scaleResolution,framerateNorm,outputVideoPath);
+            command = String.format("-ss %d:%d:%d.%d -y -i \"%s\"  -t %d:%d:%d.%d -c:v %s -c:a %s -b:v %fM -vf scale=%s -r %s -strict -2",
+                    hoursFrom,minutesFrom,secsFrom,msFrom,inputVideoPath,hoursDuration,minutesDuration,secsDuration,msDuration,
+                    currentCodec,"copy",bitrateInMbit,scaleResolution,framerateNorm);
+
+        if(speed > 0f && speed != 1f) {
+            command += String.format(" -filter:v \"setpts=PTS/%f\"", speed);
+            command += " -filter:a \"";
+
+            float speedAudio = speed;
+            while (speedAudio > 2)
+            {
+                command += "atempo=2,";
+                speedAudio-=2;
+            }
+
+            command += String.format("atempo=%f\"", speedAudio);
+        }
+
+        command += String.format(" \"%s\"", outputVideoPath);
         RunCommandExecuteFFMPEG(command,false);
     }
     public static Bitmap getFrameFromVideo(String path, int frametimeMs)
     {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(path);
-        return mediaMetadataRetriever.getFrameAtTime(frametimeMs * 1000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        Bitmap frame = null;
+        long time = frametimeMs * 1000;
+        while (frame == null)
+        {
+            frame = mediaMetadataRetriever.getFrameAtTime(time,MediaMetadataRetriever.OPTION_CLOSEST);
+            time+=10;
+        }
+        return frame;
     }
     public static Bitmap getFrameCollage(String path,int durationVideoMs,int widthFrameInPx,int heightFrameInPx,int countFrame)
     {
         Bitmap frameCollage = null;
-        int timestep = durationVideoMs / countFrame;
-        for(int i = 0,frametimeMs = 0;i < countFrame && frametimeMs <= durationVideoMs;
+        int timestep = (durationVideoMs - 1000) / countFrame;
+        for(int i = 0,frametimeMs = timestep;i < countFrame && frametimeMs <= durationVideoMs;
             i++,frametimeMs+=timestep)
         {
             Bitmap tempFrame = getFrameFromVideo(path,frametimeMs);
@@ -216,7 +239,7 @@ public class ActionEditor {
         return frameCollage;
     }
 
-    public static void extractFrames(String videopath,String outfile,long fromTimeMS,long toTimeMS,int countFrame) throws InterruptedException {
+    public static void extractFrames(String videopath, String outfile, long fromTimeMS, long toTimeMS, int countFrame) throws InterruptedException {
         String command = "";
         long msFrom = fromTimeMS % 1000;
         long secsFrom = TimeUnit.MILLISECONDS.toSeconds(fromTimeMS)  % 60;
@@ -231,12 +254,12 @@ public class ActionEditor {
         long secsDuration = TimeUnit.MILLISECONDS.toSeconds(durationMS)  % 60;
         long hoursDuration = TimeUnit.MILLISECONDS.toHours(durationMS)  % 24;
         long minutesDuration = TimeUnit.MILLISECONDS.toMinutes(durationMS)  % 60;
+        command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\"",hoursFrom,
+                minutesFrom, secsFrom,msFrom, hoursDuration, minutesDuration, secsDuration,msDuration, videopath);
         if(countFrame > 0)
-            command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\" -frames:v %d \"%s\"",hoursFrom,
-                minutesFrom, secsFrom,msFrom, hoursDuration, minutesDuration, secsDuration,msDuration, videopath, countFrame, outfile);
-        else
-            command = String.format("-y -ss %d:%d:%d.%d -t %d:%d:%d.%d -i \"%s\" \"%s\"",hoursFrom,
-                    minutesFrom,secsFrom, hoursDuration,minutesDuration,secsDuration,videopath,outfile);
+            command+= String.format("-frames:v %d",countFrame);
+
+        command += String.format(" \"%s\"", outfile);
         RunCommandExecuteFFMPEG(command,false);
     }
 
@@ -261,5 +284,6 @@ public class ActionEditor {
                 minutesFrom, secsFrom, msFrom, hoursDuration, minutesDuration, secsDuration, msDuration, videopath,outfile);
         RunCommandExecuteFFMPEG(command,false);
     }
+
 
 }

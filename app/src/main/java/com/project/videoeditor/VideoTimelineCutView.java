@@ -151,6 +151,7 @@ public class VideoTimelineCutView extends LinearLayout{
         saveButton.setOnClickListener(this::clickSave);
         extractFrames.setOnClickListener(this::clickExtractFrames);
         extractAudio.setOnClickListener(this::clickExtractAudio);
+        speedButton.setOnClickListener(this::clickChangeSpeed);
     }
 
     public void addItemInTimelineBody(Bitmap frameCollage, String nameCollage)
@@ -219,7 +220,7 @@ public class VideoTimelineCutView extends LinearLayout{
 
     public void clickChangeSpeed(View view)
     {
-        callbackClickEdit.clickChangeSpeed(view,getLeftValue(),getRightValue(),0);
+        callbackClickEdit.clickChangeSpeed(view,getLeftValue(),getRightValue(),4);
     }
 
 }

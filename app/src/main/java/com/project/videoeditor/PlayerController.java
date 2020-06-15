@@ -3,10 +3,15 @@ package com.project.videoeditor;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -21,6 +26,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 
@@ -68,6 +74,7 @@ public class PlayerController implements Serializable {
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
         player.prepare(playlist, true, false);
+
 
     }
     private MediaSource buildMediaSource(Uri uri) {
@@ -142,6 +149,10 @@ public class PlayerController implements Serializable {
         }
     }
 
+    public void setSpeedOnRange(int beginMs, int endMs, float speed)
+    {
+
+    }
     public void moveByVideoIndex(int index)
     {
         player.seekTo(index,0);

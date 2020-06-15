@@ -53,12 +53,6 @@ public class MainEditor extends AppCompatActivity {
         void call(VideoInfo data);
     }
 
-    private static IResultCallbackTakeVideoInfo callbackTakeVideoInfo;
-
-    public static void registerResultCallbackTakeVideo(IResultCallbackTakeVideoInfo callback)
-    {
-        callbackTakeVideoInfo = callback;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,36 +161,6 @@ public class MainEditor extends AppCompatActivity {
 
     public void ClickAddVideo(View view) throws InterruptedException {
         videoTimelineControllerSplit.addVideoToTimeline(editVideoInfo);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_TAKE_GALLERY_VIDEO:
-                    VideoInfo info = new VideoInfo();
-                    Uri selectedVideoUri = data.getData();
-                    String ffmpegPath;
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                        ffmpegPath = SupportUtil.safUriToFFmpegPath(this,selectedVideoUri);
-                    else
-                        ffmpegPath = SupportUtil.getPath(this,selectedVideoUri);
-
-                    String displayName = SupportUtil.getInfoByUri(this,selectedVideoUri, OpenableColumns.DISPLAY_NAME);
-                    String filesize = SupportUtil.getInfoByUri(this,selectedVideoUri,OpenableColumns.SIZE);
-
-                    info.setFilename(displayName);
-                    info.setSizeInBytes(Long.parseLong(filesize));
-                    info.parseInfoFromPath(ffmpegPath);
-                    ActionEditor.setVideoInfo(info);
-
-                    if(callbackTakeVideoInfo != null)
-                        callbackTakeVideoInfo.call(info);
-                    break;
-            }
-        }
     }
 
     public BaseFilter getCurrentFilter()
