@@ -1,6 +1,6 @@
 # VideoEditor
  FFMPEG-based video editor for Android
-# Проект временно заморожен! 
+# Проект заморожен! 
 # The project is temporarily frozen!
 # RU
 ## Описание:
